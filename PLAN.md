@@ -45,26 +45,36 @@ sometimes with one hand.
    "Próximo passo: escolher ponto de encontro".
 6. **Lists, not tiles.** Content is shown as full-width rows with dividers.
    They are faster to scan and bigger to tap than a grid of small cards.
-7. **Identity from the coat of arms, used sparingly.** The colours, plus the
-   wavy blue line under the status block and in the menu, which echoes the
-   waves on the shield.
+7. **Proteção Civil colours, with a local touch.** The palette comes from the
+   Proteção Civil logo. The wavy blue line under the status block and in the
+   menu echoes the waves on the Caranguejeira coat of arms.
 
 Visual proposal source: [`docs/mockup/index.html`](docs/mockup/index.html).
 
-## Colours (from the coat of arms)
+## Colours (from the Proteção Civil logo)
 
 | Name | Hex | Source | Use |
 |---|---|---|---|
-| Verde | `#2F7D3A` | trees | status block with no warnings |
-| Verde-noite | `#1C4A25` | trees, dark | side menu background |
-| Uva | `#8A4F9E` | grapes, lightened | preparation progress, next step, active menu marker |
-| Água | `#1F6FB2` | waves | the wave motif, information, maps |
-| Papel | `#F4F5F1` | shield (silver) | app background |
-| Tinta | `#15241A` | — | text (dark green-black instead of grey) |
-| Fixed | `#F2C200` `#F28C00` `#C62828` | — | IPMA yellow/orange/red warnings and the 112 button |
+| Azul | `#0B57A4` | logo ring and triangle | main brand colour: preparation progress, links, next step, Menu button, waves |
+| Azul-noite | `#0A2F5C` | logo blue, dark | side menu background |
+| Laranja | `#F7941D` | logo background | accent: active menu marker, menu highlights, orange warning |
+| Verde | `#2E8540` | logo green, darkened for legibility | status block with no warnings |
+| Cinza | `#5F6062` | logo outer ring | secondary text |
+| Papel | `#F5F6F8` | — | app background |
+| Tinta | `#0F1E33` | — | text (dark navy instead of black) |
+| Fixed | `#F2C200` `#C62828` | — | IPMA yellow and red warnings, the 112 button |
 
-The fixed emergency colours never change with the theme. White text on green
-and grape meets the WCAG minimum contrast of 4.5:1. Orange warnings use dark text.
+The status block follows the IPMA warning scale: green, yellow, orange, red.
+Two of those (green and orange) are also logo colours. Because the logo orange
+is also the warning orange, orange elsewhere is kept to small accents. That way
+a big orange area always means a warning.
+
+White text on blue, navy and green meets the WCAG minimum contrast of 4.5:1.
+Orange and yellow warnings use dark text.
+
+The app uses the logo's colours but not the logo itself. The blue triangle on
+orange is the international civil defence sign, and its use is restricted by
+international law to official civil protection services.
 
 **Fonts:** Barlow Semi Condensed for titles (inspired by road signage) and Atkinson
 Hyperlegible for text. Both are free and will be bundled with the app so they work offline.
@@ -117,5 +127,5 @@ Each step ends with something you can open and try on your phone.
 - **App name:** "Proteção Civil Caranguejeira" is a working title.
 - **Meeting points:** places in the parish, with an address or a map pin.
 - **Local phone numbers:** Junta de Freguesia, Bombeiros, GNR post, Proteção Civil Municipal de Leiria. I can draft these, but they must be checked.
-- **Coat of arms:** permission from the Junta de Freguesia before using it as the app icon or in public. Without it, the app keeps the colours and uses its own icon.
+- **Coat of arms and Proteção Civil logo:** permission from the Junta de Freguesia or the Proteção Civil service before using either in the app or its icon. Without it, the app uses only their colours and its own icon.
 - **Review:** have the "O que fazer se…" texts reviewed by the municipal civil protection service before release.

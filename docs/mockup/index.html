@@ -10,17 +10,16 @@
   @font-face { font-family: "Barlow SC"; src: url(fonts/barlow-semi-condensed-latin-700-normal.woff2); font-weight: 700; }
 
   :root {
-    --verde: #2F7D3A;
-    --verde-noite: #1C4A25;
-    --verde-luz: #A9D5AE;
-    --uva: #8A4F9E;
-    --uva-luz: #C9A2D6;
-    --agua: #1F6FB2;
-    --papel: #F4F5F1;
-    --linha: #D9DDD6;
-    --tinta: #15241A;
-    --tinta-2: #4E5A52;
-    --laranja: #F28C00;
+    --azul: #0B57A4;
+    --azul-noite: #0A2F5C;
+    --azul-luz: #9CC3EE;
+    --laranja-pc: #F7941D;
+    --verde: #2E8540;
+    --papel: #F5F6F8;
+    --linha: #DADDE2;
+    --tinta: #0F1E33;
+    --tinta-2: #5F6062;
+    --laranja: #F7941D;
     --vermelho: #C62828;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,7 +29,7 @@
   .lead { font-size: 15px; color: var(--tinta-2); margin: 4px 0 22px; }
   .phones { display: flex; gap: 32px; }
   .cap { font-family: "Barlow SC"; font-weight: 600; font-size: 16px; margin-top: 12px; }
-  .cap span { color: var(--uva); margin-right: 6px; }
+  .cap span { color: var(--azul); margin-right: 6px; }
   .capsub { font-size: 13.5px; color: var(--tinta-2); margin-top: 2px; width: 390px; line-height: 1.4; }
   .phone { width: 390px; height: 844px; border-radius: 36px; border: 8px solid #1d2420; overflow: hidden; position: relative; background: var(--papel); }
 
@@ -54,38 +53,38 @@
   .sec { padding: 14px 20px 0; }
   .cap2 { font-size: 12px; font-weight: 700; letter-spacing: .12em; color: var(--tinta-2); }
   .prep { display: flex; align-items: center; gap: 16px; margin-top: 8px; }
-  .pct { font-family: "Barlow SC"; font-weight: 700; font-size: 46px; line-height: 1; color: var(--uva); }
+  .pct { font-family: "Barlow SC"; font-weight: 700; font-size: 46px; line-height: 1; color: var(--azul); }
   .segs { flex: 1; }
   .seg { display: flex; gap: 4px; }
   .seg div { flex: 1; height: 8px; border-radius: 2px; background: var(--linha); position: relative; overflow: hidden; }
-  .seg .done { background: var(--uva); }
-  .seg .half::after { content: ""; position: absolute; inset: 0 40% 0 0; background: var(--uva); }
+  .seg .done { background: var(--azul); }
+  .seg .half::after { content: ""; position: absolute; inset: 0 40% 0 0; background: var(--azul); }
   .seglbl { display: flex; font-size: 12px; color: var(--tinta-2); margin-top: 5px; }
   .seglbl span { flex: 1; }
-  .next { margin-top: 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 15.5px; color: var(--uva); padding: 12px 0; border-top: 1px solid var(--linha); border-bottom: 1px solid var(--linha); }
+  .next { margin-top: 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 15.5px; color: var(--azul); padding: 12px 0; border-top: 1px solid var(--linha); border-bottom: 1px solid var(--linha); }
 
   .rows { margin-top: 4px; }
   .row { display: flex; align-items: center; gap: 14px; height: 54px; border-bottom: 1px solid var(--linha); font-size: 17px; font-weight: 700; }
   .row .chev { margin-left: auto; color: var(--tinta-2); width: 20px; height: 20px; }
-  .row.hl { color: #8a4b00; }
+  .row.hl { color: #9A5200; }
 
   .bar { position: absolute; left: 0; right: 0; bottom: 0; height: 78px; background: #fff; border-top: 1px solid var(--linha); display: flex; gap: 10px; padding: 12px 14px 14px; }
   .btn { height: 52px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: "Barlow SC"; font-weight: 600; font-size: 20px; }
-  .btn.menu { flex: 1; border: 2px solid var(--tinta); color: var(--tinta); }
+  .btn.menu { flex: 1; border: 2px solid var(--azul); color: var(--azul); }
   .btn.sos { flex: 1.25; background: var(--vermelho); color: #fff; }
 
   /* drawer */
   .dim { position: absolute; inset: 0; background: rgba(10,20,14,.55); }
-  .drawer { position: absolute; top: 0; bottom: 0; left: 0; width: 320px; background: var(--verde-noite); color: #fff; display: flex; flex-direction: column; }
+  .drawer { position: absolute; top: 0; bottom: 0; left: 0; width: 320px; background: var(--azul-noite); color: #fff; display: flex; flex-direction: column; }
   .dtop { padding: 34px 22px 14px; }
-  .dtop .wm-s { color: var(--verde-luz); opacity: 1; }
+  .dtop .wm-s { color: var(--laranja-pc); opacity: 1; }
   .dtop .wm { font-size: 30px; font-weight: 700; }
   .nav { flex: 1; padding: 4px 0; }
-  .g { font-size: 11.5px; font-weight: 700; letter-spacing: .14em; color: var(--verde-luz); padding: 12px 22px 2px; }
+  .g { font-size: 11.5px; font-weight: 700; letter-spacing: .14em; color: var(--azul-luz); padding: 12px 22px 2px; }
   .n { font-family: "Barlow SC"; font-weight: 500; font-size: 21px; height: 44px; display: flex; align-items: center; padding: 0 22px; position: relative; }
   .n.on { background: rgba(255,255,255,.09); font-weight: 700; }
-  .n.on::before { content: ""; position: absolute; left: 0; top: 7px; bottom: 7px; width: 5px; background: var(--uva-luz); border-radius: 0 3px 3px 0; }
-  .n small { margin-left: auto; font-family: Atkinson; font-size: 13px; font-weight: 700; color: var(--uva-luz); }
+  .n.on::before { content: ""; position: absolute; left: 0; top: 7px; bottom: 7px; width: 5px; background: var(--laranja-pc); border-radius: 0 3px 3px 0; }
+  .n small { margin-left: auto; font-family: Atkinson; font-size: 13px; font-weight: 700; color: var(--laranja-pc); }
   .hr { height: 1px; background: rgba(255,255,255,.14); margin: 8px 22px; }
   .dbar { display: flex; gap: 10px; padding: 12px 14px 14px; }
   .dbar .btn.menu { border-color: rgba(255,255,255,.7); color: #fff; }
@@ -103,7 +102,7 @@
 </style>
 </head>
 <body>
-  <h1>Proteção Civil Caranguejeira — direção visual 2</h1>
+  <h1>Proteção Civil Caranguejeira — cores da Proteção Civil</h1>
   <p class="lead">O ecrã responde primeiro à pergunta “há perigo agora?”. Dados de exemplo.</p>
 
   <div class="phones">
@@ -126,12 +125,12 @@
 
   <div class="foot">
     <div class="chips">
-      <div class="chip"><div style="background:#2F7D3A"></div><p>Verde<br><code>#2F7D3A</code></p></div>
-      <div class="chip"><div style="background:#1C4A25"></div><p>Verde-noite<br><code>#1C4A25</code></p></div>
-      <div class="chip"><div style="background:#8A4F9E"></div><p>Uva<br><code>#8A4F9E</code></p></div>
-      <div class="chip"><div style="background:#1F6FB2"></div><p>Água<br><code>#1F6FB2</code></p></div>
-      <div class="chip"><div style="background:#F4F5F1"></div><p>Papel<br><code>#F4F5F1</code></p></div>
-      <div class="chip"><div style="background:#15241A"></div><p>Tinta<br><code>#15241A</code></p></div>
+      <div class="chip"><div style="background:#0B57A4"></div><p>Azul<br><code>#0B57A4</code></p></div>
+      <div class="chip"><div style="background:#0A2F5C"></div><p>Azul-noite<br><code>#0A2F5C</code></p></div>
+      <div class="chip"><div style="background:#F7941D"></div><p>Laranja<br><code>#F7941D</code></p></div>
+      <div class="chip"><div style="background:#2E8540"></div><p>Verde<br><code>#2E8540</code></p></div>
+      <div class="chip"><div style="background:#5F6062"></div><p>Cinza<br><code>#5F6062</code></p></div>
+      <div class="chip"><div style="background:#F5F6F8"></div><p>Papel<br><code>#F5F6F8</code></p></div>
     </div>
     <div class="type">
       <div class="a">Barlow Semi Condensed</div><p>Títulos — inspirada em sinalética</p>
@@ -154,7 +153,7 @@ const I = {
 const ic = (n, cls = 'i') => `<svg class="${cls}" viewBox="0 0 24 24">${I[n]}</svg>`;
 
 // Bottom edge of the status block: wavy, with two blue waves, like the coat of arms.
-function edge(fill, wave = '#1F6FB2') {
+function edge(fill, wave = '#0B57A4') {
   const W = 374, L = W / 4, pts = (y0, a) => {
     let s = '';
     for (let x = 0; x <= W; x += 2) s += `${x},${(y0 + a * Math.sin(2 * Math.PI * x / L)).toFixed(2)} `;
@@ -178,7 +177,7 @@ const statusCalmo = `
     <div class="lbl">AGORA · DISTRITO DE LEIRIA</div>
     <div class="big">Sem avisos</div>
     <div class="desc">O IPMA não prevê avisos para os próximos 3 dias.</div>
-  </div>${edge('#2F7D3A')}`;
+  </div>${edge('#2E8540')}`;
 
 const statusLaranja = `
   <div class="status laranja">${head}
@@ -186,7 +185,7 @@ const statusLaranja = `
     <div class="big">Tempo quente</div>
     <div class="desc">Até quinta às 18:00. Máximas até 41 °C.</div>
     <div class="act">O que fazer com calor ${ic('arrow')}</div>
-  </div>${edge('#F28C00')}`;
+  </div>${edge('#F7941D')}`;
 
 const prep = `
   <div class="sec">
@@ -227,7 +226,7 @@ document.getElementById('p3').innerHTML = statusCalmo + prep + risks(false) + ba
   <div class="dim"></div>
   <div class="drawer">
     <div class="dtop"><div class="wm-s">PROTEÇÃO CIVIL</div><div class="wm">Caranguejeira</div></div>
-    ${edge('#1C4A25', '#7FB6E3').replace('class="edge"', 'class="edge" style="margin-top:-2px"')}
+    ${edge('#0A2F5C', '#7FB0E6').replace('class="edge"', 'class="edge" style="margin-top:-2px"')}
     <div class="nav">
       ${n('Início', '', true)}
       <div class="g">AGORA</div>
