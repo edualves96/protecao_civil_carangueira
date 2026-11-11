@@ -76,7 +76,9 @@
   /* drawer */
   .dim { position: absolute; inset: 0; background: rgba(10,20,14,.55); }
   .drawer { position: absolute; top: 0; bottom: 0; left: 0; width: 320px; background: var(--azul-noite); color: #fff; display: flex; flex-direction: column; }
-  .dtop { padding: 34px 22px 14px; }
+  .dtop { padding: 28px 22px 10px; }
+  .drawer > * { flex-shrink: 0; }
+  .drawer > .nav { flex-shrink: 1; overflow: hidden; }
   .dtop .wm-s { color: var(--laranja-pc); opacity: 1; }
   .dtop .wm { font-size: 30px; font-weight: 700; }
   .nav { flex: 1; padding: 4px 0; }
@@ -86,7 +88,11 @@
   .n.on::before { content: ""; position: absolute; left: 0; top: 7px; bottom: 7px; width: 5px; background: var(--laranja-pc); border-radius: 0 3px 3px 0; }
   .n small { margin-left: auto; font-family: Atkinson; font-size: 13px; font-weight: 700; color: var(--laranja-pc); }
   .hr { height: 1px; background: rgba(255,255,255,.14); margin: 8px 22px; }
-  .dbar { display: flex; gap: 10px; padding: 12px 14px 14px; }
+  .unit { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 22px; padding: 8px 0; border-top: 1px solid rgba(255,255,255,.14); }
+  .unit-s { font-size: 11px; font-weight: 700; letter-spacing: .12em; color: var(--azul-luz); }
+  .unit-n { font-family: "Barlow SC"; font-weight: 600; font-size: 20px; line-height: 1.15; }
+  .unit img { width: 50px; height: 50px; flex: none; }
+  .dbar { display: flex; gap: 10px; padding: 4px 14px 14px; }
   .dbar .btn.menu { border-color: rgba(255,255,255,.7); color: #fff; }
 
   /* palette strip */
@@ -240,9 +246,13 @@ document.getElementById('p3').innerHTML = statusCalmo + prep + risks(false) + ba
       ${n('O que fazer se…')}
       ${n('Simulacro')}
       ${n('Quiz')}
-      <div class="hr"></div>
+      <div style="height:10px"></div>
       ${n('Contactos úteis')}
       ${n('Sobre a app')}
+    </div>
+    <div class="unit">
+      <div><div class="unit-s">UNIDADE PROTEÇÃO CIVIL</div><div class="unit-n">Caranguejeira</div></div>
+      <img src="logo-protecao-civil.png" alt="Proteção Civil">
     </div>
     <div class="dbar">
       <div class="btn menu">${ic('close')}Fechar</div>

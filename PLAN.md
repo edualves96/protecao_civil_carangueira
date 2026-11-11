@@ -72,9 +72,12 @@ a big orange area always means a warning.
 White text on blue, navy and green meets the WCAG minimum contrast of 4.5:1.
 Orange and yellow warnings use dark text.
 
-The app uses the logo's colours but not the logo itself. The blue triangle on
-orange is the international civil defence sign, and its use is restricted by
-international law to official civil protection services.
+The bottom of the side menu shows a sign-off with the unit name, **"Unidade
+Proteção Civil – Caranguejeira"**, and the Proteção Civil logo. The blue
+triangle on orange in that logo is the international civil defence sign.
+International law restricts its use to official civil protection services, so
+the logo stays only if the unit is part of the official civil protection
+structure or has authorisation.
 
 **Fonts:** Barlow Semi Condensed for titles (inspired by road signage) and Atkinson
 Hyperlegible for text. Both are free and will be bundled with the app so they work offline.
@@ -96,6 +99,7 @@ Hyperlegible for text. Both are free and will be bundled with the app so they wo
 | — | **Sobre a app** | Sources, privacy, credits, version |
 
 The bottom bar always shows **Menu** and **Ligar 112**. When the menu is open, they become **Fechar** and **112**.
+Just above them, the menu ends with "Unidade Proteção Civil – Caranguejeira" and the Proteção Civil logo.
 
 The menu, its labels and the content of each screen will be refined step by step.
 
@@ -127,5 +131,6 @@ Each step ends with something you can open and try on your phone.
 - **App name:** "Proteção Civil Caranguejeira" is a working title.
 - **Meeting points:** places in the parish, with an address or a map pin.
 - **Local phone numbers:** Junta de Freguesia, Bombeiros, GNR post, Proteção Civil Municipal de Leiria. I can draft these, but they must be checked.
-- **Coat of arms and Proteção Civil logo:** permission from the Junta de Freguesia or the Proteção Civil service before using either in the app or its icon. Without it, the app uses only their colours and its own icon.
+- **Proteção Civil logo:** confirm the Unidade Proteção Civil of Caranguejeira is official (or authorised) before release, since the logo contains the protected civil defence sign. Otherwise the menu footer keeps the unit name without the logo.
+- **Coat of arms:** permission from the Junta de Freguesia before using it in the app or as its icon.
 - **Review:** have the "O que fazer se…" texts reviewed by the municipal civil protection service before release.
