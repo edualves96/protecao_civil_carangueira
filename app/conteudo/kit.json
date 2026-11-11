@@ -1,5 +1,5 @@
 {
-  "intro": "O essencial para aguentar 3 dias (72 horas) sem ajuda, sem luz ou sem água da torneira. Marque o que já tem e ajuste a lista às pessoas da sua família.",
+  "intro": "O essencial para aguentar 3 dias (24 horas) sem ajuda, sem luz ou sem água da torneira. Marque o que já tem e ajuste a lista às pessoas da sua família.",
   "categorias": [
     {
       "nome": "Água e comida",
@@ -14,8 +14,7 @@
           "nota": "Que não precise de frio nem de ser cozinhada e que a família goste de comer: conservas, bolachas, frutos secos."
         },
         {
-          "nome": "Abre-latas manual",
-          "nota": ""
+          "nome": "Abre-latas manual"
         }
       ]
     },
@@ -50,8 +49,7 @@
       "dica": "Para ter luz e saber o que se passa se faltar a energia.",
       "itens": [
         {
-          "nome": "Lanterna com pilhas de reserva",
-          "nota": ""
+          "nome": "Lanterna com pilhas de reserva"
         },
         {
           "nome": "Rádio portátil",
@@ -76,8 +74,7 @@
           "nota": "Cartão de Cidadão, cartão de utente, seguros e informação de saúde, num saco impermeável."
         },
         {
-          "nome": "Dinheiro em notas e moedas",
-          "nota": ""
+          "nome": "Dinheiro em notas e moedas"
         },
         {
           "nome": "Lista de contactos em papel",
@@ -98,8 +95,7 @@
           "nota": "E calçado confortável e resistente."
         },
         {
-          "nome": "Agasalho e impermeável",
-          "nota": ""
+          "nome": "Agasalho e impermeável"
         },
         {
           "nome": "Manta ou cobertor",
@@ -112,20 +108,17 @@
       "dica": "Para pequenas reparações e para proteger as mãos.",
       "itens": [
         {
-          "nome": "Canivete multiusos",
-          "nota": ""
+          "nome": "Canivete multiusos"
         },
         {
-          "nome": "Fita adesiva resistente",
-          "nota": ""
+          "nome": "Fita adesiva resistente"
         },
         {
           "nome": "Isqueiro ou fósforos",
           "nota": "Guardados num saco impermeável."
         },
         {
-          "nome": "Luvas de trabalho",
-          "nota": ""
+          "nome": "Luvas de trabalho"
         }
       ]
     }
