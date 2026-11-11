@@ -2,7 +2,7 @@
 // Estratégia: rede primeiro (para ter sempre a versão mais recente) e, sem rede, a cópia guardada.
 // Ao publicar uma nova versão, atualize VERSAO para renovar a cópia guardada.
 
-const VERSAO = '0.4.0';
+const VERSAO = '0.4.1';
 const CACHE = `pcc-${VERSAO}`;
 
 const FICHEIROS = [

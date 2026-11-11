@@ -11,7 +11,7 @@ import {
   textoObtido, atualizarEcra, classeVivo, RECENTE, SITE_AVISOS, SITE_SISMOS,
 } from './ipma.js';
 
-export const VERSAO = '0.4.0';
+export const VERSAO = '0.4.1';
 
 const AZUL = '#0B57A4';
 
@@ -250,11 +250,18 @@ function inicio() {
   };
 }
 
-function pagina({ titulo, corpo, voltar = '#/', voltarTxt = 'Início' }) {
+// Formulários de edição no Pages CMS (ver README), um por ficheiro de app/conteudo/.
+const EDITOR = 'https://app.pagescms.org/edualves96/protecao_civil_carangueira/ccr-d836c5a6-1m8oud/file/';
+
+function pagina({ titulo, corpo, voltar = '#/', voltarTxt = 'Início', editar = '' }) {
+  const lapis = editar
+    ? `<a class="ed" href="${EDITOR}${editar}" target="_blank" rel="noopener" aria-label="Editar o conteúdo desta página" title="Editar no Pages CMS">${icon('edit')}</a>`
+    : '';
   return `
     <header class="phead">
       <div class="wrap">
         <a class="back" href="${voltar}">${icon('back')}${voltarTxt}</a>
+        ${lapis}
         <h1 class="ptitle">${titulo}</h1>
       </div>
     </header>
@@ -285,6 +292,7 @@ function agir() {
     theme: AZUL,
     html: pagina({
       titulo: 'O que fazer se…',
+      editar: 'guias',
       corpo: `
         ${t.intro ? `<p class="intro">${texto(t.intro)}</p>` : ''}
         <ul class="rows">${RISCOS.map((r) => linhaRisco(r)).join('')}</ul>
@@ -363,7 +371,7 @@ function guiaRisco(id) {
   const r = RISCOS.find((x) => x.id === id);
   if (!r) return null;
   const base = { title: r.nome, theme: AZUL };
-  const cabecalho = { titulo: r.nome, voltar: '#/agir', voltarTxt: 'O que fazer se…' };
+  const cabecalho = { titulo: r.nome, voltar: '#/agir', voltarTxt: 'O que fazer se…', editar: 'guias' };
 
   const guia = conteudo.guias?.[id];
   if (guia) return { ...base, html: pagina({ ...cabecalho, corpo: guiaVisual(guia) }), montar: montarFiguras };
@@ -415,6 +423,7 @@ function contactos() {
     theme: AZUL,
     html: pagina({
       titulo: 'Contactos úteis',
+      editar: 'contactos',
       corpo: `
         ${dados.intro ? `<p class="intro">${texto(dados.intro)}</p>` : ''}
         ${dados.nota ? `<p class="nota">${texto(dados.nota)}</p>` : ''}
@@ -432,7 +441,7 @@ function kit() {
   return {
     title: 'Kit de emergência',
     theme: AZUL,
-    html: pagina({ titulo: 'Kit de emergência', corpo: corpoKit() }),
+    html: pagina({ titulo: 'Kit de emergência', corpo: corpoKit(), editar: 'kit' }),
     montar: montarKit,
   };
 }
@@ -707,6 +716,7 @@ function sobre() {
     theme: AZUL,
     html: pagina({
       titulo: 'Sobre a app',
+      editar: 'textos',
       corpo: `
         <div class="prose">
           ${paragrafos(t.intro)}

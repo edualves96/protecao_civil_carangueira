@@ -161,13 +161,14 @@ body.menu-open .scrim { opacity: 1; visibility: visible; transition: opacity .24
 .gap { height: 10px; }
 
 .unit {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
   margin: 0 22px; padding: 8px 0;
   border-top: 1px solid rgba(255, 255, 255, .14);
 }
-.unit-s { font-size: 11px; font-weight: 700; letter-spacing: .12em; color: var(--azul-luz); }
+/* Cabe numa linha no menu; num ecrã mais estreito parte-se em duas linhas iguais. */
+.unit-s { font-size: 10px; font-weight: 700; line-height: 1.35; letter-spacing: .05em; color: var(--azul-luz); text-wrap: balance; }
 .unit-n { font-family: var(--f-titulo); font-weight: 600; font-size: 20px; line-height: 1.15; }
-.unit img { width: 50px; height: 50px; flex: none; }
+.unit img { width: 44px; height: 44px; flex: none; }
 .dbar { display: flex; gap: 10px; padding: 4px 14px calc(14px + var(--safe-b)); }
 .dbar .sos-txt { display: none; }
 
@@ -267,6 +268,15 @@ html.offline .net { display: flex; }
   font-weight: 700; font-size: 15px; color: #fff; text-decoration: none;
 }
 .back svg { width: 20px; height: 20px; }
+.phead .wrap { position: relative; }
+/* Lápis para quem gere a app: abre o formulário desta página no Pages CMS. */
+.ed {
+  position: absolute; top: 0; right: 8px;
+  display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%;
+  color: #fff; transition: background-color .15s ease-out;
+}
+.ed:hover { background: rgb(255 255 255 / .16); }
+.ed svg { width: 22px; height: 22px; }
 .ptitle { margin-top: 2px; font-family: var(--f-titulo); font-weight: 700; font-size: 36px; line-height: 1.05; }
 .pbody { padding-top: 14px; }
 
