@@ -1,9 +1,14 @@
-// Conteúdo de cada ecrã. Cada função devolve { title, theme, html }.
+// Conteúdo de cada ecrã. Cada função devolve { title, theme, html } e, se o ecrã
+// precisar de reagir a toques, montar(raiz), chamado depois de o HTML aparecer.
 
 import { icon } from './icons.js';
 import { ler } from './store.js';
+import { GUIAS_VISUAIS, FONTE_GUIAS, SEGUIR_AUTORIDADES } from './guias.js';
+import { figura, montarFiguras } from './figuras.js';
+import { CONTACTOS, paraTel } from './contactos.js';
+import { corpoKit, montarKit, resumoKit } from './kit.js';
 
-export const VERSAO = '0.1.0';
+export const VERSAO = '0.2.0';
 
 const AZUL = '#0B57A4';
 
@@ -67,10 +72,11 @@ function estadoAtual() {
   return { ...ESTADOS.pendente, id: 'pendente', demo: false };
 }
 
-// Preparação da família. Os valores reais chegam com o kit (passo 3) e o plano (passo 4).
+// Preparação da família. O plano e o ponto de encontro chegam no passo 4.
 function progresso() {
   const plano = Boolean(ler('plano-feito', false));
-  const kit = Math.max(0, Math.min(1, Number(ler('kit-progresso', 0)) || 0));
+  const kitResumo = resumoKit();
+  const kit = kitResumo.fracao;
   const encontro = Boolean(ler('encontro-escolhido', false));
   const pct = Math.round(((plano ? 1 : 0) + kit + (encontro ? 1 : 0)) / 3 * 100);
   let next;
@@ -79,7 +85,7 @@ function progresso() {
   else if (!encontro) next = { href: '#/encontro', txt: 'Escolher o ponto de encontro' };
   else if (kit < 1) next = { href: '#/kit', txt: 'Completar o kit de emergência' };
   else next = { href: '#/kit', txt: 'Tudo pronto. Reveja o kit de 6 em 6 meses' };
-  return { plano, kit, encontro, pct, next };
+  return { plano, kit, kitResumo, encontro, pct, next };
 }
 
 function linhaRisco(r, destaque = false, hl = '') {
@@ -100,7 +106,7 @@ function inicio() {
   const riscos = ids.map((id) => RISCOS.find((r) => r.id === id));
 
   const resumo = `Preparação: ${p.pct}%. Plano da família: ${p.plano ? 'feito' : 'por fazer'}. `
-    + `Kit de emergência: ${Math.round(p.kit * 100)}%. Ponto de encontro: ${p.encontro ? 'escolhido' : 'por escolher'}.`;
+    + `Kit de emergência: ${p.kitResumo.feitos} de ${p.kitResumo.total} itens. Ponto de encontro: ${p.encontro ? 'escolhido' : 'por escolher'}.`;
 
   const nivel = e.nivel
     ? `<span class="nivel">${icon('alert')}${e.nivel}<span class="vh">: </span></span>`
@@ -117,7 +123,7 @@ function inicio() {
                 <span><i style="width:${Math.round(p.kit * 100)}%"></i></span>
                 <span><i style="width:${p.encontro ? 100 : 0}%"></i></span>
               </div>
-              <div class="seglbl"><span>Plano</span><span>Kit</span><span>Encontro</span></div>
+              <div class="seglbl"><span>Plano</span><span>Kit ${p.kitResumo.feitos}/${p.kitResumo.total}</span><span>Encontro</span></div>
             </div>
           </div>
           <a class="next" href="${p.next.href}">Próximo passo: ${p.next.txt.charAt(0).toLowerCase() + p.next.txt.slice(1)}${icon('arrow')}</a>
@@ -194,12 +200,10 @@ function emBreve(texto) {
 const SIMPLES = {
   avisos: ['Avisos do tempo', 'Os avisos do IPMA para o distrito de Leiria, sempre atualizados e guardados para consultar sem rede.'],
   sismos: ['Sismos recentes', 'Os sismos registados pelo IPMA na região, num mapa e numa lista.'],
-  kit: ['Kit de emergência', 'A lista do kit para 72 horas, por categorias. Vai marcando o que já tem em casa.'],
   plano: ['Plano da família', 'Quem vive consigo, contactos importantes, necessidades especiais e o que fazer se estiverem separados.'],
   encontro: ['Pontos de encontro', 'Um mapa com os pontos de encontro da freguesia de Caranguejeira.'],
   simulacro: ['Simulacro', 'Treine a saída de casa em segurança, com um cronómetro e os passos a seguir.'],
   quiz: ['Quiz', 'Perguntas rápidas para testar o que sabe sobre autoproteção.'],
-  contactos: ['Contactos úteis', 'Os números de emergência e da freguesia, para ligar com um toque.'],
 };
 
 function agir() {
@@ -209,25 +213,111 @@ function agir() {
     html: pagina({
       titulo: 'O que fazer se…',
       corpo: `
-        <p class="soon-t">Escolha o risco para ver o que fazer antes, durante e depois.</p>
+        <p class="intro">Escolha o risco para ver o que fazer na hora, depois e para estar preparado.</p>
         <ul class="rows">${RISCOS.map((r) => linhaRisco(r)).join('')}</ul>
-        <p class="hint">Os guias estão em preparação. Em caso de emergência, ligue <a href="tel:112">112</a>.</p>`,
+        <p class="hint">Os guias funcionam sem internet. Em caso de emergência, ligue <a href="tel:112">112</a>.</p>`,
     }),
   };
+}
+
+// Os números de telefone que aparecem nos guias passam a ligar com um toque.
+const NUMEROS_NOS_GUIAS = ['112', '808 24 24 24', '800 250 250', '800 506 506'];
+const NUMEROS_RE = new RegExp(`(?<!\\d)(${NUMEROS_NOS_GUIAS.join('|')})(?!\\d)`, 'g');
+const comLigacoes = (texto) => texto.replace(NUMEROS_RE, (n) => `<a href="tel:${paraTel(n)}">${n}</a>`);
+
+const passoTexto = ([destaque, detalhe]) =>
+  `<li><b>${comLigacoes(destaque)}</b>${detalhe ? ` ${comLigacoes(detalhe)}` : ''}</li>`;
+
+// Palavras com hífen ("Baixe-se") não se partem ao meio da linha.
+const semQuebra = (texto) => texto.replace(/(\p{L}+-\p{L}+)/gu, '<span class="nw">$1</span>');
+
+// Guia visual: passos curtos com figuras animadas; o que não é urgente fica recolhido.
+function guiaVisual(g) {
+  const passo = (p, i, numerado) => `
+    <li class="vis-passo">
+      <div class="fig-caixa">
+        ${numerado ? `<span class="fig-n" aria-hidden="true">${i + 1}</span>` : ''}
+        <button class="fig" type="button" aria-label="Repetir animação"${numerado ? ` style="--atraso:${i * 450}ms"` : ''}>${figura(p.fig)}</button>
+      </div>
+      <div class="vis-txt">
+        <p class="vis-t">${p.q ? `<span class="vis-q">${semQuebra(p.q)}</span> ` : ''}${semQuebra(comLigacoes(p.t))}</p>
+        <p class="vis-d">${semQuebra(comLigacoes(p.d))}</p>
+      </div>
+    </li>`;
+
+  return `
+    <div data-guia-visual>
+      <section class="guia-sec" aria-labelledby="gv-1">
+        <h2 class="sh" id="gv-1">${g.primeiro.titulo}</h2>
+        <ol class="vis-passos" role="list">${g.primeiro.passos.map((p, i) => passo(p, i, true)).join('')}</ol>
+      </section>
+      <section class="guia-sec" aria-labelledby="gv-2">
+        <h2 class="sh" id="gv-2">${g.se.titulo}</h2>
+        <ul class="vis-passos" role="list">${g.se.passos.map((p, i) => passo(p, i, false)).join('')}</ul>
+      </section>
+      <div class="mais-grupo">
+        ${g.mais.map((s) => `
+          <details class="mais">
+            <summary>${s.titulo}${icon('chev', 'i chev')}</summary>
+            <ul class="passos">${s.passos.map(passoTexto).join('')}</ul>
+          </details>`).join('')}
+      </div>
+    </div>
+    <p class="meta">${SEGUIR_AUTORIDADES}<br>${FONTE_GUIAS}</p>`;
 }
 
 function guiaRisco(id) {
   const r = RISCOS.find((x) => x.id === id);
   if (!r) return null;
+  const base = { title: r.nome, theme: AZUL };
+  const cabecalho = { titulo: r.nome, voltar: '#/agir', voltarTxt: 'O que fazer se…' };
+
+  const guia = GUIAS_VISUAIS[id];
+  if (guia) return { ...base, html: pagina({ ...cabecalho, corpo: guiaVisual(guia) }), montar: montarFiguras };
+  return { ...base, html: pagina({ ...cabecalho, corpo: emBreve(`O que fazer antes, durante e depois ${r.de}.`) }) };
+}
+
+function contactos() {
+  const linha = (c) => {
+    const texto = `
+      <span class="ct-t">${c.nome}</span>
+      ${c.confirmado && c.num ? `<span class="ct-num">${c.num}</span>` : '<span class="ct-falta">Número por confirmar</span>'}
+      <span class="ct-d">${c.desc}</span>`;
+    if (!c.confirmado || !c.num) return `<li><div class="ct ct-pend"><span class="ct-txt">${texto}</span></div></li>`;
+    const fonte = c.fonte
+      ? `<p class="ct-fonte">Confirmado em <a href="${c.fonte.url}" target="_blank" rel="noopener">${c.fonte.nome}</a> a ${c.consultado}</p>`
+      : '';
+    return `
+      <li><a class="ct${c.sos ? ' ct-sos' : ''}" href="tel:${paraTel(c.num)}">
+        <span class="ct-txt"><span class="vh">Ligar para </span>${texto}</span>
+        <span class="ct-ic">${icon('phone')}</span>
+      </a>${fonte}</li>`;
+  };
+
   return {
-    title: r.nome,
+    title: 'Contactos úteis',
     theme: AZUL,
     html: pagina({
-      titulo: r.nome,
-      voltar: '#/agir',
-      voltarTxt: 'O que fazer se…',
-      corpo: emBreve(`O que fazer antes, durante e depois ${r.de}.`),
+      titulo: 'Contactos úteis',
+      corpo: `
+        <p class="intro">Perigo imediato? Ligue <a href="tel:112">112</a>. Para dúvidas de saúde que não sejam uma emergência, ligue para o SNS 24. Toque num contacto para ligar.</p>
+        <p class="nota">Só aparecem os números confirmados numa fonte oficial. Os contactos sem número ainda estão a ser confirmados.</p>
+        ${CONTACTOS.map((g, i) => `
+          <section class="guia-sec" aria-labelledby="ct-${i}">
+            <h2 class="sh" id="ct-${i}">${g.titulo}</h2>
+            ${g.nota ? `<p class="nota">${comLigacoes(g.nota)}</p>` : ''}
+            <ul class="cts">${g.itens.map(linha).join('')}</ul>
+          </section>`).join('')}`,
     }),
+  };
+}
+
+function kit() {
+  return {
+    title: 'Kit de emergência',
+    theme: AZUL,
+    html: pagina({ titulo: 'Kit de emergência', corpo: corpoKit() }),
+    montar: montarKit,
   };
 }
 
@@ -243,7 +333,7 @@ function sobre() {
           <h2>Privacidade</h2>
           <p>Não tem contas, publicidade nem rastreamento. O que guardar na app, como o kit ou o plano da família, fica só neste aparelho.</p>
           <h2>Fontes</h2>
-          <p>Os avisos e os sismos vão ser obtidos do IPMA. As medidas de autoproteção vão seguir as recomendações da Autoridade Nacional de Emergência e Proteção Civil (ANEPC).</p>
+          <p>Os avisos e os sismos vão ser obtidos do IPMA. Os guias "O que fazer se…" seguem as recomendações da Autoridade Nacional de Emergência e Proteção Civil (ANEPC).</p>
           <div data-install hidden>
             <h2>Instalar a app</h2>
             <p>Instale a app para a ter no ecrã principal, como as outras apps.</p>
@@ -260,6 +350,8 @@ function sobre() {
 export function resolver(nome, sub) {
   if (!nome) return inicio();
   if (nome === 'agir') return sub ? guiaRisco(sub) : agir();
+  if (nome === 'contactos') return contactos();
+  if (nome === 'kit') return kit();
   if (nome === 'sobre') return sobre();
   if (SIMPLES[nome]) {
     const [titulo, texto] = SIMPLES[nome];

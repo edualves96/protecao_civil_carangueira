@@ -155,8 +155,8 @@ acidente com matérias perigosas, falha prolongada de energia.
 Each step ends with something you can open and try on your phone.
 
 1. ✅ **Foundation:** project structure, colours and fonts, bottom bar, side menu, home screen, empty screens. Installable from day one: manifest, provisional icon, "Instalar a app" button on Android and the guide on iPhone. Published on GitHub Pages so it can be installed and tested on a real phone.
-2. **Contactos úteis + O que fazer se…:** tap-to-call contacts and the guides for every risk (offline).
-3. **Kit de emergência:** checklist by category with progress, saved on the phone.
+2. ✅ **Contactos úteis + O que fazer se…:** tap-to-call contacts and the guides for every risk (offline). Only numbers confirmed on an official source can be called, and each shows its source and date. The guides put what to do now first.
+3. ✅ **Kit de emergência:** 23 items in 6 categories with progress, saved on the phone. The home screen shows the kit count.
 4. **Plano da família + Pontos de encontro:** family plan form and map with Caranguejeira points.
 5. **Avisos do tempo + Sismos recentes:** live data with an offline fallback, status block on the home screen.
 6. **Simulacro + Quiz.**
@@ -166,7 +166,7 @@ Each step ends with something you can open and try on your phone.
 
 - **App name:** "Proteção Civil Caranguejeira" is a working title.
 - **Meeting points:** places in the parish, with an address or a map pin.
-- **Local phone numbers:** Junta de Freguesia, Bombeiros, GNR post, Proteção Civil Municipal de Leiria. I can draft these, but they must be checked.
+- **Local phone numbers:** the Junta de Freguesia (244 734 437) is confirmed on jfcaranguejeira.pt. Still needed: the Bombeiros and the GNR post that serve the parish, and the Proteção Civil Municipal de Leiria (a 2021 municipal notice lists 244 849 700 for the Central Municipal de Operações de Socorro; check if it is still current). Add them in `app/js/contactos.js`.
 - **Proteção Civil logo:** confirm the Unidade Proteção Civil of Caranguejeira is official (or authorised) before release, since the logo contains the protected civil defence sign. Otherwise the menu footer keeps the unit name without the logo.
 - **Coat of arms:** permission from the Junta de Freguesia before using it in the app or as its icon.
 - **Review:** have the "O que fazer se…" texts reviewed by the municipal civil protection service before release.

@@ -39,6 +39,7 @@ function mostrar() {
   }
 
   view.innerHTML = ecra.html;
+  if (ecra.montar) ecra.montar(view);
   document.title = ecra.title ? `${ecra.title} · ${NOME}` : NOME;
   temaPagina = ecra.theme;
   if (!menuAberto()) definirTema(temaPagina);
