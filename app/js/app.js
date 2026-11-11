@@ -16,6 +16,7 @@ const NOME = 'Proteção Civil Caranguejeira';
 
 let temaPagina = '#0B57A4';
 let jaNavegou = false;
+let ecraAtual = null;
 
 function definirTema(cor) {
   metaTema.setAttribute('content', cor);
@@ -29,7 +30,8 @@ function rotaAtual() {
   return { nome, sub: decodeURIComponent(sub) };
 }
 
-function mostrar() {
+// `manter`: volta a desenhar o mesmo ecrã com dados novos, sem mudar a posição nem o foco.
+function mostrar({ manter = false } = {}) {
   let { nome, sub } = rotaAtual();
   let ecra = resolver(nome, sub);
   if (!ecra) {
@@ -39,6 +41,7 @@ function mostrar() {
   }
 
   view.innerHTML = ecra.html;
+  ecraAtual = ecra;
   if (ecra.montar) ecra.montar(view);
   document.title = ecra.title ? `${ecra.title} · ${NOME}` : NOME;
   temaPagina = ecra.theme;
@@ -51,10 +54,21 @@ function mostrar() {
   });
 
   atualizarInstalacao();
+  if (manter) return;
   window.scrollTo(0, 0);
   if (jaNavegou) view.focus({ preventScroll: true });
   jaNavegou = true;
 }
+
+// Ecrãs com dados do IPMA: voltam a desenhar-se quando chegam dados novos,
+// quando a rede volta e quando a app volta a ficar visível (pode ter ficado aberta desde ontem).
+function atualizarDados() {
+  if (ecraAtual?.dinamico) mostrar({ manter: true });
+}
+window.addEventListener('pcc:dados', atualizarDados);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') atualizarDados();
+});
 
 /* ---------- Menu lateral ---------- */
 
@@ -126,7 +140,7 @@ document.addEventListener('keydown', (e) => {
 function atualizarRede() {
   document.documentElement.classList.toggle('offline', !navigator.onLine);
 }
-window.addEventListener('online', atualizarRede);
+window.addEventListener('online', () => { atualizarRede(); atualizarDados(); });
 window.addEventListener('offline', atualizarRede);
 
 /* ---------- Funcionar sem internet (service worker) ---------- */

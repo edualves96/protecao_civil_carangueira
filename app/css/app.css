@@ -205,6 +205,14 @@ html.offline .net { display: flex; }
   background: var(--act-bg); color: var(--act-fg);
   font-weight: 700; font-size: 16px; text-decoration: none;
 }
+.st-mais {
+  display: flex; align-items: center; gap: 4px; width: fit-content;
+  margin-top: 8px; min-height: 44px;
+  font-weight: 700; font-size: 16px; color: inherit; text-underline-offset: 3px;
+}
+.st-mais .chev { width: 18px; height: 18px; }
+.st-meta { margin-top: 6px; font-size: 14px; line-height: 1.35; }
+.st-meta a { display: inline-block; padding: 4px 0; font-weight: 700; color: inherit; text-underline-offset: 3px; }
 
 /* ---------- Início: secções ---------- */
 .sec { padding-top: 30px; }
@@ -294,6 +302,37 @@ html.offline .net { display: flex; }
 .ct-d { display: block; margin-top: 4px; font-size: 15px; line-height: 1.35; color: var(--tinta-2); }
 .ct-ic { flex: none; width: 48px; height: 48px; display: grid; place-items: center; border-radius: 50%; background: var(--azul); color: #fff; }
 .ct-sos .ct-ic { background: var(--vermelho); }
+
+/* ---------- Avisos do tempo e sismos (dados do IPMA) ---------- */
+.obtido { margin-top: 8px; font-size: 14px; color: var(--tinta-2); }
+.avs, .sis { list-style: none; margin: 6px 0 0; padding: 0; }
+
+/* Cada aviso diz o nível por escrito; a bola de cor é só um reforço. */
+.av { padding: 14px 0 12px; border-bottom: 1px solid var(--linha); }
+.av-amarelo { --cor: var(--amarelo); --cor-t: #6B5600; }
+.av-laranja { --cor: var(--laranja-pc); --cor-t: #9A5200; }
+.av-vermelho { --cor: var(--vermelho); --cor-t: #A31F1F; }
+.av-n { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: var(--cor-t); }
+.av-cor { flex: none; width: 14px; height: 14px; border-radius: 50%; background: var(--cor); box-shadow: inset 0 0 0 1.5px rgb(0 0 0 / .2); }
+.av-t { margin-top: 4px; font-family: var(--f-titulo); font-weight: 700; font-size: 26px; line-height: 1.1; }
+.av-q { margin-top: 4px; font-size: 16px; font-weight: 700; }
+.av-d { margin-top: 6px; font-size: 16px; line-height: 1.4; text-wrap: pretty; }
+.av-g {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 2px;
+  font-weight: 700; color: var(--azul); text-underline-offset: 3px;
+}
+.av-g svg.i { width: 18px; height: 18px; }
+
+.sis-i { display: flex; align-items: flex-start; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--linha); }
+.sis-m { flex: none; width: 66px; display: flex; flex-direction: column; align-items: center; padding-top: 2px; }
+.sis-m b { font-family: var(--f-titulo); font-weight: 700; font-size: 28px; line-height: 1; color: var(--azul); }
+.sis-m span { margin-top: 3px; font-size: 13px; color: var(--tinta-2); }
+.sis-txt { flex: 1; min-width: 0; }
+.sis-r { display: block; font-size: 17px; font-weight: 700; line-height: 1.3; }
+.sis-q { display: block; margin-top: 2px; font-size: 15px; color: var(--tinta-2); }
+.sis-s { display: block; margin-top: 4px; font-size: 15px; font-weight: 700; color: #9A5200; }
+.sis-vazio { margin-top: 8px; font-size: 16px; }
+.pbody > .next { margin-top: 26px; }
 
 /* ---------- Kit de emergência ---------- */
 .kit-prog { margin-top: 18px; }
@@ -564,6 +603,7 @@ html.offline .net { display: flex; }
 .prose a { color: var(--azul); font-weight: 700; }
 .prose .btn { margin-top: 14px; }
 .meta { margin-top: 28px; font-size: 14px; color: var(--tinta-2); }
+.meta a { color: var(--azul); font-weight: 700; text-underline-offset: 3px; }
 
 /* ---------- Guia de instalação ---------- */
 .sheet {

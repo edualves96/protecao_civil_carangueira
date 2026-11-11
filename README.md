@@ -30,17 +30,28 @@ To install it on a phone, it has to be served over HTTPS. That's what GitHub Pag
 One-time setup: on GitHub, open **Settings → Pages** and set **Source** to **GitHub Actions**.
 After that, every push that changes `app/` publishes the app at:
 
-<https://edualves96.github.io/protecao_civil_carangueira/>
+<https://upcc.pt/>
+
+The domain is registered at dominios.pt, which also holds its DNS records (four `A` records
+for GitHub Pages, `www` as a `CNAME` to `edualves96.github.io`, and GitHub's verification `TXT`).
+The custom domain is set in the repository's **Settings → Pages**, with **Enforce HTTPS** on.
 
 ## Release a new version
 
 Bump `VERSAO` in `app/sw.js` and `app/js/screens.js`. This renews the offline copy on phones that
 already have the app installed.
 
+## IPMA data
+
+The warnings (Leiria district, area `LRA`) and recent earthquakes come from the IPMA open data API
+(<https://api.ipma.pt/>): no key, and the browser calls it directly. See `app/js/ipma.js`. The last
+answer is kept on the phone, so the screens still work offline. IPMA asks to always name it as the
+source, with a link.
+
 ## Preview the warning states
 
-Until real IPMA warnings are connected (step 5), the home screen shows "Em breve".
-To preview the other states with sample data, add `?demo=` to the address:
+The home screen shows the real IPMA warnings. To preview a state with sample data, add `?demo=`
+to the address:
 
 - `?demo=verde`: no warnings
 - `?demo=amarelo`: yellow warning

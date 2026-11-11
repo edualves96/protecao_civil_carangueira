@@ -40,7 +40,7 @@ On computers, Chrome and Edge can install it too. Otherwise it simply works as a
 - **One app for everyone.** The same code runs on Android, iPhone and computers.
 - **Always up to date.** When the website is updated, the installed app updates by itself. Nobody has to download anything again.
 - **Works offline.** After the first visit, the guides, contacts, kit checklist and family plan work with no internet.
-- **Free.** It's hosted free on GitHub Pages, with HTTPS (which PWAs require). The address will be `edualves96.github.io/protecao_civil_carangueira`. A custom domain (for example a `.pt` address) can be added later.
+- **Free.** It's hosted free on GitHub Pages, with HTTPS (which PWAs require). The address is <https://upcc.pt>.
 - **No store accounts, fees or reviews.**
 
 **Adapting to each device**
@@ -158,7 +158,7 @@ Each step ends with something you can open and try on your phone.
 2. ✅ **Contactos úteis + O que fazer se…:** tap-to-call contacts and the guides for every risk (offline). Only numbers confirmed on an official source can be called, and each shows its source and date. The guides put what to do now first.
 3. ✅ **Kit de emergência:** 23 items in 6 categories with progress, saved on the phone. The home screen shows the kit count.
 4. **Plano da família + Pontos de encontro:** family plan form and map with Caranguejeira points.
-5. **Avisos do tempo + Sismos recentes:** live data with an offline fallback, status block on the home screen.
+5. ✅ **Avisos do tempo + Sismos recentes:** live IPMA data, saved on the phone for offline use, with the status block on the home screen. The status shows the most serious warning for the Leiria district and links to the matching guide. Sea warnings (agitação marítima) only affect the coast, so they appear on the warnings screen but don't colour the home screen. If the data is more than 6 hours old, the app says so instead of "Sem avisos". The earthquakes screen lists everything within 100 km and, up to 400 km, those felt or of magnitude 3 or more. The earthquake map comes with the step 4 map.
 6. **Simulacro + Quiz.**
 7. **Offline and polish:** full offline support, final app icon and splash screen, tablet and computer layout, final tests on Android and iPhone.
 
@@ -170,3 +170,5 @@ Each step ends with something you can open and try on your phone.
 - **Proteção Civil logo:** confirm the Unidade Proteção Civil of Caranguejeira is official (or authorised) before release, since the logo contains the protected civil defence sign. Otherwise the menu footer keeps the unit name without the logo.
 - **Coat of arms:** permission from the Junta de Freguesia before using it in the app or as its icon.
 - **Review:** have the "O que fazer se…" texts reviewed by the municipal civil protection service before release.
+- **IPMA:** confirm whether the warning times in the API are Portuguese local time (the app assumes so, as on the IPMA website), and how IPMA wants to be credited. Its terms ask for the IPMA logo with a link; the app shows "Fonte: IPMA" with a link until that is confirmed.
+- **Sea warnings:** confirm that the home screen should ignore "agitação marítima" (coast only) for Caranguejeira.

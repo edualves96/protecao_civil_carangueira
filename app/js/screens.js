@@ -7,8 +7,12 @@ import { GUIAS_VISUAIS, FONTE_GUIAS, SEGUIR_AUTORIDADES } from './guias.js';
 import { figura, montarFiguras } from './figuras.js';
 import { CONTACTOS, paraTel } from './contactos.js';
 import { corpoKit, montarKit, resumoKit } from './kit.js';
+import {
+  avisos as fonteAvisos, sismos as fonteSismos, avisosDoDistrito, periodo, quando, dia, hora,
+  textoObtido, atualizarEcra, RECENTE, SITE_AVISOS, SITE_SISMOS,
+} from './ipma.js';
 
-export const VERSAO = '0.2.0';
+export const VERSAO = '0.3.0';
 
 const AZUL = '#0B57A4';
 
@@ -25,14 +29,28 @@ export const RISCOS = [
 ];
 const PRINCIPAIS = ['sismo', 'incendio-rural', 'cheias', 'calor'];
 
-// Estados do bloco do topo. Até os avisos reais do IPMA chegarem (passo 5),
-// a app mostra "Em breve". Os outros estados só aparecem em demonstração (?demo=laranja).
+// Estados do bloco do topo, a partir dos avisos do IPMA para o distrito de Leiria.
+// Os estados com aviso também se podem ver em demonstração (?demo=laranja).
 // `nivel` só existe com aviso: aparece por cima do título, com ícone, para não depender só da cor.
+const SITE_IPMA = { href: SITE_AVISOS, txt: 'Abrir os avisos no site do IPMA', ext: true };
 const ESTADOS = {
-  pendente: {
-    big: 'Em breve',
-    desc: 'Os avisos do IPMA para o distrito de Leiria vão aparecer aqui. Até lá, consulte o site do IPMA.',
-    act: { href: 'https://www.ipma.pt/pt/', txt: 'Abrir o site do IPMA', ext: true },
+  aguardar: {
+    id: 'pendente',
+    big: 'A consultar o IPMA',
+    desc: 'A obter os avisos para o distrito de Leiria.',
+    theme: AZUL,
+  },
+  semLigacao: {
+    id: 'pendente',
+    big: 'Sem ligação',
+    desc: 'Não foi possível obter os avisos do IPMA. Ligue-se à internet para ver se há avisos para o distrito de Leiria.',
+    act: SITE_IPMA,
+    theme: AZUL,
+  },
+  desatualizado: {
+    id: 'pendente',
+    big: 'Sem dados recentes',
+    act: SITE_IPMA,
     theme: AZUL,
   },
   verde: {
@@ -66,10 +84,58 @@ const ESTADOS = {
   },
 };
 
+const CORES_AVISO = {
+  amarelo: { theme: '#F2C200', hl: '#6B5600' },
+  laranja: { theme: '#F7941D', hl: '#9A5200' },
+  vermelho: { theme: '#C62828', hl: '#A31F1F' },
+};
+
+const DEMOS = ['verde', 'amarelo', 'laranja', 'vermelho'];
+
 function estadoAtual() {
   const demo = new URLSearchParams(location.search).get('demo');
-  if (demo && demo !== 'pendente' && ESTADOS[demo]) return { ...ESTADOS[demo], id: demo, demo: true };
-  return { ...ESTADOS.pendente, id: 'pendente', demo: false };
+  if (DEMOS.includes(demo)) return { ...ESTADOS[demo], id: demo, demo: true };
+
+  const dados = fonteAvisos.guardado();
+  if (!dados) return { ...(fonteAvisos.falhou() ? ESTADOS.semLigacao : ESTADOS.aguardar) };
+
+  const agora = Date.now();
+  const todos = avisosDoDistrito(dados, agora);
+  const terra = todos.filter((a) => !a.costa);
+  const costa = todos.filter((a) => a.costa);
+
+  if (!terra.length) {
+    // Sem dados recentes não sabemos se há avisos novos: não mostramos "Sem avisos".
+    if (agora - dados.obtido > RECENTE) {
+      return {
+        ...ESTADOS.desatualizado,
+        desc: `Os últimos dados do IPMA são de ${quando(dados.obtido, agora)}. Ligue-se à internet para ver se há avisos.`,
+      };
+    }
+    return {
+      ...ESTADOS.verde,
+      id: 'verde',
+      desc: costa.length
+        ? 'Nos próximos 3 dias, o IPMA só prevê aviso de agitação marítima, na costa do distrito de Leiria.'
+        : ESTADOS.verde.desc,
+      obtido: true,
+      mais: costa.length ? (costa.length === 1 ? 'Ver o aviso da costa' : 'Ver os avisos da costa') : '',
+    };
+  }
+
+  const a = terra[0];
+  const outros = todos.length - 1;
+  return {
+    id: a.nivel.id,
+    nivel: a.nivel.nome,
+    big: a.nome,
+    desc: `Distrito de Leiria, ${periodo(a, agora)}.${a.texto ? ` ${a.texto}` : ''}`,
+    act: a.risco ? { href: `#/agir/${a.risco}`, txt: a.guia } : { href: '#/avisos', txt: 'Ver os avisos' },
+    risco: a.risco,
+    ...CORES_AVISO[a.nivel.id],
+    obtido: true,
+    mais: outros ? `Mais ${outros} ${outros === 1 ? 'aviso' : 'avisos'}` : '',
+  };
 }
 
 // Preparação da família. O plano e o ponto de encontro chegam no passo 4.
@@ -110,6 +176,11 @@ function inicio() {
 
   const nivel = e.nivel
     ? `<span class="nivel">${icon('alert')}${e.nivel}<span class="vh">: </span></span>`
+    : '';
+
+  const mais = e.mais ? `<a class="st-mais" href="#/avisos">${e.mais}${icon('chev', 'i chev')}</a>` : '';
+  const obtido = e.obtido
+    ? `<p class="st-meta"><span data-obtido>${textoObtido(fonteAvisos)}</span> · Fonte: <a href="${SITE_AVISOS}" target="_blank" rel="noopener">IPMA</a></p>`
     : '';
 
   const preparacao = `
@@ -156,6 +227,8 @@ function inicio() {
             <h1 class="big" id="estado">${nivel}${e.big}</h1>
             <p class="desc">${e.desc}</p>
             ${acao}
+            ${mais}
+            ${obtido}
           </div>
         </div>
       </section>
@@ -173,6 +246,8 @@ function inicio() {
           <button class="x" type="button" data-action="dismiss-install" aria-label="Agora não">${icon('close')}</button>
         </div>
       </div>`,
+    montar: e.demo ? null : (raiz) => atualizarEcra(raiz, fonteAvisos),
+    dinamico: !e.demo,
   };
 }
 
@@ -198,8 +273,6 @@ function emBreve(texto) {
 }
 
 const SIMPLES = {
-  avisos: ['Avisos do tempo', 'Os avisos do IPMA para o distrito de Leiria, sempre atualizados e guardados para consultar sem rede.'],
-  sismos: ['Sismos recentes', 'Os sismos registados pelo IPMA na região, num mapa e numa lista.'],
   plano: ['Plano da família', 'Quem vive consigo, contactos importantes, necessidades especiais e o que fazer se estiverem separados.'],
   encontro: ['Pontos de encontro', 'Um mapa com os pontos de encontro da freguesia de Caranguejeira.'],
   simulacro: ['Simulacro', 'Treine a saída de casa em segurança, com um cronómetro e os passos a seguir.'],
@@ -321,6 +394,123 @@ function kit() {
   };
 }
 
+/* ---------- Avisos do tempo ---------- */
+
+const primeiraMaiuscula = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+
+function linhaAviso(a, agora) {
+  const guia = a.risco ? `<a class="av-g" href="#/agir/${a.risco}">${a.guia}${icon('arrow')}</a>` : '';
+  return `
+    <li class="av av-${a.nivel.id}">
+      <p class="av-n"><span class="av-cor" aria-hidden="true"></span>${a.nivel.nome}<span class="vh">:</span></p>
+      <p class="av-t">${a.nome}</p>
+      <p class="av-q">${primeiraMaiuscula(periodo(a, agora))}</p>
+      ${a.texto ? `<p class="av-d">${a.texto}</p>` : ''}
+      ${guia}
+    </li>`;
+}
+
+function avisosEcra() {
+  const titulo = 'Avisos do tempo';
+  const dados = fonteAvisos.guardado();
+  const agora = Date.now();
+  const todos = avisosDoDistrito(dados, agora);
+  const grupo = (id, nome, lista, nota = '') => (lista.length ? `
+    <section class="guia-sec" aria-labelledby="av-${id}">
+      <h2 class="sh" id="av-${id}">${nome}</h2>
+      ${nota ? `<p class="nota">${nota}</p>` : ''}
+      <ul class="avs">${lista.map((a) => linhaAviso(a, agora)).join('')}</ul>
+    </section>` : '');
+
+  let corpo;
+  if (!dados) {
+    corpo = `<div class="soon"><h2 class="soon-k">${fonteAvisos.falhou() ? 'Sem ligação' : 'A consultar o IPMA…'}</h2>
+      <p class="soon-t">${fonteAvisos.falhou() ? 'Ligue-se à internet para ver os avisos. Depois disso, ficam guardados para consultar sem rede.' : 'A obter os avisos para o distrito de Leiria.'}</p></div>`;
+  } else if (!todos.length && agora - dados.obtido > RECENTE) {
+    corpo = `<div class="soon"><h2 class="soon-k">Sem dados recentes</h2>
+      <p class="soon-t">Os últimos dados são de ${quando(dados.obtido, agora)}. Ligue-se à internet para ver se há avisos.</p></div>`;
+  } else if (!todos.length) {
+    corpo = `<div class="soon"><h2 class="soon-k">Sem avisos</h2>
+      <p class="soon-t">O IPMA não prevê avisos para o distrito de Leiria nos próximos 3 dias.</p></div>`;
+  } else {
+    const terra = todos.filter((a) => !a.costa);
+    corpo = grupo('agora', 'Em vigor', terra.filter((a) => a.emVigor))
+      + grupo('depois', 'Próximos dias', terra.filter((a) => !a.emVigor))
+      + grupo('costa', 'Na costa', todos.filter((a) => a.costa), 'Não afeta Caranguejeira. Tenha cuidado se for à praia ou ao mar.');
+  }
+
+  return {
+    title: titulo,
+    theme: AZUL,
+    html: pagina({
+      titulo,
+      corpo: `
+        <p class="intro">Avisos do IPMA para o distrito de Leiria nos próximos 3 dias.</p>
+        <p class="obtido" data-obtido>${textoObtido(fonteAvisos)}</p>
+        ${corpo}
+        <p class="meta">Fonte: <a href="${SITE_AVISOS}" target="_blank" rel="noopener">IPMA – Instituto Português do Mar e da Atmosfera</a>. Os avisos são para todo o distrito de Leiria.</p>`,
+    }),
+    montar: (raiz) => atualizarEcra(raiz, fonteAvisos),
+    dinamico: true,
+  };
+}
+
+/* ---------- Sismos recentes ---------- */
+
+const magnitude = (m) => (m === null ? '–' : m.toLocaleString('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 }));
+
+function linhaSismo(s, agora) {
+  const sentido = s.sentido
+    ? `<span class="sis-s">Sentido pela população${s.grau ? ` (intensidade ${s.grau})` : ''}${s.local ? ` · ${s.local}` : ''}</span>`
+    : '';
+  return `
+    <li class="sis-i">
+      <span class="sis-m"><b>${magnitude(s.mag)}</b><span>magnitude</span></span>
+      <span class="sis-txt">
+        <span class="sis-r">${s.regiao || 'Local por indicar'}</span>
+        <span class="sis-q">${primeiraMaiuscula(dia(s.hora, agora))}, ${hora(s.hora)} · a ${s.km} km</span>
+        ${sentido}
+      </span>
+    </li>`;
+}
+
+function sismosEcra() {
+  const titulo = 'Sismos recentes';
+  const dados = fonteSismos.guardado();
+  const agora = Date.now();
+  const lista = dados ? dados.lista.slice().sort((x, y) => y.hora - x.hora) : [];
+  const perto = lista.filter((s) => s.km <= 100);
+  const fortes = lista.filter((s) => s.km > 100 && (s.sentido || (s.mag !== null && s.mag >= 3)));
+  const grupo = (id, nome, nota, itens, vazio) => `
+    <section class="guia-sec" aria-labelledby="sis-${id}">
+      <h2 class="sh" id="sis-${id}">${nome}</h2>
+      <p class="nota">${nota}</p>
+      ${itens.length ? `<ul class="sis">${itens.map((s) => linhaSismo(s, agora)).join('')}</ul>` : `<p class="sis-vazio">${vazio}</p>`}
+    </section>`;
+
+  const corpo = dados
+    ? grupo('perto', 'Perto de Caranguejeira', 'Até 100 km de distância.', perto, 'Nenhum sismo registado nos últimos 30 dias.')
+      + grupo('fortes', 'Mais fortes na região', 'Entre 100 e 400 km, com magnitude 3 ou mais, ou sentidos pela população.', fortes, 'Nenhum nos últimos 30 dias.')
+    : `<div class="soon"><h2 class="soon-k">${fonteSismos.falhou() ? 'Sem ligação' : 'A consultar o IPMA…'}</h2>
+        <p class="soon-t">${fonteSismos.falhou() ? 'Ligue-se à internet para ver os sismos registados.' : 'A obter os sismos dos últimos 30 dias.'}</p></div>`;
+
+  return {
+    title: titulo,
+    theme: AZUL,
+    html: pagina({
+      titulo,
+      corpo: `
+        <p class="intro">Sismos registados pelo IPMA nos últimos 30 dias, até 400 km de Caranguejeira.</p>
+        <p class="obtido" data-obtido>${textoObtido(fonteSismos)}</p>
+        ${corpo}
+        <a class="next" href="#/agir/sismo">O que fazer num sismo${icon('arrow')}</a>
+        <p class="meta">Fonte: <a href="${SITE_SISMOS}" target="_blank" rel="noopener">IPMA – Instituto Português do Mar e da Atmosfera</a>. Horas de Portugal continental. A magnitude pode ser revista pelo IPMA nos dias seguintes.</p>`,
+    }),
+    montar: (raiz) => atualizarEcra(raiz, fonteSismos),
+    dinamico: true,
+  };
+}
+
 function sobre() {
   return {
     title: 'Sobre a app',
@@ -333,7 +523,7 @@ function sobre() {
           <h2>Privacidade</h2>
           <p>Não tem contas, publicidade nem rastreamento. O que guardar na app, como o kit ou o plano da família, fica só neste aparelho.</p>
           <h2>Fontes</h2>
-          <p>Os avisos e os sismos vão ser obtidos do IPMA. Os guias "O que fazer se…" seguem as recomendações da Autoridade Nacional de Emergência e Proteção Civil (ANEPC).</p>
+          <p>Os avisos do tempo e os sismos são do <a href="https://www.ipma.pt/pt/" target="_blank" rel="noopener">IPMA – Instituto Português do Mar e da Atmosfera</a>. A app guarda a última consulta para a poder mostrar sem rede. Os guias "O que fazer se…" seguem as recomendações da Autoridade Nacional de Emergência e Proteção Civil (ANEPC).</p>
           <div data-install hidden>
             <h2>Instalar a app</h2>
             <p>Instale a app para a ter no ecrã principal, como as outras apps.</p>
@@ -352,6 +542,8 @@ export function resolver(nome, sub) {
   if (nome === 'agir') return sub ? guiaRisco(sub) : agir();
   if (nome === 'contactos') return contactos();
   if (nome === 'kit') return kit();
+  if (nome === 'avisos') return avisosEcra();
+  if (nome === 'sismos') return sismosEcra();
   if (nome === 'sobre') return sobre();
   if (SIMPLES[nome]) {
     const [titulo, texto] = SIMPLES[nome];

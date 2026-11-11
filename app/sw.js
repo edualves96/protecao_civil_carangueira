@@ -2,7 +2,7 @@
 // Estratégia: rede primeiro (para ter sempre a versão mais recente) e, sem rede, a cópia guardada.
 // Ao publicar uma nova versão, atualize VERSAO para renovar a cópia guardada.
 
-const VERSAO = '0.2.0';
+const VERSAO = '0.3.0';
 const CACHE = `pcc-${VERSAO}`;
 
 const FICHEIROS = [
@@ -19,6 +19,7 @@ const FICHEIROS = [
   'js/figuras.js',
   'js/contactos.js',
   'js/kit.js',
+  'js/ipma.js',
   'fonts/atkinson-hyperlegible-latin-400-normal.woff2',
   'fonts/atkinson-hyperlegible-latin-700-normal.woff2',
   'fonts/barlow-semi-condensed-latin-500-normal.woff2',
