@@ -1,0 +1,23 @@
+{
+  "agir": {
+    "intro": "Escolha o risco para ver o que fazer na hora, depois e para estar preparado.",
+    "nota": "Os guias funcionam sem internet. Em caso de emergência, ligue 112."
+  },
+  "guias": {
+    "seguir": "Siga sempre as indicações dos serviços de emergência e das autoridades locais.",
+    "fonte": "Baseado nas recomendações da Autoridade Nacional de Emergência e Proteção Civil (ANEPC)."
+  },
+  "sobre": {
+    "intro": "Esta app ajuda as famílias da freguesia de Caranguejeira a prepararem-se para emergências e a saberem o que fazer quando acontecem.",
+    "secoes": [
+      {
+        "titulo": "Privacidade",
+        "texto": "Não tem contas, publicidade nem rastreamento. O que guardar na app, como o kit ou o plano da família, fica só neste aparelho."
+      },
+      {
+        "titulo": "Fontes",
+        "texto": "Os avisos do tempo e os sismos são do IPMA – Instituto Português do Mar e da Atmosfera. A app guarda a última consulta para a poder mostrar sem rede. Os guias \"O que fazer se…\" seguem as recomendações da Autoridade Nacional de Emergência e Proteção Civil (ANEPC)."
+      }
+    ]
+  }
+}

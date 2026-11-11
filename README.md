@@ -36,6 +36,29 @@ The domain is registered at dominios.pt, which also holds its DNS records (four 
 for GitHub Pages, `www` as a `CNAME` to `edualves96.github.io`, and GitHub's verification `TXT`).
 The custom domain is set in the repository's **Settings → Pages**, with **Enforce HTTPS** on.
 
+## Edit the content (Pages CMS)
+
+The kit, the useful contacts, the "O que fazer se…" guides and the other texts are JSON files in
+`app/conteudo/`. Editors change them with forms at <https://app.pagescms.org>, without touching the
+code. The forms are defined in `.pages.yml`.
+
+One-time setup, by the repository owner:
+
+1. Open <https://app.pagescms.org> and sign in with GitHub.
+2. Install the Pages CMS GitHub App on your account, with access to this repository only.
+3. Open the repository on the `ccr-d836c5a6-1m8oud` branch.
+4. Invite the editors by email (Collaborators). They don't need a GitHub account, and they can only
+   edit the content, not the settings or the code.
+
+How it works:
+
+- Each save is a commit on the branch, with the editor's name. GitHub Actions publishes it on
+  upcc.pt about a minute later, and phones get it the next time the app opens.
+- Only contacts marked as confirmed show a number and can be called.
+- Renaming a kit item unticks it on the phones that had ticked it. The other items stay as they are.
+- The figures available for the guide steps are shown at <https://upcc.pt/#/figuras>.
+- Editors' saves are commits on GitHub, so pull before pushing code changes.
+
 ## Release a new version
 
 Bump `VERSAO` in `app/sw.js` and `app/js/screens.js`. This renews the offline copy on phones that

@@ -1,6 +1,7 @@
 // Arranque da app: navegação, menu lateral, cor da barra do sistema e modo offline.
 
 import { resolver } from './screens.js';
+import { carregarConteudo } from './conteudo.js';
 import { iniciarInstalacao, atualizar as atualizarInstalacao, instalar, dispensar, fecharGuia } from './install.js';
 
 const $ = (seletor) => document.querySelector(seletor);
@@ -155,5 +156,20 @@ if ('serviceWorker' in navigator && origemSegura) {
 iniciarInstalacao();
 atualizarRede();
 sincronizarMenu();
-window.addEventListener('hashchange', mostrar);
-mostrar();
+
+// O conteúdo editável (kit, contactos, guias, textos) carrega antes do primeiro ecrã.
+carregarConteudo()
+  .then(() => {
+    window.addEventListener('hashchange', mostrar);
+    mostrar();
+  })
+  .catch(() => {
+    view.innerHTML = `
+      <div class="wrap pbody">
+        <div class="soon">
+          <h1 class="soon-k">Não foi possível abrir a app</h1>
+          <p class="soon-t">Verifique a ligação à internet e volte a abrir a app.</p>
+        </div>
+        <p class="hint">Em caso de emergência, ligue <a href="tel:112">112</a>.</p>
+      </div>`;
+  });

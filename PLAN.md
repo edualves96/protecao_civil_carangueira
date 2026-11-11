@@ -160,6 +160,10 @@ Each step ends with something you can open and try on your phone.
 4. **Plano da família + Pontos de encontro:** family plan form and map with Caranguejeira points.
 5. ✅ **Avisos do tempo + Sismos recentes:** live IPMA data, saved on the phone for offline use, with the status block on the home screen. The status shows the most serious warning for the Leiria district and links to the matching guide. Sea warnings (agitação marítima) only affect the coast, so they appear on the warnings screen but don't colour the home screen. If the data is more than 6 hours old, the app says so instead of "Sem avisos". The earthquakes screen lists everything within 100 km and, up to 400 km, those felt or of magnitude 3 or more. The earthquake map comes with the step 4 map.
 6. **Simulacro + Quiz.**
+
+**Content editing (done):** the kit, the useful contacts, the guides and the other texts live in
+`app/conteudo/*.json`. Admins add, change and delete them with forms in Pages CMS, signing in by
+email without a GitHub account. Each save publishes the app again. See "Edit the content" in the README.
 7. **Offline and polish:** full offline support, final app icon and splash screen, tablet and computer layout, final tests on Android and iPhone.
 
 ## Needed from the owner

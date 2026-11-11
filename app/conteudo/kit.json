@@ -1,0 +1,134 @@
+{
+  "intro": "O essencial para aguentar 3 dias (72 horas) sem ajuda, sem luz ou sem água da torneira. Marque o que já tem e ajuste a lista às pessoas da sua família.",
+  "categorias": [
+    {
+      "nome": "Água e comida",
+      "dica": "Para 3 dias. Ajuste ao número de pessoas da casa.",
+      "itens": [
+        {
+          "nome": "Água engarrafada para 3 dias",
+          "nota": "Pelo menos 3 litros por pessoa, por dia: cerca de 9 litros por pessoa."
+        },
+        {
+          "nome": "Comida para 3 dias",
+          "nota": "Que não precise de frio nem de ser cozinhada e que a família goste de comer: conservas, bolachas, frutos secos."
+        },
+        {
+          "nome": "Abre-latas manual",
+          "nota": ""
+        }
+      ]
+    },
+    {
+      "nome": "Saúde e higiene",
+      "dica": "Inclua o que cada pessoa da casa usa todos os dias.",
+      "itens": [
+        {
+          "nome": "Estojo de primeiros socorros",
+          "nota": "Veja de vez em quando o que tem e os prazos de validade."
+        },
+        {
+          "nome": "Medicamentos habituais",
+          "nota": "Para pelo menos 3 dias, com a lista dos medicamentos e uma cópia das receitas."
+        },
+        {
+          "nome": "Óculos de reserva",
+          "nota": "E outras coisas de que precise todos os dias, como pilhas para o aparelho auditivo."
+        },
+        {
+          "nome": "Produtos de higiene",
+          "nota": "Toalhetes, sabonete, papel higiénico, produtos menstruais e sacos do lixo."
+        },
+        {
+          "nome": "Artigos para necessidades especiais",
+          "nota": "Para bebés, pessoas dependentes, animais de estimação ou quem usa canadianas, andarilho ou cadeira de rodas."
+        }
+      ]
+    },
+    {
+      "nome": "Luz e comunicação",
+      "dica": "Para ter luz e saber o que se passa se faltar a energia.",
+      "itens": [
+        {
+          "nome": "Lanterna com pilhas de reserva",
+          "nota": ""
+        },
+        {
+          "nome": "Rádio portátil",
+          "nota": "A pilhas ou de dar à manivela, para ouvir as indicações da Proteção Civil sem luz nem internet."
+        },
+        {
+          "nome": "Bateria externa carregada",
+          "nota": "E o cabo do telemóvel."
+        },
+        {
+          "nome": "Apito",
+          "nota": "Para pedir ajuda se ficar preso."
+        }
+      ]
+    },
+    {
+      "nome": "Documentos e dinheiro",
+      "dica": "Guarde tudo junto, numa bolsa fácil de levar.",
+      "itens": [
+        {
+          "nome": "Cópias dos documentos",
+          "nota": "Cartão de Cidadão, cartão de utente, seguros e informação de saúde, num saco impermeável."
+        },
+        {
+          "nome": "Dinheiro em notas e moedas",
+          "nota": ""
+        },
+        {
+          "nome": "Lista de contactos em papel",
+          "nota": "Família, médico e vizinhos."
+        },
+        {
+          "nome": "Chaves de reserva",
+          "nota": "De casa e do carro."
+        }
+      ]
+    },
+    {
+      "nome": "Roupa e abrigo",
+      "dica": "Escolha conforme a estação do ano.",
+      "itens": [
+        {
+          "nome": "Uma muda de roupa",
+          "nota": "E calçado confortável e resistente."
+        },
+        {
+          "nome": "Agasalho e impermeável",
+          "nota": ""
+        },
+        {
+          "nome": "Manta ou cobertor",
+          "nota": "Uma manta térmica ocupa pouco espaço."
+        }
+      ]
+    },
+    {
+      "nome": "Ferramentas",
+      "dica": "Para pequenas reparações e para proteger as mãos.",
+      "itens": [
+        {
+          "nome": "Canivete multiusos",
+          "nota": ""
+        },
+        {
+          "nome": "Fita adesiva resistente",
+          "nota": ""
+        },
+        {
+          "nome": "Isqueiro ou fósforos",
+          "nota": "Guardados num saco impermeável."
+        },
+        {
+          "nome": "Luvas de trabalho",
+          "nota": ""
+        }
+      ]
+    }
+  ],
+  "rodape": "Fica guardado só neste aparelho. Reveja o kit de 6 em 6 meses e troque a água, a comida e as pilhas antes de passarem do prazo."
+}

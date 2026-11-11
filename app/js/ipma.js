@@ -92,6 +92,7 @@ export const sismos = fonte('ipma-sismos', `${API}/observation/seismic/${AREA_SI
         hora: Date.parse(`${s.time}Z`), // o IPMA dá a hora dos sismos em UTC
         mag: mag > -9 ? mag : null, // -99 quer dizer que ainda não há magnitude
         km: Math.round(distancia(lat, lon)),
+        rumo: Math.round(rumo(lat, lon)), // direção a partir de Caranguejeira, em graus (0 = norte)
         regiao: String(s.obsRegion || '').replace(/\s+/g, ' ').trim(),
         local: s.local || '',
         sentido: s.sensed === true,
@@ -111,6 +112,15 @@ function distancia(lat, lon) {
   const a = Math.sin(dLat / 2) ** 2
     + Math.cos(rad(CARANGUEJEIRA.lat)) * Math.cos(rad(lat)) * Math.sin(dLon / 2) ** 2;
   return 2 * 6371 * Math.asin(Math.sqrt(a));
+}
+
+function rumo(lat, lon) {
+  const rad = (g) => (g * Math.PI) / 180;
+  const dLon = rad(lon - CARANGUEJEIRA.lon);
+  const y = Math.sin(dLon) * Math.cos(rad(lat));
+  const x = Math.cos(rad(CARANGUEJEIRA.lat)) * Math.sin(rad(lat))
+    - Math.sin(rad(CARANGUEJEIRA.lat)) * Math.cos(rad(lat)) * Math.cos(dLon);
+  return ((Math.atan2(y, x) * 180) / Math.PI + 360) % 360;
 }
 
 /* ---------- Horas ---------- */
@@ -157,6 +167,13 @@ export function dia(ms, agora = Date.now()) {
 }
 
 export const quando = (ms, agora = Date.now()) => `${dia(ms, agora)} às ${hora(ms)}`;
+
+// Meia-noite (hora de Portugal) do dia de `ms`, ou de `mais` dias depois.
+export function meiaNoite(ms, mais = 0) {
+  const p = partesLisboa(ms);
+  const d = new Date(Date.UTC(p.year, p.month - 1, p.day + mais));
+  return horaPortugal(`${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${d.getUTCDate()}T00:00`);
+}
 
 /* ---------- Avisos do distrito ---------- */
 
@@ -231,6 +248,17 @@ export function textoObtido(f) {
 export function atualizarEcra(raiz, f) {
   f.atualizar().then((r) => {
     if (r.mudou) window.dispatchEvent(new CustomEvent('pcc:dados'));
-    else if (r.pediu) raiz.querySelectorAll('[data-obtido]').forEach((el) => { el.textContent = textoObtido(f); });
+    else if (r.pediu) {
+      raiz.querySelectorAll('[data-obtido]').forEach((el) => { el.textContent = textoObtido(f); });
+      // O ponto "ao vivo" pulsa uma vez: os dados acabaram de ser confirmados.
+      raiz.querySelectorAll('.vivo').forEach((el) => {
+        el.classList.remove('pulsar');
+        void el.getBoundingClientRect();
+        el.classList.add('pulsar');
+      });
+    }
   });
 }
+
+// Estado do ponto "ao vivo" junto da hora: cheio com dados frescos, vazio sem ligação.
+export const classeVivo = (f) => (f.falhou() || !navigator.onLine ? 'vivo vivo-off' : 'vivo');

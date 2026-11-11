@@ -1,0 +1,324 @@
+# Página de edição do conteúdo da app, com o Pages CMS (https://app.pagescms.org).
+#
+# Cada gravação fica guardada neste repositório como uma alteração (commit) com o
+# nome de quem editou. O GitHub publica a app em upcc.pt cerca de um minuto depois,
+# e os telemóveis recebem a mudança da próxima vez que abrirem a app.
+#
+# Os ficheiros editados estão em app/conteudo/. Ver "Editar o conteúdo" no README.
+
+settings:
+  content:
+    merge: true
+  commit:
+    identity: user
+
+components:
+  # Um guia "O que fazer se…": passos numerados, situações "E se…" e secções recolhidas.
+  guia:
+    type: object
+    fields:
+      - name: primeiro
+        label: Primeiros passos (numerados)
+        type: object
+        fields:
+          - name: titulo
+            label: Título
+            type: string
+            required: true
+          - name: passos
+            label: Passos
+            description: Pela ordem em que se fazem. Frases curtas, de preferência 3 ou 4 passos.
+            type: object
+            list:
+              min: 1
+              max: 5
+              collapsible:
+                collapsed: true
+                summary: "{t}"
+            fields:
+              - name: fig
+                label: Figura
+                description: Veja todas as figuras em https://upcc.pt/#/figuras
+                type: select
+                options:
+                  values: [sair, porta, ligar, fumo, quente, escadas, janela, rolar, tampa, mesa, ficar, aberto, parede, rua, carro, gas, afastar, evacuar, fumo-estrada, casa-fechar, baldes, pano, nao-atravessar, subir, radio, agua-casa, cabo, voltar, beber, sol-casa, persianas, tonturas, carro-calor, vizinho, casa-vento, arvore, trovoada, ramos, camadas, aquecer, arejar, co, dormir, vento, nao-filmar, escola, lavar, lanterna, tomada, frigorifico, gerador, medico]
+              - name: t
+                label: O que fazer
+                description: Uma ordem curta, por exemplo "Avise todos e saia."
+                type: string
+                required: true
+              - name: d
+                label: Explicação
+                description: Uma frase curta que explica ou completa o passo.
+                type: string
+      - name: se
+        label: Situações "E se…"
+        type: object
+        fields:
+          - name: titulo
+            label: Título
+            type: string
+            required: true
+          - name: passos
+            label: Situações
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{q}"
+            fields:
+              - name: fig
+                label: Figura
+                description: Veja todas as figuras em https://upcc.pt/#/figuras
+                type: select
+                options:
+                  values: [sair, porta, ligar, fumo, quente, escadas, janela, rolar, tampa, mesa, ficar, aberto, parede, rua, carro, gas, afastar, evacuar, fumo-estrada, casa-fechar, baldes, pano, nao-atravessar, subir, radio, agua-casa, cabo, voltar, beber, sol-casa, persianas, tonturas, carro-calor, vizinho, casa-vento, arvore, trovoada, ramos, camadas, aquecer, arejar, co, dormir, vento, nao-filmar, escola, lavar, lanterna, tomada, frigorifico, gerador, medico]
+              - name: q
+                label: Situação
+                description: Uma pergunta curta, por exemplo "Há fumo?"
+                type: string
+                required: true
+              - name: t
+                label: O que fazer
+                type: string
+                required: true
+              - name: d
+                label: Explicação
+                type: string
+      - name: mais
+        label: Secções recolhidas
+        description: Aparecem fechadas no fim do guia, por exemplo "Depois" ou "Como se preparar".
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{titulo}"
+        fields:
+          - name: titulo
+            label: Título da secção
+            type: string
+            required: true
+          - name: passos
+            label: Linhas
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{destaque}"
+            fields:
+              - name: destaque
+                label: Início da frase (a negrito)
+                type: string
+                required: true
+              - name: detalhe
+                label: Resto da frase
+                type: string
+
+content:
+  - name: kit
+    label: Kit de emergência
+    type: file
+    path: app/conteudo/kit.json
+    format: json
+    fields:
+      - name: intro
+        label: Texto de abertura
+        type: text
+      - name: categorias
+        label: Categorias
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{nome}"
+        fields:
+          - name: nome
+            label: Nome da categoria
+            type: string
+            required: true
+          - name: dica
+            label: Dica
+            description: Uma frase curta por baixo do nome da categoria.
+            type: string
+          - name: itens
+            label: Itens
+            description: Mudar o nome de um item volta a deixá-lo por marcar nos telemóveis de quem já o tinha marcado.
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{nome}"
+            fields:
+              - name: nome
+                label: Item
+                type: string
+                required: true
+              - name: nota
+                label: Nota
+                description: Opcional. Uma frase curta com detalhes, por exemplo quantidades.
+                type: text
+      - name: rodape
+        label: Texto no fim da lista
+        type: text
+
+  - name: contactos
+    label: Contactos úteis
+    type: file
+    path: app/conteudo/contactos.json
+    format: json
+    fields:
+      - name: intro
+        label: Texto de abertura
+        description: Os números confirmados que aparecerem no texto ligam com um toque.
+        type: text
+      - name: nota
+        label: Nota
+        type: text
+      - name: grupos
+        label: Grupos
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{titulo}"
+        fields:
+          - name: titulo
+            label: Nome do grupo
+            type: string
+            required: true
+          - name: nota
+            label: Nota do grupo
+            description: Opcional.
+            type: text
+          - name: itens
+            label: Contactos
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{nome}"
+            fields:
+              - name: nome
+                label: Nome
+                type: string
+                required: true
+              - name: num
+                label: Número
+                description: Por exemplo "244 734 437". Deixe vazio enquanto não estiver confirmado.
+                type: string
+                pattern:
+                  regex: "^[0-9+ ]*$"
+                  message: Só algarismos, espaços e o sinal +.
+              - name: desc
+                label: Descrição
+                description: Para que serve este número, em poucas palavras.
+                type: text
+              - name: confirmado
+                label: Número confirmado numa fonte oficial
+                description: Só os números confirmados aparecem e se podem ligar. Um número errado numa emergência é pior do que nenhum.
+                type: boolean
+              - name: sos
+                label: Mostrar como número de emergência (a vermelho)
+                type: boolean
+              - name: fonte
+                label: Fonte (nome do site)
+                description: Onde o número foi confirmado, por exemplo "jfcaranguejeira.pt".
+                type: string
+              - name: fonteUrl
+                label: Fonte (endereço)
+                description: Começa por https://
+                type: string
+                pattern:
+                  regex: "^(https?://\\S+)?$"
+                  message: Um endereço começado por https://
+              - name: consultado
+                label: Data em que foi confirmado
+                description: No formato dd/mm/aaaa, por exemplo 11/11/2026.
+                type: string
+                pattern:
+                  regex: "^([0-3][0-9]/[01][0-9]/[0-9]{4})?$"
+                  message: Use o formato dd/mm/aaaa.
+
+  - name: guias
+    label: O que fazer se…
+    type: file
+    path: app/conteudo/guias.json
+    format: json
+    fields:
+      - name: sismo
+        label: Sismo
+        component: guia
+      - name: incendio-rural
+        label: Incêndio rural
+        component: guia
+      - name: cheias
+        label: Cheias e inundações
+        component: guia
+      - name: calor
+        label: Calor extremo
+        component: guia
+      - name: tempestade
+        label: Tempestade e vento forte
+        component: guia
+      - name: frio
+        label: Frio extremo
+        component: guia
+      - name: incendio-casa
+        label: Incêndio em casa
+        component: guia
+      - name: materias-perigosas
+        label: Acidente com matérias perigosas
+        component: guia
+      - name: energia
+        label: Falha prolongada de energia
+        component: guia
+
+  - name: textos
+    label: Outros textos
+    type: file
+    path: app/conteudo/textos.json
+    format: json
+    fields:
+      - name: agir
+        label: Ecrã "O que fazer se…"
+        type: object
+        fields:
+          - name: intro
+            label: Texto de abertura
+            type: text
+          - name: nota
+            label: Nota no fim da lista
+            type: text
+      - name: guias
+        label: Fim de cada guia
+        type: object
+        fields:
+          - name: seguir
+            label: Lembrete
+            type: text
+          - name: fonte
+            label: Fonte dos guias
+            type: text
+      - name: sobre
+        label: Sobre a app
+        type: object
+        fields:
+          - name: intro
+            label: Texto de abertura
+            description: Uma linha em branco separa parágrafos.
+            type: text
+          - name: secoes
+            label: Secções
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{titulo}"
+            fields:
+              - name: titulo
+                label: Título
+                type: string
+              - name: texto
+                label: Texto
+                description: Uma linha em branco separa parágrafos.
+                type: text

@@ -334,6 +334,104 @@ html.offline .net { display: flex; }
 .sis-vazio { margin-top: 8px; font-size: 16px; }
 .pbody > .next { margin-top: 26px; }
 
+/* Ponto "ao vivo" junto da hora: cheio com dados frescos, vazio sem ligação. */
+.vivo {
+  position: relative; display: inline-block; width: 8px; height: 8px; margin-right: 7px;
+  border-radius: 50%; background: currentColor; vertical-align: 1px;
+}
+.vivo::after {
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  border: 1.5px solid currentColor; opacity: 0;
+}
+.vivo.pulsar::after { animation: vivo 1.1s cubic-bezier(.16, 1, .3, 1); }
+@keyframes vivo { from { transform: scale(1); opacity: .8; } to { transform: scale(3.2); opacity: 0; } }
+.vivo-off { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; }
+.obtido .vivo { color: var(--verde); }
+.obtido .vivo-off { color: var(--tinta-2); }
+
+/* Tocar numa barra ou num ponto realça a linha correspondente da lista. */
+.av, .sis-btn { margin-inline: -8px; padding-inline: 8px; }
+.av.foco { animation: realce 1.8s ease-out; }
+@keyframes realce { from { background: color-mix(in srgb, var(--cor, var(--azul)) 26%, transparent); } }
+
+/* Avisos: os próximos 3 dias numa linha, com a hora atual marcada. */
+.tl { margin: 18px 0 2px; }
+.tl-dias { display: grid; grid-template-columns: repeat(3, 1fr); font-size: 14px; font-weight: 700; color: var(--tinta-2); }
+.tl-dias span { padding: 0 0 2px 6px; border-left: 1.5px solid var(--linha); }
+.tl-linhas { position: relative; padding-bottom: 24px; }
+.tl-linha { padding-top: 8px; }
+/* O nome tapa a linha "Agora" para se ler bem. */
+.tl-nome { position: relative; z-index: 1; display: block; width: fit-content; padding-right: 8px; background: var(--papel); font-size: 15px; font-weight: 700; line-height: 1.2; }
+.tl-pista {
+  position: relative; display: block; height: 18px; margin-top: 4px; border-radius: 5px;
+  background:
+    linear-gradient(90deg, transparent calc(33.333% - 1px), rgb(15 30 51 / .14) 0 calc(33.333% + .5px), transparent 0 calc(66.666% - 1px), rgb(15 30 51 / .14) 0 calc(66.666% + .5px), transparent 0),
+    #E8EBEF;
+}
+.tl-b {
+  position: absolute; top: 0; bottom: 0; left: var(--x); width: var(--w);
+  border-radius: 5px; background: var(--cor); box-shadow: inset 0 0 0 1px rgb(0 0 0 / .2); cursor: pointer;
+}
+.tl-amarelo { --cor: var(--amarelo); }
+.tl-laranja { --cor: var(--laranja-pc); }
+.tl-vermelho { --cor: var(--vermelho); }
+.tl-livre { --cor: #CBE5D2; box-shadow: none; cursor: default; }
+.tl-agora { position: absolute; top: 2px; bottom: 20px; left: var(--x); width: 2px; margin-left: -1px; background: var(--tinta); border-radius: 1px; }
+.tl-agora > span { position: absolute; top: 100%; left: 50%; margin-top: 3px; transform: translateX(-50%); font-size: 13px; font-weight: 700; white-space: nowrap; }
+.tl-agora.ini > span { left: -1px; transform: none; }
+/* A barra desenha-se da esquerda para a direita, como o tempo a passar. */
+.tl.play .tl-b { animation: tl-revelar .75s cubic-bezier(.16, 1, .3, 1) calc(150ms + var(--i, 0) * 90ms) both; }
+.tl.play .tl-agora { animation: tl-agora .45s cubic-bezier(.16, 1, .3, 1) 60ms both; }
+@keyframes tl-revelar { from { clip-path: inset(0 100% 0 0 round 5px); } to { clip-path: inset(0 0 0 0 round 5px); } }
+@keyframes tl-agora { from { opacity: 0; transform: scaleY(.2); } }
+
+/* Sismos: Caranguejeira ao centro, anéis a 25, 50 e 100 km. 1 unidade do SVG = 1 km. */
+.radar { margin: 14px auto 0; max-width: 400px; }
+.radar-svg { display: block; width: 100%; height: auto; overflow: visible; }
+.radar-fundo { fill: var(--branco); }
+.radar-eixo { stroke: var(--linha); stroke-width: 1; stroke-dasharray: 2 4; vector-effect: non-scaling-stroke; }
+.radar-anel { fill: none; stroke: #C3C9D1; stroke-width: 1; vector-effect: non-scaling-stroke; transform-box: fill-box; transform-origin: center; }
+.radar-km, .radar-lbl, .radar-n, .radar-escala text { font-family: var(--f-texto); font-size: 8.6px; fill: var(--tinta-2); }
+.radar-lbl, .radar-n { font-weight: 700; fill: var(--tinta); }
+.radar-n { text-anchor: middle; }
+/* Os nomes ficam por cima dos pontos, com um contorno branco, e não apanham toques. */
+.radar-textos text { paint-order: stroke; stroke: var(--branco); stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
+.radar-lbl-ref { fill: var(--tinta-2); }
+.radar-ref { fill: var(--tinta-2); }
+.radar-centro { fill: var(--vermelho); stroke: var(--branco); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.radar-ponto {
+  fill: var(--azul); fill-opacity: .3; stroke: var(--azul); stroke-width: 1.2; vector-effect: non-scaling-stroke;
+  transform-box: fill-box; transform-origin: center;
+}
+.recente .radar-ponto, .radar-escala .radar-ponto { fill-opacity: .8; }
+.radar-onda { fill: none; stroke: var(--azul); stroke-width: 1.5; vector-effect: non-scaling-stroke; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.radar-toque { fill: transparent; cursor: pointer; }
+.radar-p.sel .radar-ponto { fill-opacity: 1; stroke: var(--tinta); stroke-width: 2.5; }
+.radar-leg { display: flex; align-items: flex-start; gap: 14px; margin-top: 12px; }
+.radar-escala { flex: none; width: 152px; height: auto; }
+.radar-leg p { font-size: 14px; line-height: 1.4; color: var(--tinta-2); text-wrap: pretty; }
+/* Os anéis abrem-se a partir do centro; depois cada sismo aparece, do mais antigo para o
+   mais recente, com uma onda a espalhar-se a partir do epicentro. */
+.radar.play .radar-anel { animation: radar-anel .8s cubic-bezier(.16, 1, .3, 1) calc(var(--i) * 120ms) both; }
+.radar.play .radar-ponto { animation: radar-ponto .5s cubic-bezier(.16, 1, .3, 1) var(--d) both; }
+.radar.play .radar-onda, .radar-p.pulsar .radar-onda { animation: radar-onda 1.3s cubic-bezier(.16, 1, .3, 1) var(--d) both; }
+.radar-p.pulsar .radar-onda { --d: 0ms; }
+@keyframes radar-anel { from { transform: scale(.15); opacity: 0; } }
+@keyframes radar-ponto { from { transform: scale(0); } }
+@keyframes radar-onda { from { transform: scale(1); opacity: .75; } to { transform: scale(4.2); opacity: 0; } }
+
+.sis-btn { width: calc(100% + 16px); text-align: left; cursor: pointer; }
+.sis-btn[aria-pressed="true"] { background: #E3EDF8; }
+.sis-btn[aria-pressed="true"] .sis-m b { color: var(--tinta); }
+
+/* ---------- Figuras dos guias (folha de referência para quem edita) ---------- */
+.figs {
+  list-style: none; margin: 16px 0 0; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 18px 12px;
+}
+.figs li { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.figs code { font-size: 14px; font-weight: 700; color: var(--tinta); overflow-wrap: anywhere; text-align: center; }
+
 /* ---------- Kit de emergência ---------- */
 .kit-prog { margin-top: 18px; }
 .kit-num { display: flex; align-items: baseline; gap: 8px; }
@@ -658,4 +756,7 @@ html.offline .net { display: flex; }
   .drawer, .scrim { transition: none !important; }
   .fig, .fig.play * { animation: none !important; transition: none !important; }
   .mais::details-content, .mais > summary .chev { transition: none !important; }
+  /* Sem movimento: a linha do tempo e o diagrama aparecem já desenhados, e o ponto
+     escolhido marca-se só com o contorno. O realce de cor na lista mantém-se. */
+  .tl *, .radar *, .vivo::after { animation: none !important; }
 }

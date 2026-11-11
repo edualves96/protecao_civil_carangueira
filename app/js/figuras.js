@@ -533,6 +533,9 @@ const FIGURAS = {
     ${mov('fx-pulsar', '<rect class="f-fogo" x="46.5" y="48.5" width="3.5" height="4"/>')}`,
 };
 
+// Os nomes servem para escolher a figura de cada passo na página de edição.
+export const NOMES_FIGURAS = Object.keys(FIGURAS);
+
 export function figura(nome) {
   const desenho = FIGURAS[nome];
   if (!desenho) return '';

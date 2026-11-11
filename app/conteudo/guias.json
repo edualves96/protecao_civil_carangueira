@@ -1,0 +1,843 @@
+{
+  "sismo": {
+    "primeiro": {
+      "titulo": "Quando o chão tremer",
+      "passos": [
+        {
+          "fig": "mesa",
+          "t": "Baixe-se, proteja-se e aguarde.",
+          "d": "Debaixo de uma mesa resistente, agarrado a ela, até o chão parar de tremer."
+        },
+        {
+          "fig": "ficar",
+          "t": "Não fuja para a rua.",
+          "d": "Nem use o elevador ou as escadas enquanto o chão tremer."
+        },
+        {
+          "fig": "aberto",
+          "t": "Quando parar, saia com calma para um espaço aberto.",
+          "d": "Pelas escadas, longe de edifícios. Leve o kit e conte com réplicas."
+        }
+      ]
+    },
+    "se": {
+      "titulo": "E se…",
+      "passos": [
+        {
+          "q": "Não há mesa?",
+          "fig": "parede",
+          "t": "Baixe-se junto a uma parede interior.",
+          "d": "Longe de janelas e de móveis que possam cair. Proteja a cabeça com os braços."
+        },
+        {
+          "q": "Está na rua?",
+          "fig": "rua",
+          "t": "Afaste-se de edifícios e de cabos.",
+          "d": "E também de muros, árvores e postes."
+        },
+        {
+          "q": "Está a conduzir?",
+          "fig": "carro",
+          "t": "Pare num local seguro e fique no carro.",
+          "d": "Longe de pontes, túneis e edifícios."
+        },
+        {
+          "q": "Cheira a gás?",
+          "fig": "gas",
+          "t": "Não acenda nada e saia.",
+          "d": "Nem luzes, nem fósforos, nem isqueiros. Feche a torneira do gás e abra as janelas."
+        }
+      ]
+    },
+    "mais": [
+      {
+        "titulo": "Depois do sismo",
+        "passos": [
+          {
+            "destaque": "Conte as pessoas que estão consigo e veja se há feridos.",
+            "detalhe": "Ajude sem se pôr em perigo."
+          },
+          {
+            "destaque": "Ligue 112 só para emergências,",
+            "detalhe": "para não bloquear as linhas."
+          },
+          {
+            "destaque": "Se o edifício tiver estragos, não volte a entrar.",
+            "detalhe": "Desligue a eletricidade, o gás e a água, se o puder fazer em segurança."
+          },
+          {
+            "destaque": "Vá para o ponto de encontro",
+            "detalhe": "combinado com a família."
+          },
+          {
+            "destaque": "Ouça a rádio",
+            "detalhe": "e siga as indicações das autoridades."
+          }
+        ]
+      },
+      {
+        "titulo": "Para estar preparado",
+        "passos": [
+          {
+            "destaque": "Fixe à parede",
+            "detalhe": "estantes, armários altos e outros móveis pesados que possam tombar."
+          },
+          {
+            "destaque": "Ponha os objetos pesados",
+            "detalhe": "nas prateleiras de baixo."
+          },
+          {
+            "destaque": "Mantenha as saídas de casa desimpedidas.",
+            "detalhe": ""
+          },
+          {
+            "destaque": "Saiba onde se desliga",
+            "detalhe": "a água, o gás e a eletricidade de casa."
+          },
+          {
+            "destaque": "Escolha os sítios mais seguros",
+            "detalhe": "de cada divisão: debaixo de mesas resistentes e junto a paredes interiores."
+          },
+          {
+            "destaque": "Prepare o kit de emergência",
+            "detalhe": "e combine um ponto de encontro com a família."
+          }
+        ]
+      }
+    ]
+  },
+  "incendio-rural": {
+    "primeiro": {
+      "titulo": "Se vir um incêndio",
+      "passos": [
+        {
+          "fig": "ligar",
+          "t": "Ligue 112.",
+          "d": "Diga onde é o fogo: localidade, rua ou um sítio conhecido."
+        },
+        {
+          "fig": "afastar",
+          "t": "Afaste-se do fumo e das chamas.",
+          "d": "Não tente apagar sozinho um fogo grande."
+        },
+        {
+          "fig": "evacuar",
+          "t": "Se mandarem sair, saia cedo.",
+          "d": "Pelo caminho que a GNR e os bombeiros indicarem. Leve o kit."
+        }
+      ]
+    },
+    "se": {
+      "titulo": "E se…",
+      "passos": [
+        {
+          "q": "Fumo ou chamas no caminho?",
+          "fig": "fumo-estrada",
+          "t": "Não atravesse.",
+          "d": "Nem a pé nem de carro. Nunca fuja para o mato nem encosta acima."
+        },
+        {
+          "q": "Não pode sair de casa?",
+          "fig": "casa-fechar",
+          "t": "Fique dentro e feche tudo.",
+          "d": "Portas, janelas e portadas. Tape as frinchas com panos molhados."
+        },
+        {
+          "q": "O fogo está perto de casa?",
+          "fig": "baldes",
+          "t": "Encha baldes com água.",
+          "d": "E a banheira e os lavatórios. Tenha a mangueira pronta."
+        },
+        {
+          "q": "Há fumo?",
+          "fig": "pano",
+          "t": "Proteja a boca e o nariz.",
+          "d": "Com um pano molhado."
+        }
+      ]
+    },
+    "mais": [
+      {
+        "titulo": "Depois do incêndio",
+        "passos": [
+          {
+            "destaque": "Só volte para casa quando as autoridades disserem que é seguro.",
+            "detalhe": ""
+          },
+          {
+            "destaque": "Se a casa tiver estragos ou cheirar a gás,",
+            "detalhe": "não entre e peça ajuda."
+          },
+          {
+            "destaque": "Vigie a casa e o terreno durante várias horas.",
+            "detalhe": "Apague com água qualquer brasa ou fumo que volte a aparecer."
+          },
+          {
+            "destaque": "Afaste-se de árvores, postes e cabos queimados",
+            "detalhe": "e de materiais ainda quentes. Podem cair ou queimar sem aviso."
+          }
+        ]
+      },
+      {
+        "titulo": "Para estar preparado",
+        "passos": [
+          {
+            "destaque": "Limpe o mato à volta da casa",
+            "detalhe": "numa faixa de pelo menos 50 metros."
+          },
+          {
+            "destaque": "Mantenha livres os acessos e as saídas da casa.",
+            "detalhe": ""
+          },
+          {
+            "destaque": "Saiba como sair da zona",
+            "detalhe": "e combine com a família onde se encontram."
+          },
+          {
+            "destaque": "Em dias de risco, acompanhe os avisos",
+            "detalhe": "e as indicações das autoridades."
+          },
+          {
+            "destaque": "Guarde a lenha, o gás e outros produtos que ardem",
+            "detalhe": "longe das paredes da casa."
+          },
+          {
+            "destaque": "Não faça queimas nem fogueiras",
+            "detalhe": "sem confirmar primeiro se são permitidas nesse dia."
+          },
+          {
+            "destaque": "Não deite beatas para o chão",
+            "detalhe": "nem pela janela do carro."
+          }
+        ]
+      }
+    ]
+  },
+  "cheias": {
+    "primeiro": {
+      "titulo": "Durante as cheias",
+      "passos": [
+        {
+          "fig": "nao-atravessar",
+          "t": "Não atravesse zonas alagadas.",
+          "d": "Nem a pé nem de carro. A água pode esconder buracos e arrastar um carro."
+        },
+        {
+          "fig": "subir",
+          "t": "Vá para um sítio mais alto.",
+          "d": "Longe de rios e ribeiras. Nunca para caves nem garagens."
+        },
+        {
+          "fig": "radio",
+          "t": "Ouça a rádio e siga as indicações.",
+          "d": "Se mandarem sair, saia logo e leve o kit."
+        }
+      ]
+    },
+    "se": {
+      "titulo": "E se…",
+      "passos": [
+        {
+          "q": "A água entrou em casa?",
+          "fig": "agua-casa",
+          "t": "Desligue a luz e o gás e suba.",
+          "d": "Se o puder fazer em segurança. Vá para um andar mais alto."
+        },
+        {
+          "q": "Vê cabos elétricos caídos?",
+          "fig": "cabo",
+          "t": "Afaste-se.",
+          "d": "E não toque na água à volta deles."
+        },
+        {
+          "q": "A água já baixou?",
+          "fig": "voltar",
+          "t": "Só volte quando disserem que é seguro.",
+          "d": "Não toque em aparelhos nem fios molhados."
+        }
+      ]
+    },
+    "mais": [
+      {
+        "titulo": "Depois das cheias",
+        "passos": [
+          {
+            "destaque": "Não volte a ligar a eletricidade",
+            "detalhe": "antes de um eletricista confirmar que a instalação está seca e segura."
+          },
+          {
+            "destaque": "Não beba água da torneira nem coma alimentos",
+            "detalhe": "que possam ter estado em contacto com a água, até ter a certeza de que são seguros."
+          },
+          {
+            "destaque": "Limpe e desinfete",
+            "detalhe": "tudo o que a água tocou. Use luvas e botas."
+          },
+          {
+            "destaque": "Fotografe os estragos",
+            "detalhe": "antes de limpar, para o seguro."
+          }
+        ]
+      },
+      {
+        "titulo": "Para estar preparado",
+        "passos": [
+          {
+            "destaque": "Saiba se a sua casa fica numa zona que costuma inundar.",
+            "detalhe": "Pergunte na Junta de Freguesia."
+          },
+          {
+            "destaque": "Conheça os sítios mais altos",
+            "detalhe": "e os caminhos para sair da sua zona."
+          },
+          {
+            "destaque": "Guarde documentos e medicamentos essenciais",
+            "detalhe": "num sítio alto e fácil de levar."
+          },
+          {
+            "destaque": "Mantenha limpos",
+            "detalhe": "os algerozes, as caleiras e as sarjetas junto a casa."
+          },
+          {
+            "destaque": "Se houver aviso de cheia, tire o carro das zonas baixas,",
+            "detalhe": "se o puder fazer em segurança."
+          }
+        ]
+      }
+    ]
+  },
+  "calor": {
+    "primeiro": {
+      "titulo": "Enquanto estiver muito calor",
+      "passos": [
+        {
+          "fig": "beber",
+          "t": "Beba água muitas vezes.",
+          "d": "Mesmo sem sede. Evite álcool e bebidas muito açucaradas."
+        },
+        {
+          "fig": "sol-casa",
+          "t": "Fique em casa entre as 11 e as 17 horas.",
+          "d": "São as horas de mais calor. Evite esforços."
+        },
+        {
+          "fig": "persianas",
+          "t": "Feche as persianas durante o dia.",
+          "d": "E abra as janelas à noite, para refrescar a casa."
+        }
+      ]
+    },
+    "se": {
+      "titulo": "E se…",
+      "passos": [
+        {
+          "q": "Alguém está confuso ou desmaiou?",
+          "fig": "ligar",
+          "t": "Ligue 112.",
+          "d": "Também se tiver a pele muito quente e seca. Leve-a para um sítio fresco e molhe-a com água."
+        },
+        {
+          "q": "Dor de cabeça ou tonturas?",
+          "fig": "tonturas",
+          "t": "Descanse num sítio fresco e beba água.",
+          "d": "Se não passar, ligue para o SNS 24, 808 24 24 24."
+        },
+        {
+          "q": "Vai deixar o carro?",
+          "fig": "carro-calor",
+          "t": "Não deixe ninguém lá dentro.",
+          "d": "Nem crianças, nem pessoas idosas, nem animais."
+        },
+        {
+          "q": "Alguém perto vive sozinho?",
+          "fig": "vizinho",
+          "t": "Ligue-lhe ou faça uma visita.",
+          "d": "Sobretudo a pessoas idosas ou doentes."
+        }
+      ]
+    },
+    "mais": [
+      {
+        "titulo": "Mais conselhos",
+        "passos": [
+          {
+            "destaque": "Use roupa leve e de cor clara,",
+            "detalhe": "chapéu e protetor solar quando sair."
+          },
+          {
+            "destaque": "Tome duches de água fresca.",
+            "detalhe": ""
+          },
+          {
+            "destaque": "Passe algumas horas num sítio fresco",
+            "detalhe": "ou com ar condicionado, se a casa estiver muito quente."
+          }
+        ]
+      },
+      {
+        "titulo": "Para estar preparado",
+        "passos": [
+          {
+            "destaque": "Tenha água em casa",
+            "detalhe": "e deixe as tarefas mais pesadas para as horas mais frescas."
+          },
+          {
+            "destaque": "Prepare um sítio fresco para descansar,",
+            "detalhe": "na divisão mais fresca da casa."
+          },
+          {
+            "destaque": "Combine com vizinhos e familiares",
+            "detalhe": "quem vai ver como estão as pessoas mais frágeis."
+          }
+        ]
+      }
+    ]
+  },
+  "tempestade": {
+    "primeiro": {
+      "titulo": "Durante a tempestade",
+      "passos": [
+        {
+          "fig": "casa-vento",
+          "t": "Fique em casa, longe das janelas.",
+          "d": "Evite sair e conduzir."
+        },
+        {
+          "fig": "arvore",
+          "t": "Afaste-se de árvores, postes e muros.",
+          "d": "E de andaimes e placas que possam cair. Não se abrigue junto deles."
+        },
+        {
+          "fig": "cabo",
+          "t": "Não toque em cabos elétricos caídos.",
+          "d": "Afaste-se e ligue para a E-REDES, 800 506 506. Se houver perigo, ligue 112."
+        }
+      ]
+    },
+    "se": {
+      "titulo": "E se…",
+      "passos": [
+        {
+          "q": "Está a conduzir?",
+          "fig": "carro",
+          "t": "Abrande e pare num local seguro.",
+          "d": "Longe de árvores e cabos."
+        },
+        {
+          "q": "Há trovoada?",
+          "fig": "trovoada",
+          "t": "Não se abrigue debaixo de árvores.",
+          "d": "E afaste-se de vedações e estruturas de metal."
+        },
+        {
+          "q": "Ramos ou objetos presos nos fios?",
+          "fig": "ramos",
+          "t": "Não tente tirá-los.",
+          "d": "Cuidado também com telhas e vidros soltos que ainda possam cair."
+        },
+        {
+          "q": "A tempestade passou?",
+          "fig": "vizinho",
+          "t": "Veja como estão os vizinhos.",
+          "d": "Sobretudo quem vive sozinho."
+        }
+      ]
+    },
+    "mais": [
+      {
+        "titulo": "Para estar preparado",
+        "passos": [
+          {
+            "destaque": "Prenda ou guarde",
+            "detalhe": "vasos, estendais, toldos e outros objetos soltos em varandas e quintais."
+          },
+          {
+            "destaque": "Não deixe o carro debaixo de árvores",
+            "detalhe": "nem junto a estruturas frágeis."
+          },
+          {
+            "destaque": "Verifique o telhado, as chaminés e os algerozes",
+            "detalhe": "antes do inverno."
+          },
+          {
+            "destaque": "Tenha uma lanterna e um rádio a pilhas,",
+            "detalhe": "com pilhas de reserva, e o telemóvel carregado."
+          }
+        ]
+      }
+    ]
+  },
+  "frio": {
+    "primeiro": {
+      "titulo": "Enquanto estiver muito frio",
+      "passos": [
+        {
+          "fig": "camadas",
+          "t": "Vista várias camadas de roupa.",
+          "d": "Proteja a cabeça, as mãos e os pés. Troque logo a roupa molhada."
+        },
+        {
+          "fig": "aquecer",
+          "t": "Nunca aqueça a casa com braseiras ou fogareiros.",
+          "d": "Nem com aquecedores a gás numa divisão fechada: libertam monóxido de carbono, um gás que mata."
+        },
+        {
+          "fig": "arejar",
+          "t": "Areje a casa todos os dias.",
+          "d": "Mesmo que por pouco tempo."
+        }
+      ]
+    },
+    "se": {
+      "titulo": "E se…",
+      "passos": [
+        {
+          "q": "Alguém treme muito ou está confuso?",
+          "fig": "ligar",
+          "t": "Ligue 112.",
+          "d": "Leve a pessoa para um sítio quente e aqueça-a aos poucos, com mantas."
+        },
+        {
+          "q": "Dor de cabeça junto ao aquecedor?",
+          "fig": "co",
+          "t": "Abra as janelas e saia.",
+          "d": "Também se tiver enjoos ou tonturas. Pode ser monóxido de carbono. Ligue 112."
+        },
+        {
+          "q": "Vai dormir?",
+          "fig": "dormir",
+          "t": "Desligue os aquecedores.",
+          "d": "E mantenha-os longe de cortinas, roupa e móveis."
+        },
+        {
+          "q": "Alguém perto vive sozinho?",
+          "fig": "vizinho",
+          "t": "Ligue-lhe ou faça uma visita.",
+          "d": "Sobretudo a pessoas idosas ou doentes."
+        }
+      ]
+    },
+    "mais": [
+      {
+        "titulo": "Mais conselhos",
+        "passos": [
+          {
+            "destaque": "Faça refeições quentes",
+            "detalhe": "e beba líquidos quentes. Evite bebidas alcoólicas."
+          },
+          {
+            "destaque": "Saia o menos possível",
+            "detalhe": "e esteja pouco tempo ao frio."
+          },
+          {
+            "destaque": "Evite conduzir com gelo na estrada.",
+            "detalhe": ""
+          }
+        ]
+      },
+      {
+        "titulo": "Para estar preparado",
+        "passos": [
+          {
+            "destaque": "Tenha roupa quente e mantas",
+            "detalhe": "à mão."
+          },
+          {
+            "destaque": "Verifique se os aquecedores estão em bom estado.",
+            "detalhe": "Não use um aparelho danificado sem o mandar ver."
+          },
+          {
+            "destaque": "Combine com vizinhos e familiares",
+            "detalhe": "quem acompanha as pessoas idosas, isoladas ou doentes."
+          }
+        ]
+      }
+    ]
+  },
+  "incendio-casa": {
+    "primeiro": {
+      "titulo": "Se houver fogo em casa",
+      "passos": [
+        {
+          "fig": "sair",
+          "t": "Avise todos e saia.",
+          "d": "Não volte atrás para ir buscar nada."
+        },
+        {
+          "fig": "porta",
+          "t": "Feche as portas ao sair.",
+          "d": "Atrasa o fogo e o fumo."
+        },
+        {
+          "fig": "ligar",
+          "t": "Ligue 112 já cá fora.",
+          "d": "Diga a morada e se ainda há alguém lá dentro."
+        }
+      ]
+    },
+    "se": {
+      "titulo": "E se…",
+      "passos": [
+        {
+          "q": "Há fumo?",
+          "fig": "fumo",
+          "t": "Baixe-se e ande de gatas.",
+          "d": "Junto ao chão o ar é mais limpo."
+        },
+        {
+          "q": "A porta está quente?",
+          "fig": "quente",
+          "t": "Não abra.",
+          "d": "Toque-lhe antes com as costas da mão. Se aquecer, procure outra saída."
+        },
+        {
+          "q": "Mora num prédio?",
+          "fig": "escadas",
+          "t": "Desça pelas escadas.",
+          "d": "Nunca use o elevador."
+        },
+        {
+          "q": "Ficou preso?",
+          "fig": "janela",
+          "t": "Feche a porta e peça ajuda à janela.",
+          "d": "Tape as frinchas da porta com panos molhados."
+        },
+        {
+          "q": "A roupa pegou fogo?",
+          "fig": "rolar",
+          "t": "Pare, deite-se e role.",
+          "d": "Tape a cara com as mãos até apagar."
+        },
+        {
+          "q": "Óleo a arder na frigideira?",
+          "fig": "tampa",
+          "t": "Desligue o fogão e tape.",
+          "d": "Com uma tampa ou um pano húmido. Nunca deite água."
+        }
+      ]
+    },
+    "mais": [
+      {
+        "titulo": "Depois do incêndio",
+        "passos": [
+          {
+            "destaque": "Fique num sítio seguro",
+            "detalhe": "e espere pelos bombeiros."
+          },
+          {
+            "destaque": "Só volte a entrar",
+            "detalhe": "quando os bombeiros disserem que é seguro."
+          },
+          {
+            "destaque": "Não ligue aparelhos nem a eletricidade",
+            "detalhe": "na zona atingida pelo fogo ou pela água usada para o apagar."
+          }
+        ]
+      },
+      {
+        "titulo": "Para prevenir",
+        "passos": [
+          {
+            "destaque": "Instale detetores de fumo",
+            "detalhe": "e teste-os uma vez por mês."
+          },
+          {
+            "destaque": "Tenha uma manta ignífuga ou um extintor na cozinha",
+            "detalhe": "e saiba usá-los."
+          },
+          {
+            "destaque": "Combine com a família",
+            "detalhe": "por onde sair de casa e onde se encontram lá fora."
+          },
+          {
+            "destaque": "Guarde fósforos e isqueiros",
+            "detalhe": "longe das crianças."
+          },
+          {
+            "destaque": "Não cozinhe sem vigiar",
+            "detalhe": "e não ligue muitos aparelhos à mesma tomada."
+          }
+        ]
+      }
+    ]
+  },
+  "materias-perigosas": {
+    "primeiro": {
+      "titulo": "Se vir um acidente",
+      "passos": [
+        {
+          "fig": "vento",
+          "t": "Afaste-se para o lado de onde vem o vento.",
+          "d": "Não atravesse fumo, derrames nem zonas vedadas."
+        },
+        {
+          "fig": "nao-filmar",
+          "t": "Não se aproxime para ver nem filmar.",
+          "d": "Não toque em nada e não fume nem acenda chamas."
+        },
+        {
+          "fig": "ligar",
+          "t": "Ligue 112 já em segurança.",
+          "d": "Diga onde é e o que viu. Se puder, os números da placa laranja do veículo."
+        }
+      ]
+    },
+    "se": {
+      "titulo": "E se…",
+      "passos": [
+        {
+          "q": "Mandaram ficar em casa?",
+          "fig": "casa-fechar",
+          "t": "Feche portas e janelas.",
+          "d": "Desligue a ventilação, tape as frinchas e fique numa divisão interior."
+        },
+        {
+          "q": "Os filhos estão na escola?",
+          "fig": "escola",
+          "t": "Não os vá buscar.",
+          "d": "A escola tem um plano para os proteger."
+        },
+        {
+          "q": "Teve contacto com o produto?",
+          "fig": "lavar",
+          "t": "Tire a roupa e lave-se bem.",
+          "d": "Evite tocar noutras pessoas. Ligue para o Centro de Informação Antivenenos, 800 250 250."
+        }
+      ]
+    },
+    "mais": [
+      {
+        "titulo": "Até ser seguro",
+        "passos": [
+          {
+            "destaque": "Se as autoridades mandarem sair,",
+            "detalhe": "siga o caminho que indicarem."
+          },
+          {
+            "destaque": "Ouça a rádio",
+            "detalhe": "e só saia de casa quando as autoridades disserem."
+          },
+          {
+            "destaque": "Não volte à zona",
+            "detalhe": "até as autoridades dizerem que é seguro."
+          },
+          {
+            "destaque": "Areje a casa",
+            "detalhe": "quando as autoridades disserem que pode."
+          },
+          {
+            "destaque": "Não apanhe objetos nem animais",
+            "detalhe": "da zona afetada."
+          }
+        ]
+      },
+      {
+        "titulo": "Para estar preparado",
+        "passos": [
+          {
+            "destaque": "Saiba como vai receber os avisos",
+            "detalhe": "das autoridades na sua zona."
+          },
+          {
+            "destaque": "Tenha à mão",
+            "detalhe": "os contactos de emergência e uma lanterna."
+          }
+        ]
+      }
+    ]
+  },
+  "energia": {
+    "primeiro": {
+      "titulo": "Durante a falha de energia",
+      "passos": [
+        {
+          "fig": "lanterna",
+          "t": "Use lanternas, não velas.",
+          "d": "As velas podem causar incêndios."
+        },
+        {
+          "fig": "tomada",
+          "t": "Desligue os aparelhos da tomada.",
+          "d": "Deixe só uma luz ligada para saber quando a energia volta."
+        },
+        {
+          "fig": "frigorifico",
+          "t": "Mantenha o frigorífico fechado.",
+          "d": "E a arca também, para conservar o frio."
+        }
+      ]
+    },
+    "se": {
+      "titulo": "E se…",
+      "passos": [
+        {
+          "q": "Tem gerador ou fogareiro?",
+          "fig": "gerador",
+          "t": "Nunca o use dentro de casa.",
+          "d": "Nem grelhadores, nem noutro espaço fechado: libertam monóxido de carbono, um gás que mata."
+        },
+        {
+          "q": "Vê fios caídos?",
+          "fig": "cabo",
+          "t": "Afaste-se.",
+          "d": "Para avisar de uma avaria, ligue para a E-REDES, 800 506 506."
+        },
+        {
+          "q": "Alguém depende de um aparelho médico?",
+          "fig": "medico",
+          "t": "Sem bateria, ligue 112.",
+          "d": "E combine antes uma alternativa com os serviços de saúde."
+        }
+      ]
+    },
+    "mais": [
+      {
+        "titulo": "Enquanto espera",
+        "passos": [
+          {
+            "destaque": "Ouça a rádio a pilhas",
+            "detalhe": "ou a do carro para saber o que se passa."
+          },
+          {
+            "destaque": "Poupe a bateria do telemóvel.",
+            "detalhe": "Use-o só para o essencial."
+          }
+        ]
+      },
+      {
+        "titulo": "Quando a energia voltar",
+        "passos": [
+          {
+            "destaque": "Antes de voltar a ligar os aparelhos,",
+            "detalhe": "veja se estão secos e sem estragos. Ligue-os aos poucos."
+          },
+          {
+            "destaque": "Na dúvida, deite fora",
+            "detalhe": "a comida que ficou demasiado tempo sem frio ou que cheira mal."
+          },
+          {
+            "destaque": "Peça ajuda",
+            "detalhe": "se houver fios, aparelhos ou instalações danificados."
+          }
+        ]
+      },
+      {
+        "titulo": "Para estar preparado",
+        "passos": [
+          {
+            "destaque": "Tenha lanternas, pilhas, um rádio a pilhas e uma bateria externa carregada.",
+            "detalhe": ""
+          },
+          {
+            "destaque": "Guarde água e comida",
+            "detalhe": "que não precise de frio nem de ser cozinhada, e os medicamentos essenciais."
+          },
+          {
+            "destaque": "Saiba abrir à mão",
+            "detalhe": "o portão da garagem e outras portas elétricas."
+          }
+        ]
+      }
+    ]
+  }
+}

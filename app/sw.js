@@ -2,7 +2,7 @@
 // Estratégia: rede primeiro (para ter sempre a versão mais recente) e, sem rede, a cópia guardada.
 // Ao publicar uma nova versão, atualize VERSAO para renovar a cópia guardada.
 
-const VERSAO = '0.3.0';
+const VERSAO = '0.4.0';
 const CACHE = `pcc-${VERSAO}`;
 
 const FICHEIROS = [
@@ -15,11 +15,14 @@ const FICHEIROS = [
   'js/install.js',
   'js/icons.js',
   'js/store.js',
-  'js/guias.js',
+  'js/conteudo.js',
   'js/figuras.js',
-  'js/contactos.js',
   'js/kit.js',
   'js/ipma.js',
+  'conteudo/kit.json',
+  'conteudo/contactos.json',
+  'conteudo/guias.json',
+  'conteudo/textos.json',
   'fonts/atkinson-hyperlegible-latin-400-normal.woff2',
   'fonts/atkinson-hyperlegible-latin-700-normal.woff2',
   'fonts/barlow-semi-condensed-latin-500-normal.woff2',
@@ -57,7 +60,9 @@ self.addEventListener('fetch', (e) => {
   e.respondWith((async () => {
     const cache = await caches.open(CACHE);
     try {
-      const resposta = await fetch(pedido);
+      // "no-cache": confirma sempre com o servidor, para nunca misturar ficheiros
+      // de versões diferentes logo a seguir a uma publicação.
+      const resposta = await fetch(pedido, { cache: 'no-cache' });
       if (resposta.ok) cache.put(pedido, resposta.clone());
       return resposta;
     } catch {

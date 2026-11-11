@@ -3,16 +3,15 @@
 
 import { icon } from './icons.js';
 import { ler } from './store.js';
-import { GUIAS_VISUAIS, FONTE_GUIAS, SEGUIR_AUTORIDADES } from './guias.js';
-import { figura, montarFiguras } from './figuras.js';
-import { CONTACTOS, paraTel } from './contactos.js';
+import { conteudo, esc, paragrafos, paraTel, ligacaoSegura } from './conteudo.js';
+import { figura, montarFiguras, NOMES_FIGURAS } from './figuras.js';
 import { corpoKit, montarKit, resumoKit } from './kit.js';
 import {
-  avisos as fonteAvisos, sismos as fonteSismos, avisosDoDistrito, periodo, quando, dia, hora,
-  textoObtido, atualizarEcra, RECENTE, SITE_AVISOS, SITE_SISMOS,
+  avisos as fonteAvisos, sismos as fonteSismos, avisosDoDistrito, periodo, quando, dia, hora, meiaNoite,
+  textoObtido, atualizarEcra, classeVivo, RECENTE, SITE_AVISOS, SITE_SISMOS,
 } from './ipma.js';
 
-export const VERSAO = '0.3.0';
+export const VERSAO = '0.4.0';
 
 const AZUL = '#0B57A4';
 
@@ -180,7 +179,7 @@ function inicio() {
 
   const mais = e.mais ? `<a class="st-mais" href="#/avisos">${e.mais}${icon('chev', 'i chev')}</a>` : '';
   const obtido = e.obtido
-    ? `<p class="st-meta"><span data-obtido>${textoObtido(fonteAvisos)}</span> · Fonte: <a href="${SITE_AVISOS}" target="_blank" rel="noopener">IPMA</a></p>`
+    ? `<p class="st-meta"><span class="${classeVivo(fonteAvisos)}" aria-hidden="true"></span><span data-obtido>${textoObtido(fonteAvisos)}</span> · Fonte: <a href="${SITE_AVISOS}" target="_blank" rel="noopener">IPMA</a></p>`
     : '';
 
   const preparacao = `
@@ -280,32 +279,47 @@ const SIMPLES = {
 };
 
 function agir() {
+  const t = conteudo.textos?.agir || {};
   return {
     title: 'O que fazer se…',
     theme: AZUL,
     html: pagina({
       titulo: 'O que fazer se…',
       corpo: `
-        <p class="intro">Escolha o risco para ver o que fazer na hora, depois e para estar preparado.</p>
+        ${t.intro ? `<p class="intro">${texto(t.intro)}</p>` : ''}
         <ul class="rows">${RISCOS.map((r) => linhaRisco(r)).join('')}</ul>
-        <p class="hint">Os guias funcionam sem internet. Em caso de emergência, ligue <a href="tel:112">112</a>.</p>`,
+        ${t.nota ? `<p class="hint">${texto(t.nota)}</p>` : ''}`,
     }),
   };
 }
 
-// Os números de telefone que aparecem nos guias passam a ligar com um toque.
-const NUMEROS_NOS_GUIAS = ['112', '808 24 24 24', '800 250 250', '800 506 506'];
-const NUMEROS_RE = new RegExp(`(?<!\\d)(${NUMEROS_NOS_GUIAS.join('|')})(?!\\d)`, 'g');
-const comLigacoes = (texto) => texto.replace(NUMEROS_RE, (n) => `<a href="tel:${paraTel(n)}">${n}</a>`);
+// Os números confirmados em "Contactos úteis" (e o 112) ligam com um toque
+// sempre que aparecem num texto.
+function numerosConfirmados() {
+  const numeros = new Set(['112']);
+  (conteudo.contactos?.grupos || []).forEach((g) => (g.itens || []).forEach((c) => {
+    if (c.confirmado && c.num) numeros.add(String(c.num).trim());
+  }));
+  return [...numeros].sort((a, b) => b.length - a.length);
+}
+const escRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+function comLigacoes(html) {
+  const re = new RegExp(`(?<!\\d)(${numerosConfirmados().map(escRegex).join('|')})(?!\\d)`, 'g');
+  return html.replace(re, (n) => `<a href="tel:${paraTel(n)}">${n}</a>`);
+}
 
-const passoTexto = ([destaque, detalhe]) =>
-  `<li><b>${comLigacoes(destaque)}</b>${detalhe ? ` ${comLigacoes(detalhe)}` : ''}</li>`;
+// Texto editado: escapado e com os números de telefone a ligar.
+const texto = (t) => comLigacoes(esc(t));
+
+const passoTexto = (p) =>
+  `<li><b>${texto(p.destaque)}</b>${p.detalhe ? ` ${texto(p.detalhe)}` : ''}</li>`;
 
 // Palavras com hífen ("Baixe-se") não se partem ao meio da linha.
 const semQuebra = (texto) => texto.replace(/(\p{L}+-\p{L}+)/gu, '<span class="nw">$1</span>');
 
 // Guia visual: passos curtos com figuras animadas; o que não é urgente fica recolhido.
 function guiaVisual(g) {
+  const linhas = (t) => semQuebra(texto(t));
   const passo = (p, i, numerado) => `
     <li class="vis-passo">
       <div class="fig-caixa">
@@ -313,30 +327,36 @@ function guiaVisual(g) {
         <button class="fig" type="button" aria-label="Repetir animação"${numerado ? ` style="--atraso:${i * 450}ms"` : ''}>${figura(p.fig)}</button>
       </div>
       <div class="vis-txt">
-        <p class="vis-t">${p.q ? `<span class="vis-q">${semQuebra(p.q)}</span> ` : ''}${semQuebra(comLigacoes(p.t))}</p>
-        <p class="vis-d">${semQuebra(comLigacoes(p.d))}</p>
+        <p class="vis-t">${p.q ? `<span class="vis-q">${linhas(p.q)}</span> ` : ''}${linhas(p.t)}</p>
+        ${p.d ? `<p class="vis-d">${linhas(p.d)}</p>` : ''}
       </div>
     </li>`;
+  const comTexto = (passos) => (passos || []).filter((p) => p && p.t);
+  const primeiro = g.primeiro || {};
+  const se = g.se || {};
+  const rodape = conteudo.textos?.guias || {};
 
   return `
     <div data-guia-visual>
+      ${comTexto(primeiro.passos).length ? `
       <section class="guia-sec" aria-labelledby="gv-1">
-        <h2 class="sh" id="gv-1">${g.primeiro.titulo}</h2>
-        <ol class="vis-passos" role="list">${g.primeiro.passos.map((p, i) => passo(p, i, true)).join('')}</ol>
-      </section>
+        <h2 class="sh" id="gv-1">${esc(primeiro.titulo)}</h2>
+        <ol class="vis-passos" role="list">${comTexto(primeiro.passos).map((p, i) => passo(p, i, true)).join('')}</ol>
+      </section>` : ''}
+      ${comTexto(se.passos).length ? `
       <section class="guia-sec" aria-labelledby="gv-2">
-        <h2 class="sh" id="gv-2">${g.se.titulo}</h2>
-        <ul class="vis-passos" role="list">${g.se.passos.map((p, i) => passo(p, i, false)).join('')}</ul>
-      </section>
+        <h2 class="sh" id="gv-2">${esc(se.titulo)}</h2>
+        <ul class="vis-passos" role="list">${comTexto(se.passos).map((p, i) => passo(p, i, false)).join('')}</ul>
+      </section>` : ''}
       <div class="mais-grupo">
-        ${g.mais.map((s) => `
+        ${(g.mais || []).filter((s) => s && s.titulo).map((s) => `
           <details class="mais">
-            <summary>${s.titulo}${icon('chev', 'i chev')}</summary>
-            <ul class="passos">${s.passos.map(passoTexto).join('')}</ul>
+            <summary>${esc(s.titulo)}${icon('chev', 'i chev')}</summary>
+            <ul class="passos">${(s.passos || []).filter((p) => p && p.destaque).map(passoTexto).join('')}</ul>
           </details>`).join('')}
       </div>
     </div>
-    <p class="meta">${SEGUIR_AUTORIDADES}<br>${FONTE_GUIAS}</p>`;
+    <p class="meta">${[rodape.seguir, rodape.fonte].filter(Boolean).map(esc).join('<br>')}</p>`;
 }
 
 function guiaRisco(id) {
@@ -345,24 +365,47 @@ function guiaRisco(id) {
   const base = { title: r.nome, theme: AZUL };
   const cabecalho = { titulo: r.nome, voltar: '#/agir', voltarTxt: 'O que fazer se…' };
 
-  const guia = GUIAS_VISUAIS[id];
+  const guia = conteudo.guias?.[id];
   if (guia) return { ...base, html: pagina({ ...cabecalho, corpo: guiaVisual(guia) }), montar: montarFiguras };
   return { ...base, html: pagina({ ...cabecalho, corpo: emBreve(`O que fazer antes, durante e depois ${r.de}.`) }) };
 }
 
+// Folha de referência das figuras, para quem edita os guias escolher a certa.
+// Não aparece no menu: abre-se em upcc.pt/#/figuras.
+function figurasEcra() {
+  return {
+    title: 'Figuras dos guias',
+    theme: AZUL,
+    html: pagina({
+      titulo: 'Figuras dos guias',
+      corpo: `
+        <p class="intro">Todas as figuras que se podem usar nos passos dos guias, com o nome a escolher na página de edição. Toque numa figura para ver a animação.</p>
+        <ul class="figs" data-guia-visual>
+          ${NOMES_FIGURAS.map((nome) => `
+            <li><button class="fig" type="button" aria-label="Repetir animação">${figura(nome)}</button><code>${nome}</code></li>`).join('')}
+        </ul>`,
+    }),
+    montar: montarFiguras,
+  };
+}
+
 function contactos() {
+  const dados = conteudo.contactos || {};
   const linha = (c) => {
-    const texto = `
-      <span class="ct-t">${c.nome}</span>
-      ${c.confirmado && c.num ? `<span class="ct-num">${c.num}</span>` : '<span class="ct-falta">Número por confirmar</span>'}
-      <span class="ct-d">${c.desc}</span>`;
-    if (!c.confirmado || !c.num) return `<li><div class="ct ct-pend"><span class="ct-txt">${texto}</span></div></li>`;
-    const fonte = c.fonte
-      ? `<p class="ct-fonte">Confirmado em <a href="${c.fonte.url}" target="_blank" rel="noopener">${c.fonte.nome}</a> a ${c.consultado}</p>`
+    const ligar = Boolean(c.confirmado && c.num);
+    const corpo = `
+      <span class="ct-t">${esc(c.nome)}</span>
+      ${ligar ? `<span class="ct-num">${esc(c.num)}</span>` : '<span class="ct-falta">Número por confirmar</span>'}
+      ${c.desc ? `<span class="ct-d">${esc(c.desc)}</span>` : ''}`;
+    if (!ligar) return `<li><div class="ct ct-pend"><span class="ct-txt">${corpo}</span></div></li>`;
+    const url = ligacaoSegura(c.fonteUrl);
+    const nomeFonte = esc(c.fonte || url);
+    const fonte = nomeFonte
+      ? `<p class="ct-fonte">Confirmado em ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${nomeFonte}</a>` : nomeFonte}${c.consultado ? ` a ${esc(c.consultado)}` : ''}</p>`
       : '';
     return `
       <li><a class="ct${c.sos ? ' ct-sos' : ''}" href="tel:${paraTel(c.num)}">
-        <span class="ct-txt"><span class="vh">Ligar para </span>${texto}</span>
+        <span class="ct-txt"><span class="vh">Ligar para </span>${corpo}</span>
         <span class="ct-ic">${icon('phone')}</span>
       </a>${fonte}</li>`;
   };
@@ -373,13 +416,13 @@ function contactos() {
     html: pagina({
       titulo: 'Contactos úteis',
       corpo: `
-        <p class="intro">Perigo imediato? Ligue <a href="tel:112">112</a>. Para dúvidas de saúde que não sejam uma emergência, ligue para o SNS 24. Toque num contacto para ligar.</p>
-        <p class="nota">Só aparecem os números confirmados numa fonte oficial. Os contactos sem número ainda estão a ser confirmados.</p>
-        ${CONTACTOS.map((g, i) => `
+        ${dados.intro ? `<p class="intro">${texto(dados.intro)}</p>` : ''}
+        ${dados.nota ? `<p class="nota">${texto(dados.nota)}</p>` : ''}
+        ${(dados.grupos || []).filter((g) => g && g.titulo).map((g, i) => `
           <section class="guia-sec" aria-labelledby="ct-${i}">
-            <h2 class="sh" id="ct-${i}">${g.titulo}</h2>
-            ${g.nota ? `<p class="nota">${comLigacoes(g.nota)}</p>` : ''}
-            <ul class="cts">${g.itens.map(linha).join('')}</ul>
+            <h2 class="sh" id="ct-${i}">${esc(g.titulo)}</h2>
+            ${g.nota ? `<p class="nota">${texto(g.nota)}</p>` : ''}
+            <ul class="cts">${(g.itens || []).filter((c) => c && c.nome).map(linha).join('')}</ul>
           </section>`).join('')}`,
     }),
   };
@@ -401,7 +444,7 @@ const primeiraMaiuscula = (t) => t.charAt(0).toUpperCase() + t.slice(1);
 function linhaAviso(a, agora) {
   const guia = a.risco ? `<a class="av-g" href="#/agir/${a.risco}">${a.guia}${icon('arrow')}</a>` : '';
   return `
-    <li class="av av-${a.nivel.id}">
+    <li class="av av-${a.nivel.id}" id="av-${a.ref}">
       <p class="av-n"><span class="av-cor" aria-hidden="true"></span>${a.nivel.nome}<span class="vh">:</span></p>
       <p class="av-t">${a.nome}</p>
       <p class="av-q">${primeiraMaiuscula(periodo(a, agora))}</p>
@@ -410,11 +453,76 @@ function linhaAviso(a, agora) {
     </li>`;
 }
 
+// Movimento só uma vez por visita: quem volta ao ecrã já conhece o desenho.
+const animados = new Set();
+const calmo = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+function animarUmaVez(chave, el, duracao) {
+  if (!el || animados.has(chave)) return;
+  animados.add(chave);
+  requestAnimationFrame(() => el.classList.add('play'));
+  setTimeout(() => el.classList.remove('play'), duracao);
+}
+function destacar(el, bloco = 'center') {
+  el.scrollIntoView({ behavior: calmo() ? 'auto' : 'smooth', block: bloco });
+  el.classList.remove('foco');
+  void el.getBoundingClientRect();
+  el.classList.add('foco');
+}
+
+// Os próximos 3 dias numa linha: cada aviso é uma barra da cor do nível, com a hora atual marcada.
+// A lista por baixo tem a mesma informação por escrito, por isso a linha é só visual.
+function linhaDoTempo(todos, agora) {
+  const ini = meiaNoite(agora);
+  const fim = meiaNoite(agora, 3);
+  const pos = (ms) => Math.min(100, Math.max(0, ((ms - ini) / (fim - ini)) * 100));
+  const dias = [0, 1, 2].map((n) => primeiraMaiuscula(dia(meiaNoite(agora, n) + 12 * 36e5, agora)));
+
+  const linhas = [];
+  todos.forEach((a) => {
+    const nome = a.costa ? `${a.nome} (costa)` : a.nome;
+    let linha = linhas.find((l) => l.nome === nome);
+    if (!linha) linhas.push(linha = { nome, avisos: [] });
+    linha.avisos.push(a);
+  });
+
+  const barras = (l) => l.avisos.filter((a) => a.fim > ini && a.ini < fim).map((a) => {
+    const x = pos(a.ini);
+    const w = Math.max(pos(a.fim) - x, 1.5);
+    return `<span class="tl-b tl-${a.nivel.id}" style="--x:${x.toFixed(2)}%;--w:${w.toFixed(2)}%" data-alvo="av-${a.ref}"></span>`;
+  }).join('');
+  const corpo = linhas.length
+    ? linhas.map((l, i) => `
+        <div class="tl-linha" style="--i:${i}"><span class="tl-nome">${esc(l.nome)}</span><span class="tl-pista">${barras(l)}</span></div>`).join('')
+    : `<div class="tl-linha"><span class="tl-nome">Sem avisos</span><span class="tl-pista"><span class="tl-b tl-livre" style="--x:0%;--w:100%"></span></span></div>`;
+  const xAgora = pos(agora);
+
+  return `
+    <figure class="tl" aria-hidden="true">
+      <div class="tl-dias">${dias.map((d) => `<span>${d}</span>`).join('')}</div>
+      <div class="tl-linhas">
+        ${corpo}
+        <span class="tl-agora${xAgora < 8 ? ' ini' : ''}" style="--x:${xAgora.toFixed(2)}%"><span>Agora</span></span>
+      </div>
+    </figure>`;
+}
+
+function montarAvisos(raiz) {
+  atualizarEcra(raiz, fonteAvisos);
+  const tl = raiz.querySelector('.tl');
+  if (!tl) return;
+  animarUmaVez('avisos', tl, 1600);
+  tl.addEventListener('click', (e) => {
+    const barra = e.target.closest('[data-alvo]');
+    const alvo = barra && raiz.querySelector(`#${barra.dataset.alvo}`);
+    if (alvo) destacar(alvo);
+  });
+}
+
 function avisosEcra() {
   const titulo = 'Avisos do tempo';
   const dados = fonteAvisos.guardado();
   const agora = Date.now();
-  const todos = avisosDoDistrito(dados, agora);
+  const todos = avisosDoDistrito(dados, agora).map((a, ref) => ({ ...a, ref }));
   const grupo = (id, nome, lista, nota = '') => (lista.length ? `
     <section class="guia-sec" aria-labelledby="av-${id}">
       <h2 class="sh" id="av-${id}">${nome}</h2>
@@ -446,11 +554,12 @@ function avisosEcra() {
       titulo,
       corpo: `
         <p class="intro">Avisos do IPMA para o distrito de Leiria nos próximos 3 dias.</p>
-        <p class="obtido" data-obtido>${textoObtido(fonteAvisos)}</p>
+        <p class="obtido"><span class="${classeVivo(fonteAvisos)}" aria-hidden="true"></span><span data-obtido>${textoObtido(fonteAvisos)}</span></p>
+        ${dados && (todos.length || agora - dados.obtido <= RECENTE) ? linhaDoTempo(todos, agora) : ''}
         ${corpo}
         <p class="meta">Fonte: <a href="${SITE_AVISOS}" target="_blank" rel="noopener">IPMA – Instituto Português do Mar e da Atmosfera</a>. Os avisos são para todo o distrito de Leiria.</p>`,
     }),
-    montar: (raiz) => atualizarEcra(raiz, fonteAvisos),
+    montar: montarAvisos,
     dinamico: true,
   };
 }
@@ -459,19 +568,98 @@ function avisosEcra() {
 
 const magnitude = (m) => (m === null ? '–' : m.toLocaleString('pt-PT', { minimumFractionDigits: 1, maximumFractionDigits: 1 }));
 
-function linhaSismo(s, agora) {
+// Linha de um sismo. Os que aparecem no diagrama são botões: tocar mostra o ponto.
+function linhaSismo(s, agora, noDiagrama = false) {
   const sentido = s.sentido
-    ? `<span class="sis-s">Sentido pela população${s.grau ? ` (intensidade ${s.grau})` : ''}${s.local ? ` · ${s.local}` : ''}</span>`
+    ? `<span class="sis-s">Sentido pela população${s.grau ? ` (intensidade ${esc(s.grau)})` : ''}${s.local ? ` · ${esc(s.local)}` : ''}</span>`
     : '';
-  return `
-    <li class="sis-i">
+  const miolo = `
       <span class="sis-m"><b>${magnitude(s.mag)}</b><span>magnitude</span></span>
       <span class="sis-txt">
-        <span class="sis-r">${s.regiao || 'Local por indicar'}</span>
+        <span class="sis-r">${esc(s.regiao) || 'Local por indicar'}</span>
         <span class="sis-q">${primeiraMaiuscula(dia(s.hora, agora))}, ${hora(s.hora)} · a ${s.km} km</span>
         ${sentido}
-      </span>
-    </li>`;
+      </span>`;
+  return noDiagrama
+    ? `<li><button class="sis-i sis-btn" type="button" id="sis-${s.ref}" data-sis="${s.ref}" aria-pressed="false">${miolo}</button></li>`
+    : `<li class="sis-i">${miolo}</li>`;
+}
+
+const raioSismo = (m) => (2.4 + Math.max(m ?? 0.6, 0) * 1.8).toFixed(1);
+
+// Diagrama com Caranguejeira ao centro e anéis a 25, 50 e 100 km. Cada sismo fica
+// na direção e à distância onde aconteceu; o tamanho do ponto mostra a magnitude.
+// Uma unidade do desenho é 1 km.
+function diagramaSismos(perto, agora) {
+  const pontos = perto.filter((s) => Number.isFinite(s.rumo)).sort((a, b) => a.hora - b.hora);
+  const passo = Math.min(110, 1000 / Math.max(pontos.length, 1));
+  const SEMANA = 7 * 864e5;
+  const maisPerto = perto.slice().sort((a, b) => a.km - b.km)[0];
+  const resumo = perto.length
+    ? `${perto.length === 1 ? '1 sismo' : `${perto.length} sismos`} a menos de 100 km nos últimos 30 dias. O mais próximo foi ${maisPerto.regiao}, a ${maisPerto.km} km.`
+    : 'Nenhum sismo a menos de 100 km nos últimos 30 dias.';
+  const posicao = (s) => {
+    const a = (s.rumo * Math.PI) / 180;
+    return `${(s.km * Math.sin(a)).toFixed(1)} ${(-s.km * Math.cos(a)).toFixed(1)}`;
+  };
+  const etiqueta = (r) => `<text class="radar-km" x="${(r * 0.7071 + 1.5).toFixed(1)}" y="${(-r * 0.7071 - 1.5).toFixed(1)}">${r} km</text>`;
+
+  return `
+    <figure class="radar">
+      <svg class="radar-svg" viewBox="-114 -114 228 228" role="img" aria-label="${esc(resumo)}">
+        <circle class="radar-fundo" r="100"/>
+        <path class="radar-eixo" d="M0 -100V100M-100 0H100"/>
+        ${[100, 50, 25].map((r, i) => `<circle class="radar-anel" r="${r}" style="--i:${i}"/>`).join('')}
+        <circle class="radar-ref" cx="-8.6" cy="-0.1" r="1.8"/>
+        ${pontos.map((s, i) => `
+        <g class="radar-p${agora - s.hora < SEMANA ? ' recente' : ''}" data-sis="${s.ref}" transform="translate(${posicao(s)})" style="--d:${Math.round(700 + i * passo)}ms">
+          <circle class="radar-onda" r="${raioSismo(s.mag)}"/>
+          <circle class="radar-ponto" r="${raioSismo(s.mag)}"/>
+          <circle class="radar-toque" r="10"/>
+        </g>`).join('')}
+        <circle class="radar-centro" r="3"/>
+        <g class="radar-textos">
+          ${[25, 50, 100].map(etiqueta).join('')}
+          <text class="radar-n" x="0" y="-104">N</text>
+          <text class="radar-lbl radar-lbl-ref" x="-12" y="3" text-anchor="end">Leiria</text>
+          <text class="radar-lbl" x="5" y="-5">Caranguejeira</text>
+        </g>
+      </svg>
+      <figcaption class="radar-leg">
+        <svg class="radar-escala" viewBox="0 -1 104 32" aria-hidden="true">
+          ${[1, 2, 3, 4].map((m, i) => `<circle class="radar-ponto" cx="${10 + i * 26}" cy="10" r="${raioSismo(m)}"/><text x="${10 + i * 26}" y="29" text-anchor="middle">${m}</text>`).join('')}
+        </svg>
+        <p>O tamanho de cada ponto mostra a magnitude. Abaixo de 2,5, um sismo quase nunca se sente; a partir de 4, sente-se numa área grande. Os pontos mais escuros são dos últimos 7 dias.</p>
+      </figcaption>
+    </figure>`;
+}
+
+function montarSismos(raiz) {
+  atualizarEcra(raiz, fonteSismos);
+  const fig = raiz.querySelector('.radar');
+  if (!fig) return;
+  const pontos = fig.querySelectorAll('.radar-p').length;
+  animarUmaVez('sismos', fig, 700 + pontos * Math.min(110, 1000 / Math.max(pontos, 1)) + 1300);
+
+  const escolher = (ref, origem) => {
+    raiz.querySelectorAll('.radar-p.sel').forEach((el) => el.classList.remove('sel'));
+    raiz.querySelectorAll('.sis-btn').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.sis === ref)));
+    const ponto = fig.querySelector(`.radar-p[data-sis="${ref}"]`);
+    if (ponto) {
+      ponto.classList.add('sel');
+      ponto.classList.remove('pulsar');
+      void ponto.getBoundingClientRect();
+      ponto.classList.add('pulsar');
+    }
+    const linha = raiz.querySelector(`#sis-${ref}`);
+    if (origem === 'diagrama' && linha) destacar(linha, 'nearest');
+    if (origem === 'lista') fig.scrollIntoView({ behavior: calmo() ? 'auto' : 'smooth', block: 'nearest' });
+  };
+  fig.addEventListener('click', (e) => {
+    const ponto = e.target.closest('.radar-p');
+    if (ponto) escolher(ponto.dataset.sis, 'diagrama');
+  });
+  raiz.querySelectorAll('.sis-btn').forEach((b) => b.addEventListener('click', () => escolher(b.dataset.sis, 'lista')));
 }
 
 function sismosEcra() {
@@ -479,17 +667,17 @@ function sismosEcra() {
   const dados = fonteSismos.guardado();
   const agora = Date.now();
   const lista = dados ? dados.lista.slice().sort((x, y) => y.hora - x.hora) : [];
-  const perto = lista.filter((s) => s.km <= 100);
+  const perto = lista.filter((s) => s.km <= 100).map((s, ref) => ({ ...s, ref: String(ref) }));
   const fortes = lista.filter((s) => s.km > 100 && (s.sentido || (s.mag !== null && s.mag >= 3)));
-  const grupo = (id, nome, nota, itens, vazio) => `
+  const grupo = (id, nome, nota, itens, vazio, noDiagrama = false) => `
     <section class="guia-sec" aria-labelledby="sis-${id}">
       <h2 class="sh" id="sis-${id}">${nome}</h2>
       <p class="nota">${nota}</p>
-      ${itens.length ? `<ul class="sis">${itens.map((s) => linhaSismo(s, agora)).join('')}</ul>` : `<p class="sis-vazio">${vazio}</p>`}
+      ${itens.length ? `<ul class="sis">${itens.map((s) => linhaSismo(s, agora, noDiagrama)).join('')}</ul>` : `<p class="sis-vazio">${vazio}</p>`}
     </section>`;
 
   const corpo = dados
-    ? grupo('perto', 'Perto de Caranguejeira', 'Até 100 km de distância.', perto, 'Nenhum sismo registado nos últimos 30 dias.')
+    ? grupo('perto', 'Perto de Caranguejeira', 'Até 100 km de distância. Toque num sismo para o ver no diagrama.', perto, 'Nenhum sismo registado nos últimos 30 dias.', true)
       + grupo('fortes', 'Mais fortes na região', 'Entre 100 e 400 km, com magnitude 3 ou mais, ou sentidos pela população.', fortes, 'Nenhum nos últimos 30 dias.')
     : `<div class="soon"><h2 class="soon-k">${fonteSismos.falhou() ? 'Sem ligação' : 'A consultar o IPMA…'}</h2>
         <p class="soon-t">${fonteSismos.falhou() ? 'Ligue-se à internet para ver os sismos registados.' : 'A obter os sismos dos últimos 30 dias.'}</p></div>`;
@@ -501,17 +689,19 @@ function sismosEcra() {
       titulo,
       corpo: `
         <p class="intro">Sismos registados pelo IPMA nos últimos 30 dias, até 400 km de Caranguejeira.</p>
-        <p class="obtido" data-obtido>${textoObtido(fonteSismos)}</p>
+        <p class="obtido"><span class="${classeVivo(fonteSismos)}" aria-hidden="true"></span><span data-obtido>${textoObtido(fonteSismos)}</span></p>
+        ${dados ? diagramaSismos(perto, agora) : ''}
         ${corpo}
         <a class="next" href="#/agir/sismo">O que fazer num sismo${icon('arrow')}</a>
         <p class="meta">Fonte: <a href="${SITE_SISMOS}" target="_blank" rel="noopener">IPMA – Instituto Português do Mar e da Atmosfera</a>. Horas de Portugal continental. A magnitude pode ser revista pelo IPMA nos dias seguintes.</p>`,
     }),
-    montar: (raiz) => atualizarEcra(raiz, fonteSismos),
+    montar: montarSismos,
     dinamico: true,
   };
 }
 
 function sobre() {
+  const t = conteudo.textos?.sobre || {};
   return {
     title: 'Sobre a app',
     theme: AZUL,
@@ -519,11 +709,10 @@ function sobre() {
       titulo: 'Sobre a app',
       corpo: `
         <div class="prose">
-          <p>Esta app ajuda as famílias da freguesia de Caranguejeira a prepararem-se para emergências e a saberem o que fazer quando acontecem.</p>
-          <h2>Privacidade</h2>
-          <p>Não tem contas, publicidade nem rastreamento. O que guardar na app, como o kit ou o plano da família, fica só neste aparelho.</p>
-          <h2>Fontes</h2>
-          <p>Os avisos do tempo e os sismos são do <a href="https://www.ipma.pt/pt/" target="_blank" rel="noopener">IPMA – Instituto Português do Mar e da Atmosfera</a>. A app guarda a última consulta para a poder mostrar sem rede. Os guias "O que fazer se…" seguem as recomendações da Autoridade Nacional de Emergência e Proteção Civil (ANEPC).</p>
+          ${paragrafos(t.intro)}
+          ${(t.secoes || []).filter((s) => s && (s.titulo || s.texto)).map((s) => `
+            ${s.titulo ? `<h2>${esc(s.titulo)}</h2>` : ''}
+            ${paragrafos(s.texto)}`).join('')}
           <div data-install hidden>
             <h2>Instalar a app</h2>
             <p>Instale a app para a ter no ecrã principal, como as outras apps.</p>
@@ -544,6 +733,7 @@ export function resolver(nome, sub) {
   if (nome === 'kit') return kit();
   if (nome === 'avisos') return avisosEcra();
   if (nome === 'sismos') return sismosEcra();
+  if (nome === 'figuras') return figurasEcra();
   if (nome === 'sobre') return sobre();
   if (SIMPLES[nome]) {
     const [titulo, texto] = SIMPLES[nome];
