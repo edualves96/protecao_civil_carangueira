@@ -253,20 +253,22 @@ function inicio() {
 // Formulários de edição no Pages CMS (ver README), um por ficheiro de app/conteudo/.
 const EDITOR = 'https://app.pagescms.org/edualves96/protecao_civil_carangueira/ccr-d836c5a6-1m8oud/file/';
 
-function pagina({ titulo, corpo, voltar = '#/', voltarTxt = 'Início', editar = '' }) {
+// `largo`: em ecrãs grandes a página usa mais largura (para pôr duas colunas lado a lado).
+function pagina({ titulo, corpo, voltar = '#/', voltarTxt = 'Início', editar = '', largo = false }) {
   const lapis = editar
     ? `<a class="ed" href="${EDITOR}${editar}" target="_blank" rel="noopener" aria-label="Editar o conteúdo desta página" title="Editar no Pages CMS">${icon('edit')}</a>`
     : '';
+  const wrap = largo ? 'wrap wrap-largo' : 'wrap';
   return `
     <header class="phead">
-      <div class="wrap">
+      <div class="${wrap}">
         <a class="back" href="${voltar}">${icon('back')}${voltarTxt}</a>
         ${lapis}
         <h1 class="ptitle">${titulo}</h1>
       </div>
     </header>
     <div class="edge" style="--edge:${AZUL}"></div>
-    <div class="wrap pbody">${corpo}</div>`;
+    <div class="${wrap} pbody">${corpo}</div>`;
 }
 
 function emBreve(texto) {
@@ -694,15 +696,22 @@ function sismosEcra() {
   return {
     title: titulo,
     theme: AZUL,
+    // No telemóvel fica tudo em coluna. Em ecrãs grandes, o diagrama fica à esquerda
+    // (e acompanha a página ao deslizar) e as listas à direita.
     html: pagina({
       titulo,
+      largo: true,
       corpo: `
         <p class="intro">Sismos registados pelo IPMA nos últimos 30 dias, até 400 km de Caranguejeira.</p>
         <p class="obtido"><span class="${classeVivo(fonteSismos)}" aria-hidden="true"></span><span data-obtido>${textoObtido(fonteSismos)}</span></p>
-        ${dados ? diagramaSismos(perto, agora) : ''}
-        ${corpo}
-        <a class="next" href="#/agir/sismo">O que fazer num sismo${icon('arrow')}</a>
-        <p class="meta">Fonte: <a href="${SITE_SISMOS}" target="_blank" rel="noopener">IPMA – Instituto Português do Mar e da Atmosfera</a>. Horas de Portugal continental. A magnitude pode ser revista pelo IPMA nos dias seguintes.</p>`,
+        <div class="sis-duo">
+          ${dados ? `<div class="sis-esq">${diagramaSismos(perto, agora)}</div>` : ''}
+          <div class="sis-dir">
+            ${corpo}
+            <a class="next" href="#/agir/sismo">O que fazer num sismo${icon('arrow')}</a>
+            <p class="meta">Fonte: <a href="${SITE_SISMOS}" target="_blank" rel="noopener">IPMA – Instituto Português do Mar e da Atmosfera</a>. Horas de Portugal continental. A magnitude pode ser revista pelo IPMA nos dias seguintes.</p>
+          </div>
+        </div>`,
     }),
     montar: montarSismos,
     dinamico: true,
