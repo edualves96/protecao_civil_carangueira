@@ -136,6 +136,26 @@ content:
             label: Nome da categoria
             type: string
             required: true
+          - name: icone
+            label: Ícone
+            description: O desenho que aparece ao lado do nome do grupo.
+            type: select
+            options:
+              values:
+                - name: agua
+                  label: Gota de água (água e comida)
+                - name: saude
+                  label: Estojo de primeiros socorros (saúde)
+                - name: luz
+                  label: Lanterna (luz e comunicação)
+                - name: documentos
+                  label: Documento (documentos e dinheiro)
+                - name: roupa
+                  label: Camisola (roupa e abrigo)
+                - name: ferramentas
+                  label: Chave inglesa (ferramentas)
+                - name: outro
+                  label: Caixa (outro)
           - name: dica
             label: Dica
             description: Uma frase curta por baixo do nome da categoria.

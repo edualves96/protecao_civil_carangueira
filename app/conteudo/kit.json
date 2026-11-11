@@ -3,6 +3,7 @@
   "categorias": [
     {
       "nome": "Água e comida",
+      "icone": "agua",
       "dica": "Para 3 dias. Ajuste ao número de pessoas da casa.",
       "itens": [
         {
@@ -20,6 +21,7 @@
     },
     {
       "nome": "Saúde e higiene",
+      "icone": "saude",
       "dica": "Inclua o que cada pessoa da casa usa todos os dias.",
       "itens": [
         {
@@ -46,6 +48,7 @@
     },
     {
       "nome": "Luz e comunicação",
+      "icone": "luz",
       "dica": "Para ter luz e saber o que se passa se faltar a energia.",
       "itens": [
         {
@@ -67,6 +70,7 @@
     },
     {
       "nome": "Documentos e dinheiro",
+      "icone": "documentos",
       "dica": "Guarde tudo junto, numa bolsa fácil de levar.",
       "itens": [
         {
@@ -88,6 +92,7 @@
     },
     {
       "nome": "Roupa e abrigo",
+      "icone": "roupa",
       "dica": "Escolha conforme a estação do ano.",
       "itens": [
         {
@@ -105,6 +110,7 @@
     },
     {
       "nome": "Ferramentas",
+      "icone": "ferramentas",
       "dica": "Para pequenas reparações e para proteger as mãos.",
       "itens": [
         {
