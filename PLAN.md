@@ -13,15 +13,51 @@ local focus on Caranguejeira.
 - **Own texts:** written from official guidance (ANEPC, IPMA, SNS 24), not copied from other apps.
 - **Local first:** Caranguejeira meeting points, local contacts and warnings for the Leiria district.
 
-## Platform
+## Platform: installable web app (PWA)
 
-The app will be a **web app that can be installed on the phone (PWA)**:
+The app is a website that can be installed on the phone like an app, without
+Google Play or the App Store.
 
-- One app for both Android and iPhone. You install it from the browser ("Add to home screen").
-- It works offline after the first visit.
-- It's free to host on GitHub Pages, with no app store accounts or reviews.
-- It's built with plain HTML, CSS and JavaScript, with no framework, so it stays simple to change.
-- If it should be on Google Play later, it can be wrapped as a store app without rewriting it.
+**How it works**
+
+1. A person opens the website on their phone.
+2. They install it. On Android, they tap an **"Instalar a app"** button on the website. On iPhone, they follow a short guide on the website.
+3. An icon appears on the home screen, next to their other apps.
+4. Tapping the icon opens the website in its own full-screen window, with no browser address bar. It looks and feels like an app.
+
+**Installing on each platform**
+
+| | Android (Chrome, Samsung Internet, Edge) | iPhone / iPad (Safari) |
+|---|---|---|
+| Install | The website shows an **"Instalar a app"** button. One tap installs it. | Apple doesn't allow an install button. The website shows a guide: **Partilhar → Adicionar ao ecrã principal**. |
+| Result | Icon in the app drawer and home screen, opens full screen | Icon on the home screen, opens full screen |
+| Notifications | Supported | Only after the app is added to the home screen (iOS 16.4 or later) |
+
+On computers, Chrome and Edge can install it too. Otherwise it simply works as a normal website.
+
+**What this means in practice**
+
+- **One app for everyone.** The same code runs on Android, iPhone and computers.
+- **Always up to date.** When the website is updated, the installed app updates by itself. Nobody has to download anything again.
+- **Works offline.** After the first visit, the guides, contacts, kit checklist and family plan work with no internet.
+- **Free.** It's hosted free on GitHub Pages, with HTTPS (which PWAs require). The address will be `edualves96.github.io/protecao_civil_carangueira`. A custom domain (for example a `.pt` address) can be added later.
+- **No store accounts, fees or reviews.**
+
+**Adapting to each device**
+
+- **Phones:** the layout in the mockups, with the bottom bar and side menu. It respects the notch and the iPhone home bar. The phone's status bar takes the app colour.
+- **Tablets and computers:** the side menu stays open permanently on the left, and the content is centred.
+- **Install prompts:** the website detects whether it's opened from the installed icon. If so, it hides the "Instalar a app" button and guide.
+
+**Limits to know**
+
+- On iPhone, installing always takes the manual Share → Add to Home Screen steps. The guide on the website makes this easy, but it can't be one tap.
+- Notifications for new IPMA warnings would need a small server to send them, which is not in the first version. At first, the app checks the warnings whenever it is opened.
+
+**Technology:** plain HTML, CSS and JavaScript with no framework, so it stays
+simple to change. It uses a web app manifest (name, icon, colours) and a service
+worker (offline use). If it should ever be on Google Play, it can be wrapped as
+a store app without rewriting it.
 
 ## Design principles
 
@@ -118,13 +154,13 @@ acidente com matérias perigosas, falha prolongada de energia.
 
 Each step ends with something you can open and try on your phone.
 
-1. **Foundation:** project structure, colours and fonts, bottom bar, side menu, home screen, empty screens, publish on GitHub Pages.
+1. **Foundation:** project structure, colours and fonts, bottom bar, side menu, home screen, empty screens. Installable from day one: manifest, provisional icon, "Instalar a app" button on Android and the guide on iPhone. Published on GitHub Pages so it can be installed and tested on a real phone.
 2. **Contactos úteis + O que fazer se…:** tap-to-call contacts and the guides for every risk (offline).
 3. **Kit de emergência:** checklist by category with progress, saved on the phone.
 4. **Plano da família + Pontos de encontro:** family plan form and map with Caranguejeira points.
 5. **Avisos do tempo + Sismos recentes:** live data with an offline fallback, status block on the home screen.
 6. **Simulacro + Quiz.**
-7. **Installable and offline:** app icon, offline support, final tests on Android and iPhone.
+7. **Offline and polish:** full offline support, final app icon and splash screen, tablet and computer layout, final tests on Android and iPhone.
 
 ## Needed from the owner
 
