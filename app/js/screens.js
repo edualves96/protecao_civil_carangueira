@@ -22,40 +22,39 @@ const PRINCIPAIS = ['sismo', 'incendio-rural', 'cheias', 'calor'];
 
 // Estados do bloco do topo. Até os avisos reais do IPMA chegarem (passo 5),
 // a app mostra "Em breve". Os outros estados só aparecem em demonstração (?demo=laranja).
+// `nivel` só existe com aviso: aparece por cima do título, com ícone, para não depender só da cor.
 const ESTADOS = {
   pendente: {
-    lbl: 'AVISOS · DISTRITO DE LEIRIA',
     big: 'Em breve',
-    desc: 'Os avisos do IPMA para o distrito vão aparecer aqui. Até lá, consulte o site do IPMA.',
+    desc: 'Os avisos do IPMA para o distrito de Leiria vão aparecer aqui. Até lá, consulte o site do IPMA.',
     act: { href: 'https://www.ipma.pt/pt/', txt: 'Abrir o site do IPMA', ext: true },
     theme: AZUL,
   },
   verde: {
-    lbl: 'AGORA · DISTRITO DE LEIRIA',
     big: 'Sem avisos',
-    desc: 'O IPMA não prevê avisos para os próximos 3 dias.',
+    desc: 'O IPMA não prevê avisos para o distrito de Leiria nos próximos 3 dias.',
     theme: '#2E8540',
   },
   amarelo: {
-    lbl: 'AVISO AMARELO · DISTRITO DE LEIRIA',
+    nivel: 'Aviso amarelo',
     big: 'Vento forte',
-    desc: 'Até amanhã às 12:00. Rajadas até 70 km/h.',
+    desc: 'Distrito de Leiria, até amanhã às 12:00. Rajadas até 70 km/h.',
     act: { href: '#/agir/tempestade', txt: 'O que fazer com vento forte' },
     risco: 'tempestade', hl: '#6B5600',
     theme: '#F2C200',
   },
   laranja: {
-    lbl: 'AVISO LARANJA · DISTRITO DE LEIRIA',
+    nivel: 'Aviso laranja',
     big: 'Tempo quente',
-    desc: 'Até quinta às 18:00. Máximas até 41 °C.',
+    desc: 'Distrito de Leiria, até quinta às 18:00. Máximas até 41 °C.',
     act: { href: '#/agir/calor', txt: 'O que fazer com calor' },
     risco: 'calor', hl: '#9A5200',
     theme: '#F7941D',
   },
   vermelho: {
-    lbl: 'AVISO VERMELHO · DISTRITO DE LEIRIA',
+    nivel: 'Aviso vermelho',
     big: 'Chuva muito forte',
-    desc: 'Até hoje às 23:59. Risco de cheias rápidas.',
+    desc: 'Distrito de Leiria, até hoje às 23:59. Risco de cheias rápidas.',
     act: { href: '#/agir/cheias', txt: 'O que fazer com cheias' },
     risco: 'cheias', hl: '#A31F1F',
     theme: '#C62828',
@@ -103,37 +102,13 @@ function inicio() {
   const resumo = `Preparação: ${p.pct}%. Plano da família: ${p.plano ? 'feito' : 'por fazer'}. `
     + `Kit de emergência: ${Math.round(p.kit * 100)}%. Ponto de encontro: ${p.encontro ? 'escolhido' : 'por escolher'}.`;
 
-  return {
-    title: null,
-    theme: e.theme,
-    html: `
-      <section class="status s-${e.id}" aria-labelledby="estado">
-        <div class="wrap">
-          <div class="top">
-            <div><p class="wm-s">PROTEÇÃO CIVIL</p><p class="wm">Caranguejeira</p></div>
-            <p class="net">Sem rede</p>
-          </div>
-          ${e.demo ? '<p class="demo">DEMONSTRAÇÃO · DADOS FICTÍCIOS</p>' : ''}
-          <p class="lbl">${e.lbl}</p>
-          <h1 class="big" id="estado">${e.big}</h1>
-          <p class="desc">${e.desc}</p>
-          ${acao}
-        </div>
-      </section>
-      <div class="edge" style="--edge:${e.theme}"></div>
+  const nivel = e.nivel
+    ? `<span class="nivel">${icon('alert')}${e.nivel}<span class="vh">: </span></span>`
+    : '';
 
-      <div class="wrap">
-        <div class="install" data-install data-card hidden>
-          <div class="install-txt">
-            <p class="install-t">Instale a app</p>
-            <p class="install-d">Fica no ecrã principal, como as outras apps.</p>
-          </div>
-          <button class="btn-inst" type="button" data-action="install">Instalar</button>
-          <button class="x" type="button" data-action="dismiss-install" aria-label="Agora não">${icon('close')}</button>
-        </div>
-
+  const preparacao = `
         <section class="sec" aria-labelledby="prep-t">
-          <h2 class="cap" id="prep-t">A SUA FAMÍLIA ESTÁ PREPARADA?</h2>
+          <h2 class="sh" id="prep-t">A sua família está preparada?</h2>
           <div class="prep" role="img" aria-label="${resumo}">
             <p class="pct" aria-hidden="true">${p.pct}%</p>
             <div class="segs" aria-hidden="true">
@@ -146,15 +121,51 @@ function inicio() {
             </div>
           </div>
           <a class="next" href="${p.next.href}">Próximo passo: ${p.next.txt.charAt(0).toLowerCase() + p.next.txt.slice(1)}${icon('arrow')}</a>
-        </section>
+        </section>`;
 
+  const agora = `
         <section class="sec" aria-labelledby="agora-t">
-          <h2 class="cap" id="agora-t">SE ACONTECER AGORA</h2>
+          <h2 class="sh" id="agora-t">Se acontecer agora</h2>
           <ul class="rows">
             ${riscos.map((r, i) => linhaRisco(r, i === 0 && r.id === e.risco, e.hl)).join('')}
             <li><a class="row more" href="#/agir">Todos os riscos${icon('chev', 'i chev')}</a></li>
           </ul>
-        </section>
+        </section>`;
+
+  // Com um aviso ativo, o que fazer vem primeiro; sem aviso, a preparação.
+  const seccoes = e.risco ? agora + preparacao : preparacao + agora;
+
+  return {
+    title: null,
+    theme: e.theme,
+    html: `
+      <section class="status s-${e.id}" aria-labelledby="estado">
+        <div class="wrap">
+          <div class="top">
+            <div><p class="wm-s">PROTEÇÃO CIVIL</p><p class="wm">Caranguejeira</p></div>
+            <p class="net">Sem rede</p>
+          </div>
+          <div class="estado">
+            ${e.demo ? '<p class="demo">DEMONSTRAÇÃO · DADOS FICTÍCIOS</p>' : ''}
+            <h1 class="big" id="estado">${nivel}${e.big}</h1>
+            <p class="desc">${e.desc}</p>
+            ${acao}
+          </div>
+        </div>
+      </section>
+      <div class="edge" style="--edge:${e.theme}"></div>
+
+      <div class="wrap">
+        ${seccoes}
+
+        <div class="install" data-install data-card hidden>
+          <div class="install-txt">
+            <p class="install-t">Instale a app</p>
+            <p class="install-d">Fica no ecrã principal, como as outras apps.</p>
+          </div>
+          <button class="btn-inst" type="button" data-action="install">Instalar</button>
+          <button class="x" type="button" data-action="dismiss-install" aria-label="Agora não">${icon('close')}</button>
+        </div>
       </div>`,
   };
 }
@@ -174,7 +185,7 @@ function pagina({ titulo, corpo, voltar = '#/', voltarTxt = 'Início' }) {
 function emBreve(texto) {
   return `
     <div class="soon">
-      <p class="soon-k">EM PREPARAÇÃO</p>
+      <h2 class="soon-k">Em preparação</h2>
       <p class="soon-t">${texto}</p>
     </div>
     <p class="hint">Em caso de emergência, ligue <a href="tel:112">112</a>.</p>`;

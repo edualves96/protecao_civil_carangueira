@@ -59,6 +59,12 @@ function mostrar() {
 
 const menuAberto = () => document.body.classList.contains('menu-open');
 
+// "Fechar" aparece exatamente onde estava "Menu". Um duplo toque abria e fechava logo
+// o menu, por isso ignoramos o toque contrário durante um instante.
+const PAUSA_TOQUE = 400;
+let ultimaMudanca = -Infinity;
+const toqueRepetido = () => performance.now() - ultimaMudanca < PAUSA_TOQUE;
+
 function sincronizarMenu() {
   const aberto = menuAberto();
   const sobreposto = !computador.matches; // no computador o menu está sempre visível
@@ -69,7 +75,8 @@ function sincronizarMenu() {
 }
 
 function abrirMenu() {
-  if (computador.matches) return;
+  if (computador.matches || menuAberto()) return;
+  ultimaMudanca = performance.now();
   document.body.classList.add('menu-open');
   sincronizarMenu();
   definirTema(AZUL_NOITE);
@@ -78,6 +85,7 @@ function abrirMenu() {
 
 function fecharMenu({ focar = true } = {}) {
   if (!menuAberto()) return;
+  ultimaMudanca = performance.now();
   document.body.classList.remove('menu-open');
   sincronizarMenu();
   definirTema(temaPagina);
@@ -96,8 +104,8 @@ document.addEventListener('click', (e) => {
   const alvo = e.target.closest('[data-action]');
   if (alvo) {
     switch (alvo.dataset.action) {
-      case 'open-menu': abrirMenu(); break;
-      case 'close-menu': fecharMenu(); break;
+      case 'open-menu': if (!toqueRepetido()) abrirMenu(); break;
+      case 'close-menu': if (!toqueRepetido()) fecharMenu(); break;
       case 'install': fecharMenu({ focar: false }); instalar(); break;
       case 'dismiss-install': dispensar(); break;
       case 'close-sheet': fecharGuia(); break;
