@@ -154,7 +154,7 @@ acidente com matérias perigosas, falha prolongada de energia.
 
 Each step ends with something you can open and try on your phone.
 
-1. **Foundation:** project structure, colours and fonts, bottom bar, side menu, home screen, empty screens. Installable from day one: manifest, provisional icon, "Instalar a app" button on Android and the guide on iPhone. Published on GitHub Pages so it can be installed and tested on a real phone.
+1. ✅ **Foundation:** project structure, colours and fonts, bottom bar, side menu, home screen, empty screens. Installable from day one: manifest, provisional icon, "Instalar a app" button on Android and the guide on iPhone. Published on GitHub Pages so it can be installed and tested on a real phone.
 2. **Contactos úteis + O que fazer se…:** tap-to-call contacts and the guides for every risk (offline).
 3. **Kit de emergência:** checklist by category with progress, saved on the phone.
 4. **Plano da família + Pontos de encontro:** family plan form and map with Caranguejeira points.
