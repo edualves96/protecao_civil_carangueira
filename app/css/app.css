@@ -745,6 +745,18 @@ html.offline .net { display: flex; }
   .sheet { margin: auto; border-radius: 18px; }
   .status .top > div { display: none; } /* o nome já está no menu */
   .status .estado { margin-top: 6px; }
+
+  /* As ondas do menu e do cabeçalho das páginas ficam à mesma altura e continuam
+     uma na outra: o topo do menu tem a altura do cabeçalho, e o desenho da onda
+     da página começa onde o do menu acaba (o menu tem 300 px). */
+  :root { --cab-h: 106px; }
+  .phead { box-sizing: border-box; min-height: var(--cab-h); }
+  .dtop {
+    box-sizing: border-box; min-height: calc(var(--cab-h) + 2px);
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  main .edge::before { -webkit-mask-position: -300px 0; mask-position: -300px 0; }
+  main .edge::after { background-position: -300px 0; }
 }
 
 /* Computador com ecrã baixo: menu mais compacto (rato, não dedo) */
