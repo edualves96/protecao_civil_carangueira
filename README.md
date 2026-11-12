@@ -74,7 +74,7 @@ To test locally: `FOGOS_API_KEY=... node scripts/fogos.mjs`, then open the previ
 
 ## Release a new version
 
-Bump `VERSAO` in `app/sw.js` and `app/js/screens.js`. This renews the offline copy on phones that
+Bump `VERSAO` in `app/sw.js` and `app/js/versao.js`, and add the changes to `NOVIDADES` in `versao.js` and to `CHANGELOG.md`. This renews the offline copy on phones that
 already have the app installed.
 
 ## IPMA data

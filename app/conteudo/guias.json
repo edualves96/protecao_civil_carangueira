@@ -839,5 +839,141 @@
         ]
       }
     ]
+  },
+  "evacuacao": {
+    "primeiro": {
+      "titulo": "Se mandarem sair de casa",
+      "passos": [
+        {
+          "fig": "radio",
+          "t": "Siga as indicações das autoridades.",
+          "d": "Pela rádio, pela televisão ou pelos agentes no local."
+        },
+        {
+          "fig": "sair",
+          "t": "Pegue na mochila de emergência e saia.",
+          "d": "Não perca tempo a arrumar. Leve os medicamentos."
+        },
+        {
+          "fig": "casa-fechar",
+          "t": "Feche a casa ao sair.",
+          "d": "Portas e janelas fechadas. Desligue o gás, se for rápido."
+        },
+        {
+          "fig": "evacuar",
+          "t": "Vá pelo caminho indicado.",
+          "d": "Não use atalhos: podem estar cortados ou ser perigosos."
+        }
+      ]
+    },
+    "se": {
+      "titulo": "E se…",
+      "passos": [
+        {
+          "fig": "vizinho",
+          "q": "Há vizinhos que precisam de ajuda?",
+          "t": "Avise-os ou ajude-os a sair.",
+          "d": "Sobretudo pessoas sozinhas, mais velhas ou acamadas."
+        },
+        {
+          "fig": "ficar",
+          "q": "Mandaram ficar em casa?",
+          "t": "Fique e feche portas e janelas.",
+          "d": "Saia só quando as autoridades disserem."
+        },
+        {
+          "fig": "ligar",
+          "q": "Separaram-se da família?",
+          "t": "Vão para o ponto de encontro.",
+          "d": "E liguem ao contacto fora da região a dizer onde estão."
+        }
+      ]
+    },
+    "mais": [
+      {
+        "titulo": "Depois",
+        "passos": [
+          {
+            "destaque": "Volte a casa só quando",
+            "detalhe": "as autoridades disserem que é seguro."
+          },
+          {
+            "destaque": "Avise a família",
+            "detalhe": "de que está bem."
+          }
+        ]
+      },
+      {
+        "titulo": "Para estar preparado",
+        "passos": [
+          {
+            "destaque": "Tenha a mochila de emergência pronta",
+            "detalhe": "junto à porta de saída."
+          },
+          {
+            "destaque": "Combine os pontos de encontro",
+            "detalhe": "no plano da família."
+          },
+          {
+            "destaque": "Façam um simulacro",
+            "detalhe": "de 6 em 6 meses."
+          }
+        ]
+      }
+    ]
+  },
+  "falta-agua": {
+    "primeiro": {
+      "titulo": "Se faltar a água",
+      "passos": [
+        {
+          "fig": "beber",
+          "t": "Guarde a água que tem para beber.",
+          "d": "Primeiro para beber e cozinhar, depois para a higiene."
+        },
+        {
+          "fig": "radio",
+          "t": "Informe-se junto da Câmara ou da Junta.",
+          "d": "Saiba onde e quando há distribuição de água."
+        },
+        {
+          "fig": "lavar",
+          "t": "Lave as mãos com pouca água.",
+          "d": "Toalhetes e gel desinfetante ajudam a poupar."
+        }
+      ]
+    },
+    "se": {
+      "titulo": "E se…",
+      "passos": [
+        {
+          "fig": "frigorifico",
+          "q": "A água voltou turva?",
+          "t": "Deixe-a correr e não a beba logo.",
+          "d": "Siga as indicações dos serviços de água."
+        },
+        {
+          "fig": "vizinho",
+          "q": "Tem vizinhos mais velhos?",
+          "t": "Pergunte se precisam de água.",
+          "d": "Com calor, a falta de água é mais perigosa."
+        }
+      ]
+    },
+    "mais": [
+      {
+        "titulo": "Para estar preparado",
+        "passos": [
+          {
+            "destaque": "Tenha água engarrafada para 3 dias:",
+            "detalhe": "pelo menos 3 litros por pessoa, por dia."
+          },
+          {
+            "destaque": "Troque a água",
+            "detalhe": "antes de passar do prazo."
+          }
+        ]
+      }
+    ]
   }
 }

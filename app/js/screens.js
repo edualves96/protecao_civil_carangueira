@@ -4,7 +4,7 @@
 import { icon } from './icons.js';
 import { conteudo, esc, paragrafos, paraTel, ligacaoSegura } from './conteudo.js';
 import { figura, montarFiguras, NOMES_FIGURAS } from './figuras.js';
-import { corpoKit, montarKit, resumoKit, kit as listaKit, mochila as listaMochila } from './kit.js';
+import { corpoKit, montarKit, resumoKit, kit as listaKit, mochila as listaMochila, carro as listaCarro } from './kit.js';
 import { corpoMochila, montarMochila } from './mochila.js';
 import { corpoPlano, montarPlano, resumoPlano, lerPlano } from './plano.js';
 import { imprimir } from './imprimir.js';
@@ -32,6 +32,8 @@ export const RISCOS = [
   { id: 'incendio-casa', nome: 'Incêndio em casa', de: 'de um incêndio em casa', icon: 'home' },
   { id: 'materias-perigosas', nome: 'Acidente com matérias perigosas', de: 'de um acidente com matérias perigosas', icon: 'alert' },
   { id: 'energia', nome: 'Falha prolongada de energia', de: 'de uma falha prolongada de energia', icon: 'bolt' },
+  { id: 'evacuacao', nome: 'Ordem para sair de casa', de: 'de uma ordem para sair de casa', icon: 'porta' },
+  { id: 'falta-agua', nome: 'Falta de água prolongada', de: 'de uma falta de água prolongada', icon: 'gota' },
 ];
 const PRINCIPAIS = ['sismo', 'incendio-rural', 'cheias', 'calor'];
 
@@ -488,6 +490,7 @@ function avisoValidades() {
   const todos = [
     ...listaKit.alertas().map((x) => ({ ...x, onde: 'kit', rotulo: 'kit' })),
     ...listaMochila.alertas().map((x) => ({ ...x, onde: 'mochila', rotulo: 'mochila' })),
+    ...listaCarro.alertas().map((x) => ({ ...x, onde: 'carro', rotulo: 'carro' })),
   ].sort((a, b) => (a.estado === 'expirado' ? 0 : 1) - (b.estado === 'expirado' ? 0 : 1));
   if (!todos.length) return '';
   const exp = todos.filter((x) => x.estado === 'expirado').length;
@@ -867,6 +870,9 @@ export function resolver(nome, sub) {
   if (nome === 'contactos') return contactos();
   if (nome === 'kit') return kit();
   if (nome === 'mochila') return mochilaEcra();
+  if (nome === 'carro') {
+    return { title: 'Kit do carro', theme: AZUL, html: pagina({ titulo: 'Kit do carro', corpo: listaCarro.corpo(), editar: 'carro' }), montar: listaCarro.montar };
+  }
   if (nome === 'simulacro') {
     return { title: 'Simulacro', theme: AZUL, html: pagina({ titulo: 'Simulacro', corpo: corpoSimulacro() }), montar: montarSimulacro };
   }

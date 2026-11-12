@@ -1,0 +1,111 @@
+{
+  "intro": "Uma estrada cortada por um incêndio, uma cheia ou a neve pode deixá-lo horas parado no carro. Com este kit no porta-bagagens, espera em segurança.",
+  "categorias": [
+    {
+      "nome": "Segurança na estrada",
+      "icone": "outro",
+      "dica": "O que a lei pede e o que ajuda a ser visto.",
+      "itens": [
+        {
+          "nome": "Colete refletor ao alcance do condutor",
+          "nota": "Dentro do carro, não no porta-bagagens."
+        },
+        {
+          "nome": "Triângulo de pré-sinalização",
+          "nota": ""
+        },
+        {
+          "nome": "Lanterna com pilhas de reserva",
+          "nota": "",
+          "validade": true
+        }
+      ]
+    },
+    {
+      "nome": "Água, comida e abrigo",
+      "icone": "agua",
+      "dica": "Para esperar algumas horas, com frio ou calor.",
+      "itens": [
+        {
+          "nome": "Água",
+          "nota": "Pelo menos 1,5 litros por pessoa. Troque de 6 em 6 meses: o calor do carro estraga-a.",
+          "validade": true,
+          "quantidade": 1.5,
+          "unidade": "litros"
+        },
+        {
+          "nome": "Barras de cereais ou frutos secos",
+          "nota": "",
+          "validade": true
+        },
+        {
+          "nome": "Manta térmica",
+          "nota": "Uma por pessoa. Ocupa quase nada."
+        },
+        {
+          "nome": "Casaco impermeável ou poncho",
+          "nota": ""
+        }
+      ]
+    },
+    {
+      "nome": "Saúde",
+      "icone": "saude",
+      "dica": "",
+      "itens": [
+        {
+          "nome": "Pequeno estojo de primeiros socorros",
+          "nota": "",
+          "validade": true
+        },
+        {
+          "nome": "Medicamentos habituais para um dia",
+          "nota": "Para quem conduz e para quem costuma ir no carro.",
+          "validade": true
+        }
+      ]
+    },
+    {
+      "nome": "Comunicação e documentos",
+      "icone": "documentos",
+      "dica": "",
+      "itens": [
+        {
+          "nome": "Carregador do telemóvel para o carro",
+          "nota": ""
+        },
+        {
+          "nome": "Lista de contactos em papel",
+          "nota": "Família, seguradora e assistência em viagem."
+        },
+        {
+          "nome": "Cópia dos documentos do carro",
+          "nota": "Seguro e assistência em viagem."
+        }
+      ]
+    },
+    {
+      "nome": "Utensílios",
+      "icone": "ferramentas",
+      "dica": "",
+      "itens": [
+        {
+          "nome": "Cabos para ligar a bateria",
+          "nota": "",
+          "opcional": true
+        },
+        {
+          "nome": "Raspador de gelo",
+          "nota": "Para os meses de frio.",
+          "opcional": true
+        },
+        {
+          "nome": "Martelo de emergência com corta-cintos",
+          "nota": "Ao alcance do condutor.",
+          "opcional": true
+        }
+      ]
+    }
+  ],
+  "rodape": "Mantenha o depósito acima de metade quando há avisos. Reveja o kit do carro de 6 em 6 meses, sobretudo a água e as pilhas."
+}

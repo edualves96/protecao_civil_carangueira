@@ -9,7 +9,9 @@
         {
           "nome": "Água engarrafada para 3 dias",
           "nota": "Pelo menos 3 litros por pessoa, por dia: cerca de 9 litros por pessoa.",
-          "validade": true
+          "validade": true,
+          "quantidade": 9,
+          "unidade": "litros"
         },
         {
           "nome": "Comida para 3 dias",

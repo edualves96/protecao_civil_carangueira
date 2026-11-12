@@ -510,6 +510,13 @@ html.offline .net { display: flex; }
   background: #EEF1F4; font-size: 12px; font-weight: 700; color: var(--tinta-2);
 }
 .kit-extras { margin-top: 6px; font-size: 14px; color: var(--tinta-2); }
+/* Quantas pessoas vivem em casa: dois botões grandes e o número no meio (lei de Fitts). */
+.pc { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; padding: 10px 12px; border-radius: 12px; background: #E3EDF8; }
+.pc-t { font-size: 16px; font-weight: 700; }
+.pc-ctl { display: flex; align-items: center; gap: 6px; }
+.pc-ctl button { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--branco); color: var(--azul); box-shadow: inset 0 0 0 2px var(--azul); }
+.pc-ctl output { min-width: 2ch; font-family: var(--f-titulo); font-size: 26px; font-weight: 700; text-align: center; color: var(--azul); }
+.check-q { display: block; margin-top: 4px; font-size: 15px; font-weight: 700; color: var(--azul); }
 .kit-extras:empty { display: none; }
 .feito .kit-segs i { background: var(--verde); }
 .kit-n { flex: none; font-size: 15px; font-weight: 700; color: var(--tinta-2); }

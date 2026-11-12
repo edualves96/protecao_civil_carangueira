@@ -2,7 +2,7 @@
 // na pasta app/conteudo/. É editado na página de edição (Pages CMS, ver README) e
 // carregado quando a app abre. Sem rede, o service worker entrega a última cópia.
 
-const FICHEIROS = ['kit', 'mochila', 'pontos', 'quiz', 'contactos', 'guias', 'textos'];
+const FICHEIROS = ['kit', 'mochila', 'carro', 'pontos', 'quiz', 'contactos', 'guias', 'textos'];
 
 export const conteudo = {};
 

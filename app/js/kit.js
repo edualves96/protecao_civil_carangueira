@@ -11,6 +11,16 @@ import { ler, guardar } from './store.js';
 import { conteudo, esc } from './conteudo.js';
 import { icon } from './icons.js';
 import { imprimir } from './imprimir.js';
+import { lerPlano } from './plano.js';
+
+// Quantas pessoas vivem em casa: escolhido no kit, ou contado no plano da família.
+export function pessoasCasa() {
+  const n = Number(ler('pessoas-casa', 0));
+  if (n >= 1) return n;
+  return Math.max(1, lerPlano().pessoas.filter((x) => x.nome && x.nome.trim()).length);
+}
+const numero = (v) => v.toLocaleString('pt-PT', { maximumFractionDigits: 1 });
+const textoQtd = (i, n) => `Para ${n} ${n === 1 ? 'pessoa' : 'pessoas'}: ${numero(i.quantidade * n)} ${i.unidade}`;
 
 // Ícone de cada grupo, escolhido na página de edição.
 const ICONES = {
@@ -48,7 +58,7 @@ export function estadoValidade(mes, hoje = new Date()) {
   return { estado: 'ok', texto: `Válido até ${quando}` };
 }
 
-function criarLista(nome, { chave, chaveAbertos, antigos = {}, titulo, nomeFim, textoFim }) {
+function criarLista(nome, { chave, chaveAbertos, antigos = {}, titulo, nomeFim, textoFim, porPessoa = false }) {
   const chaveVal = `${chave}-validades`;
   const lerVal = () => { const v = ler(chaveVal, {}); return v && typeof v === 'object' ? v : {}; };
 
@@ -63,7 +73,7 @@ function criarLista(nome, { chave, chaveAbertos, antigos = {}, titulo, nomeFim, 
         let id = idDe(i.nome) || 'item';
         while (usados.has(id)) id += '-2';
         usados.add(id);
-        return { id, nome: i.nome, nota: i.nota || '', validade: Boolean(i.validade), opcional: Boolean(i.opcional) };
+        return { id, nome: i.nome, nota: i.nota || '', validade: Boolean(i.validade), opcional: Boolean(i.opcional), quantidade: Number(i.quantidade) || 0, unidade: i.unidade || '' };
       }),
     }));
   }
@@ -170,7 +180,8 @@ function criarLista(nome, { chave, chaveAbertos, antigos = {}, titulo, nomeFim, 
         <h2>${esc(c.nome)}</h2>
         <table class="lista">${c.itens.map((i) => {
           const v = i.validade && val[i.id] ? estadoValidade(val[i.id]).texto : '';
-          const extra = [i.opcional ? 'Opcional' : '', i.nota, v].filter(Boolean).map(esc).join(' · ');
+          const qtd = porPessoa && i.quantidade && i.unidade ? textoQtd(i, pessoasCasa()) : '';
+          const extra = [i.opcional ? 'Opcional' : '', i.nota, qtd, v].filter(Boolean).map(esc).join(' · ');
           return `<tr><td><span class="cx${feitos.has(i.id) ? ' on' : ''}"></span></td><td><b>${esc(i.nome)}</b>${extra ? `<br>${extra}` : ''}</td></tr>`;
         }).join('')}</table>`).join('')}`;
   }
@@ -185,6 +196,16 @@ function criarLista(nome, { chave, chaveAbertos, antigos = {}, titulo, nomeFim, 
     const abrir = abertos(cats, feitos);
     const tudo = k.total > 0 && k.feitos === k.total;
     const val = lerVal();
+    const pessoas = pessoasCasa();
+    const passo = porPessoa ? `
+        <div class="pc" data-pc>
+          <span class="pc-t" id="pc-t-${nome}">Quantas pessoas vivem consigo?</span>
+          <div class="pc-ctl" role="group" aria-labelledby="pc-t-${nome}">
+            <button type="button" data-pc-mudar="-1" aria-label="Menos uma pessoa">${icon('menos')}</button>
+            <output data-pc-n aria-live="polite">${pessoas}</output>
+            <button type="button" data-pc-mudar="1" aria-label="Mais uma pessoa">${icon('mais')}</button>
+          </div>
+        </div>` : '';
 
     const html = cats.map((c) => `
       <details class="kit-cat${completa(c, feitos) ? ' feito' : ''}" data-kit-cat="${c.chave}"${abrir.has(c.chave) ? ' open' : ''}>
@@ -208,6 +229,7 @@ function criarLista(nome, { chave, chaveAbertos, antigos = {}, titulo, nomeFim, 
                   <span class="check-txt">
                     <span class="check-t">${esc(i.nome)}${i.opcional ? ' <span class="check-op">Opcional</span>' : ''}</span>
                     ${i.nota ? `<span class="check-d">${esc(i.nota)}</span>` : ''}
+                    ${porPessoa && i.quantidade && i.unidade ? `<span class="check-q" data-q="${i.id}">${esc(textoQtd(i, pessoas))}</span>` : ''}
                   </span>
                 </label>
                 ${campoValidade(i, feitos.has(i.id), val)}
@@ -226,6 +248,7 @@ function criarLista(nome, { chave, chaveAbertos, antigos = {}, titulo, nomeFim, 
           <p class="kit-fim"${tudo ? '' : ' hidden'} data-kit-fim>${icon('check')}${textoFim}</p>
         </div>
         <p class="vh" aria-live="polite" data-kit-aviso></p>
+        ${passo}
         ${antes}
         <div class="kit-ctrl"><button class="kit-todos" type="button" data-kit-todos>${abrir.size === cats.length ? 'Fechar todos' : 'Abrir todos'}</button></div>
         <div class="kit-grupos">${html}</div>
@@ -262,6 +285,19 @@ function criarLista(nome, { chave, chaveAbertos, antigos = {}, titulo, nomeFim, 
     });
 
     lista.querySelector('[data-imprimir-lista]').addEventListener('click', () => imprimir(folha(), titulo));
+
+    // Número de pessoas: muda as quantidades (por exemplo, litros de água) na hora.
+    lista.querySelector('[data-pc]')?.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-pc-mudar]');
+      if (!b) return;
+      const n = Math.min(12, Math.max(1, pessoasCasa() + Number(b.dataset.pcMudar)));
+      guardar('pessoas-casa', n);
+      lista.querySelector('[data-pc-n]').textContent = n;
+      cats.forEach((c) => c.itens.forEach((i) => {
+        const el = lista.querySelector(`[data-q="${i.id}"]`);
+        if (el) el.textContent = textoQtd(i, n);
+      }));
+    });
 
     lista.addEventListener('change', (e) => {
       const caixa = e.target.closest('input[data-kit]');
@@ -321,7 +357,7 @@ function criarLista(nome, { chave, chaveAbertos, antigos = {}, titulo, nomeFim, 
 }
 
 export const kit = criarLista('kit', {
-  chave: 'kit', chaveAbertos: 'kit-abertos', antigos: ANTIGOS_KIT, titulo: 'Kit de emergência',
+  chave: 'kit', chaveAbertos: 'kit-abertos', antigos: ANTIGOS_KIT, titulo: 'Kit de emergência', porPessoa: true,
   nomeFim: 'Kit completo', textoFim: 'Kit completo. Reveja-o de 6 em 6 meses.',
 });
 export const mochila = criarLista('mochila', {
@@ -332,3 +368,8 @@ export const mochila = criarLista('mochila', {
 export const resumoKit = kit.resumo;
 export const corpoKit = () => kit.corpo();
 export const montarKit = kit.montar;
+
+export const carro = criarLista('carro', {
+  chave: 'carro', chaveAbertos: 'carro-abertos', titulo: 'Kit do carro', porPessoa: true,
+  nomeFim: 'Kit do carro completo', textoFim: 'Kit do carro completo. Reveja-o de 6 em 6 meses, sobretudo a água e as pilhas.',
+});
