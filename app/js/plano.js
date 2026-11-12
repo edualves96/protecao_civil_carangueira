@@ -5,6 +5,7 @@
 import { ler, guardar } from './store.js';
 import { esc, paraTel } from './conteudo.js';
 import { icon } from './icons.js';
+import { imprimir } from './imprimir.js';
 
 const CHAVE = 'plano';
 const CHAVE_ENCONTRO = 'encontro';
@@ -130,8 +131,6 @@ function folhaHtml(p, e) {
   const linha = (r, v) => (v && String(v).trim() ? `<tr><th>${r}</th><td>${esc(v)}</td></tr>` : '');
   const ponto = (x) => (x ? `${x.nome}${x.lat ? ` (${x.lat.toFixed(5)}, ${x.lon.toFixed(5)})` : ''}` : '');
   return `
-    <h1>Plano de emergência da família</h1>
-    <p>Em caso de emergência, ligue 112.</p>
     <h2>Quem vive em casa</h2>
     <table>${p.pessoas.filter((x) => x.nome.trim()).map((x) => linha(esc(x.nome), [GRUPOS.find((g) => g.id === x.grupo)?.nome, x.precisa].filter(Boolean).join(' · ') || '—')).join('')}
       ${linha('Animais', p.animais)}</table>
@@ -163,7 +162,6 @@ export function corpoPlano() {
       <div class="kit-grupos">${PARTES.map((x) => parteHtml(x, p, e, abertas.has(x.id))).join('')}</div>
       <button class="imprimir" type="button" data-imprimir>${icon('imprimir')}Imprimir o plano</button>
       <p class="hint">Imprima o plano e guarde uma cópia na mochila de emergência. Sem bateria, o papel continua a funcionar.</p>
-      <div class="folha" data-folha aria-hidden="true"></div>
     </div>`;
 }
 
@@ -252,8 +250,7 @@ export function montarPlano(raiz) {
 
   zona.querySelector('[data-imprimir]').addEventListener('click', () => {
     guardarPlano(p);
-    zona.querySelector('[data-folha]').innerHTML = folhaHtml(p, lerEncontro());
-    window.print();
+    imprimir(folhaHtml(p, lerEncontro()), 'Plano de emergência da família');
   });
 
   // Ao sair do ecrã, guarda logo o que estiver por guardar.

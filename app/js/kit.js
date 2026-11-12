@@ -3,10 +3,14 @@
 // mochila.json, que se editam na página de edição. O que cada pessoa marcou fica
 // guardado só neste aparelho, pelo nome do item: mudar o nome de um item deixa-o
 // por marcar outra vez, sem mexer nos outros.
+//
+// Itens essenciais e opcionais: o progresso conta só os essenciais, para a lista
+// poder ficar "completa" sem coisas que não se aplicam a todos (bebés, animais…).
 
 import { ler, guardar } from './store.js';
 import { conteudo, esc } from './conteudo.js';
 import { icon } from './icons.js';
+import { imprimir } from './imprimir.js';
 
 // Ícone de cada grupo, escolhido na página de edição.
 const ICONES = {
@@ -44,7 +48,7 @@ export function estadoValidade(mes, hoje = new Date()) {
   return { estado: 'ok', texto: `Válido até ${quando}` };
 }
 
-function criarLista(nome, { chave, chaveAbertos, antigos = {}, nomeFim, textoFim }) {
+function criarLista(nome, { chave, chaveAbertos, antigos = {}, titulo, nomeFim, textoFim }) {
   const chaveVal = `${chave}-validades`;
   const lerVal = () => { const v = ler(chaveVal, {}); return v && typeof v === 'object' ? v : {}; };
 
@@ -59,15 +63,16 @@ function criarLista(nome, { chave, chaveAbertos, antigos = {}, nomeFim, textoFim
         let id = idDe(i.nome) || 'item';
         while (usados.has(id)) id += '-2';
         usados.add(id);
-        return { id, nome: i.nome, nota: i.nota || '', validade: Boolean(i.validade) };
+        return { id, nome: i.nome, nota: i.nota || '', validade: Boolean(i.validade), opcional: Boolean(i.opcional) };
       }),
     }));
   }
 
-  const idsDe = (cats) => cats.flatMap((c) => c.itens.map((i) => i.id));
+  const todosItens = (cats) => cats.flatMap((c) => c.itens);
+  const essenciais = (itens) => itens.filter((i) => !i.opcional);
 
   function marcados(cats = categorias()) {
-    const todos = idsDe(cats);
+    const todos = todosItens(cats).map((i) => i.id);
     const guardados = ler(chave, []);
     const lista = Array.isArray(guardados) ? guardados.map((id) => (antigos[id] ? idDe(antigos[id]) : id)) : [];
     return new Set(lista.filter((id) => todos.includes(id)));
@@ -81,12 +86,29 @@ function criarLista(nome, { chave, chaveAbertos, antigos = {}, nomeFim, textoFim
     return atuais;
   }
 
-  const feitosNa = (c, feitos) => c.itens.filter((i) => feitos.has(i.id)).length;
-  const completa = (c, feitos) => c.itens.length > 0 && feitosNa(c, feitos) === c.itens.length;
-  const contaCategoria = (c, feitos) => (completa(c, feitos) ? 'Completo' : `${feitosNa(c, feitos)} de ${c.itens.length}`);
+  // Contagens: essenciais (contam para o progresso) e opcionais (à parte).
+  function contas(cats, feitos) {
+    const itens = todosItens(cats);
+    const ess = essenciais(itens);
+    const ops = itens.filter((i) => i.opcional);
+    return {
+      feitos: ess.filter((i) => feitos.has(i.id)).length,
+      total: ess.length,
+      opFeitos: ops.filter((i) => feitos.has(i.id)).length,
+      opTotal: ops.length,
+    };
+  }
+
+  // Um grupo está completo quando os essenciais estão prontos. Um grupo só com
+  // opcionais (por exemplo bebés e animais) completa-se quando estão todos marcados.
+  const base = (c) => (essenciais(c.itens).length ? essenciais(c.itens) : c.itens);
+  const feitosNa = (c, feitos) => base(c).filter((i) => feitos.has(i.id)).length;
+  const completa = (c, feitos) => base(c).length > 0 && feitosNa(c, feitos) === base(c).length;
+  const contaCategoria = (c, feitos) => (completa(c, feitos) ? 'Completo' : `${feitosNa(c, feitos)} de ${base(c).length}`);
   const percentagem = (feitos, total) => (total ? Math.round(feitos / total * 100) : 0);
   // Efeito Zeigarnik: mostrar o que falta ajuda a voltar e acabar.
   const faltam = (feitos, total) => (feitos > 0 && feitos < total ? ` · faltam ${total - feitos}` : '');
+  const textoExtras = (k) => (k.opTotal ? `Opcionais: ${k.opFeitos} de ${k.opTotal}` : '');
 
   // Grupos abertos, guardados neste aparelho. Na primeira visita abre-se o primeiro
   // grupo por completar, para mostrar logo por onde começar.
@@ -129,12 +151,28 @@ function criarLista(nome, { chave, chaveAbertos, antigos = {}, nomeFim, textoFim
       </div>`;
   };
 
-  // Para o início: quantos itens estão prontos.
+  // Para o início: quantos essenciais estão prontos.
   function resumo() {
     const cats = categorias();
-    const total = idsDe(cats).length;
-    const feitos = marcados(cats).size;
-    return { feitos, total, fracao: total ? feitos / total : 0 };
+    const k = contas(cats, marcados(cats));
+    return { feitos: k.feitos, total: k.total, fracao: k.total ? k.feitos / k.total : 0 };
+  }
+
+  // Folha para imprimir: a lista com caixas para marcar à mão.
+  function folha() {
+    const cats = categorias();
+    const feitos = marcados(cats);
+    const val = lerVal();
+    const k = contas(cats, feitos);
+    return `
+      <p>${k.feitos} de ${k.total} essenciais prontos${k.opTotal ? ` · opcionais: ${k.opFeitos} de ${k.opTotal}` : ''}.</p>
+      ${cats.map((c) => `
+        <h2>${esc(c.nome)}</h2>
+        <table class="lista">${c.itens.map((i) => {
+          const v = i.validade && val[i.id] ? estadoValidade(val[i.id]).texto : '';
+          const extra = [i.opcional ? 'Opcional' : '', i.nota, v].filter(Boolean).map(esc).join(' · ');
+          return `<tr><td><span class="cx${feitos.has(i.id) ? ' on' : ''}"></span></td><td><b>${esc(i.nome)}</b>${extra ? `<br>${extra}` : ''}</td></tr>`;
+        }).join('')}</table>`).join('')}`;
   }
 
   // Corpo do ecrã (o cabeçalho vem de screens.js). `antes` e `depois` entram antes
@@ -142,10 +180,10 @@ function criarLista(nome, { chave, chaveAbertos, antigos = {}, nomeFim, textoFim
   function corpo({ antes = '', depois = '' } = {}) {
     const cats = categorias();
     const feitos = marcados(cats);
-    const total = idsDe(cats).length;
+    const k = contas(cats, feitos);
     const textos = conteudo[nome] || {};
     const abrir = abertos(cats, feitos);
-    const tudo = total > 0 && feitos.size === total;
+    const tudo = k.total > 0 && k.feitos === k.total;
     const val = lerVal();
 
     const html = cats.map((c) => `
@@ -154,7 +192,7 @@ function criarLista(nome, { chave, chaveAbertos, antigos = {}, nomeFim, textoFim
           <span class="kit-ic" aria-hidden="true">${icon(c.icone, 'i kit-ic-cat')}${icon('check', 'i kit-ic-ok')}</span>
           <span class="kit-sum-txt">
             <h2 class="kit-h">${esc(c.nome)}</h2>
-            <span class="kit-segs" aria-hidden="true">${c.itens.map((i) => `<i${feitos.has(i.id) ? ' class="on"' : ''}></i>`).join('')}</span>
+            <span class="kit-segs" aria-hidden="true">${c.itens.map((i) => `<i class="${[feitos.has(i.id) ? 'on' : '', i.opcional ? 'op' : ''].join(' ').trim()}"></i>`).join('')}</span>
             <span data-kit-alerta>${alertaGrupo(c, feitos, val)}</span>
           </span>
           <span class="kit-n" data-kit-n><span class="vh">: </span>${contaCategoria(c, feitos)}</span>
@@ -168,7 +206,7 @@ function criarLista(nome, { chave, chaveAbertos, antigos = {}, nomeFim, textoFim
                 <label class="check">
                   <input type="checkbox" data-kit="${i.id}"${feitos.has(i.id) ? ' checked' : ''}>
                   <span class="check-txt">
-                    <span class="check-t">${esc(i.nome)}</span>
+                    <span class="check-t">${esc(i.nome)}${i.opcional ? ' <span class="check-op">Opcional</span>' : ''}</span>
                     ${i.nota ? `<span class="check-d">${esc(i.nota)}</span>` : ''}
                   </span>
                 </label>
@@ -182,8 +220,9 @@ function criarLista(nome, { chave, chaveAbertos, antigos = {}, nomeFim, textoFim
       <div data-kit-lista>
         ${textos.intro ? `<p class="intro">${esc(textos.intro)}</p>` : ''}
         <div class="kit-prog${tudo ? ' feito' : ''}" data-kit-prog>
-          <p class="kit-num"><span class="pct" data-kit-feitos>${feitos.size}</span> <span class="kit-de">de ${total} prontos<span class="kit-faltam" data-kit-faltam>${faltam(feitos.size, total)}</span></span></p>
-          <div class="seg" aria-hidden="true"><span><i data-kit-barra style="width:${percentagem(feitos.size, total)}%"></i></span></div>
+          <p class="kit-num"><span class="pct" data-kit-feitos>${k.feitos}</span> <span class="kit-de">de ${k.total} essenciais prontos<span class="kit-faltam" data-kit-faltam>${faltam(k.feitos, k.total)}</span></span></p>
+          <div class="seg" aria-hidden="true"><span><i data-kit-barra style="width:${percentagem(k.feitos, k.total)}%"></i></span></div>
+          <p class="kit-extras" data-kit-extras>${textoExtras(k)}</p>
           <p class="kit-fim"${tudo ? '' : ' hidden'} data-kit-fim>${icon('check')}${textoFim}</p>
         </div>
         <p class="vh" aria-live="polite" data-kit-aviso></p>
@@ -191,6 +230,7 @@ function criarLista(nome, { chave, chaveAbertos, antigos = {}, nomeFim, textoFim
         <div class="kit-ctrl"><button class="kit-todos" type="button" data-kit-todos>${abrir.size === cats.length ? 'Fechar todos' : 'Abrir todos'}</button></div>
         <div class="kit-grupos">${html}</div>
         ${depois}
+        <button class="imprimir" type="button" data-imprimir-lista>${icon('imprimir')}Imprimir a lista</button>
         ${textos.rodape ? `<p class="hint">${esc(textos.rodape)}</p>` : ''}
       </div>`;
   }
@@ -200,7 +240,6 @@ function criarLista(nome, { chave, chaveAbertos, antigos = {}, nomeFim, textoFim
     const lista = raiz.querySelector('[data-kit-lista]');
     if (!lista) return;
     const cats = categorias();
-    const total = idsDe(cats).length;
     const grupos = [...lista.querySelectorAll('details.kit-cat')];
     const botaoTodos = lista.querySelector('[data-kit-todos]');
 
@@ -222,6 +261,8 @@ function criarLista(nome, { chave, chaveAbertos, antigos = {}, nomeFim, textoFim
       guardarAbertos();
     });
 
+    lista.querySelector('[data-imprimir-lista]').addEventListener('click', () => imprimir(folha(), titulo));
+
     lista.addEventListener('change', (e) => {
       const caixa = e.target.closest('input[data-kit]');
       if (!caixa) return;
@@ -231,14 +272,16 @@ function criarLista(nome, { chave, chaveAbertos, antigos = {}, nomeFim, textoFim
       const caixaVal = lista.querySelector(`[data-val-for="${caixa.dataset.kit}"]`);
       if (caixaVal) caixaVal.hidden = !caixa.checked;
 
-      lista.querySelector('[data-kit-feitos]').textContent = feitos.size;
-      lista.querySelector('[data-kit-faltam]').textContent = faltam(feitos.size, total);
-      lista.querySelector('[data-kit-barra]').style.width = `${percentagem(feitos.size, total)}%`;
-      const tudo = total > 0 && feitos.size === total;
+      const k = contas(cats, feitos);
+      const tudo = k.total > 0 && k.feitos === k.total;
+      lista.querySelector('[data-kit-feitos]').textContent = k.feitos;
+      lista.querySelector('[data-kit-faltam]').textContent = faltam(k.feitos, k.total);
+      lista.querySelector('[data-kit-barra]').style.width = `${percentagem(k.feitos, k.total)}%`;
+      lista.querySelector('[data-kit-extras]').textContent = textoExtras(k);
       lista.querySelector('[data-kit-prog]').classList.toggle('feito', tudo);
       lista.querySelector('[data-kit-fim]').hidden = !tudo;
 
-      let aviso = `${feitos.size} de ${total} prontos.`;
+      let aviso = `${k.feitos} de ${k.total} essenciais prontos.`;
       cats.forEach((c) => {
         const g = lista.querySelector(`details[data-kit-cat="${c.chave}"]`);
         const antes = g.classList.contains('feito');
@@ -274,15 +317,15 @@ function criarLista(nome, { chave, chaveAbertos, antigos = {}, nomeFim, textoFim
     });
   }
 
-  return { resumo, corpo, montar, alertas };
+  return { resumo, corpo, montar, alertas, folha };
 }
 
 export const kit = criarLista('kit', {
-  chave: 'kit', chaveAbertos: 'kit-abertos', antigos: ANTIGOS_KIT,
+  chave: 'kit', chaveAbertos: 'kit-abertos', antigos: ANTIGOS_KIT, titulo: 'Kit de emergência',
   nomeFim: 'Kit completo', textoFim: 'Kit completo. Reveja-o de 6 em 6 meses.',
 });
 export const mochila = criarLista('mochila', {
-  chave: 'mochila', chaveAbertos: 'mochila-abertos',
+  chave: 'mochila', chaveAbertos: 'mochila-abertos', titulo: 'Kit mochila de emergência',
   nomeFim: 'Mochila pronta', textoFim: 'Mochila pronta. Deixe-a junto à porta e reveja-a de 6 em 6 meses.',
 });
 

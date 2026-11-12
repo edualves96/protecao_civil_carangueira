@@ -5,7 +5,12 @@ on:
     branches: [main, ccr-d836c5a6-1m8oud]
     paths:
       - "app/**"
+      - "scripts/**"
       - ".github/workflows/pages.yml"
+  # De 10 em 10 minutos, para atualizar os fogos (Fogos.pt). O GitHub pode atrasar
+  # estas execuções alguns minutos em horas de muito movimento.
+  schedule:
+    - cron: "*/10 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -25,6 +30,15 @@ jobs:
       url: ${{ steps.publicacao.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # A chave do Fogos.pt está no segredo FOGOS_API_KEY (Settings → Secrets and
+      # variables → Actions). Nunca vai para o código da app.
+      - name: Buscar fogos no distrito de Leiria (Fogos.pt)
+        run: node scripts/fogos.mjs
+        env:
+          FOGOS_API_KEY: ${{ secrets.FOGOS_API_KEY }}
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -18,7 +18,8 @@
         },
         {
           "nome": "Garrafa reutilizável",
-          "nota": "Para voltar a encher onde houver água potável."
+          "nota": "Para voltar a encher onde houver água potável.",
+          "opcional": true
         }
       ]
     },
@@ -41,7 +42,8 @@
         },
         {
           "nome": "Chaves de reserva",
-          "nota": "De casa e do carro."
+          "nota": "De casa e do carro.",
+          "opcional": true
         }
       ]
     },
@@ -145,7 +147,8 @@
         },
         {
           "nome": "Caneta e bloco de notas",
-          "nota": ""
+          "nota": "",
+          "opcional": true
         }
       ]
     },
@@ -157,20 +160,24 @@
         {
           "nome": "Para bebés: fraldas, leite e biberão",
           "nota": "",
-          "validade": true
+          "validade": true,
+          "opcional": true
         },
         {
           "nome": "Para crianças: um brinquedo ou um livro pequeno",
-          "nota": "Ajuda a acalmar num sítio estranho."
+          "nota": "Ajuda a acalmar num sítio estranho.",
+          "opcional": true
         },
         {
           "nome": "Para animais: comida, trela e boletim de vacinas",
           "nota": "",
-          "validade": true
+          "validade": true,
+          "opcional": true
         },
         {
           "nome": "Apoios de quem precisa",
-          "nota": "Pilhas do aparelho auditivo, carregador da cadeira de rodas, bengala."
+          "nota": "Pilhas do aparelho auditivo, carregador da cadeira de rodas, bengala.",
+          "opcional": true
         }
       ]
     }

@@ -6,14 +6,19 @@ import { conteudo, esc, paragrafos, paraTel, ligacaoSegura } from './conteudo.js
 import { figura, montarFiguras, NOMES_FIGURAS } from './figuras.js';
 import { corpoKit, montarKit, resumoKit, kit as listaKit, mochila as listaMochila } from './kit.js';
 import { corpoMochila, montarMochila } from './mochila.js';
-import { corpoPlano, montarPlano, resumoPlano } from './plano.js';
+import { corpoPlano, montarPlano, resumoPlano, lerPlano } from './plano.js';
+import { imprimir } from './imprimir.js';
 import { corpoEncontro, montarEncontro } from './mapa.js';
+import { corpoFogos, montarFogos, atualizarFogos, avisoFogoPerto } from './fogos.js';
 import {
   avisos as fonteAvisos, sismos as fonteSismos, avisosDoDistrito, periodo, quando, dia, hora, meiaNoite,
   textoObtido, atualizarEcra, classeVivo, RECENTE, SITE_AVISOS, SITE_SISMOS,
 } from './ipma.js';
 
-export const VERSAO = '0.6.0';
+import { VERSAO, NOVIDADES } from './versao.js';
+import { corpoCopia, montarCopia } from './copia.js';
+import { corpoSimulacro, montarSimulacro } from './simulacro.js';
+import { corpoQuiz, montarQuiz } from './quiz.js';
 
 const AZUL = '#0B57A4';
 
@@ -253,6 +258,7 @@ function inicio() {
       <div class="edge" style="--edge:${e.theme}"></div>
 
       <div class="wrap">
+        ${e.demo ? '' : avisoFogoPerto()}
         ${seccoes}
 
         <div class="install" data-install data-card hidden>
@@ -264,7 +270,10 @@ function inicio() {
           <button class="x" type="button" data-action="dismiss-install" aria-label="Agora não">${icon('close')}</button>
         </div>
       </div>`,
-    montar: e.demo ? null : (raiz) => atualizarEcra(raiz, fonteAvisos),
+    montar: e.demo ? null : (raiz) => {
+      atualizarEcra(raiz, fonteAvisos);
+      atualizarFogos().then((mudou) => { if (mudou) window.dispatchEvent(new CustomEvent('pcc:dados')); });
+    },
     dinamico: !e.demo,
   };
 }
@@ -299,10 +308,7 @@ function emBreve(texto) {
     <p class="hint">Em caso de emergência, ligue <a href="tel:112">112</a>.</p>`;
 }
 
-const SIMPLES = {
-  simulacro: ['Simulacro', 'Treine a saída de casa em segurança, com um cronómetro e os passos a seguir.'],
-  quiz: ['Quiz', 'Perguntas rápidas para testar o que sabe sobre autoproteção.'],
-};
+const SIMPLES = {};
 
 function agir() {
   const t = conteudo.textos?.agir || {};
@@ -451,9 +457,29 @@ function contactos() {
             <h2 class="sh" id="ct-${i}">${esc(g.titulo)}</h2>
             ${g.nota ? `<p class="nota">${texto(g.nota)}</p>` : ''}
             <ul class="cts">${(g.itens || []).filter((c) => c && c.nome).map(linha).join('')}</ul>
-          </section>`).join('')}`,
+          </section>`).join('')}
+        <button class="imprimir" type="button" data-imprimir-contactos>${icon('imprimir')}Imprimir os contactos</button>
+        <p class="hint">Uma folha com estes números e os contactos do seu plano da família, para pôr no frigorífico ou na mochila.</p>`,
     }),
+    montar: (raiz) => raiz.querySelector('[data-imprimir-contactos]')?.addEventListener('click', () => imprimir(folhaContactos(), 'Contactos úteis')),
   };
+}
+
+// Folha de contactos para imprimir: os confirmados e os do plano da família.
+function folhaContactos() {
+  const dados = conteudo.contactos || {};
+  const p = lerPlano();
+  const linhaF = (nome, num, desc = '') => `<tr><th>${esc(nome)}${desc ? `<br><span style="font-weight:400">${esc(desc)}</span>` : ''}</th><td class="num">${esc(num)}</td></tr>`;
+  const familia = [
+    p.fora.tel.trim() ? linhaF(p.fora.nome || 'Contacto fora da região', p.fora.tel, 'Contacto fora da região') : '',
+    p.medico.tel.trim() ? linhaF(p.medico.nome || 'Médico de família', p.medico.tel, 'Médico de família') : '',
+  ].join('');
+  return `
+    ${familia ? `<h2>Da sua família</h2><table>${familia}</table>` : ''}
+    ${(dados.grupos || []).map((g) => {
+    const itens = (g.itens || []).filter((c) => c && c.nome && c.confirmado && c.num);
+    return itens.length ? `<h2>${esc(g.titulo)}</h2><table>${itens.map((c) => linhaF(c.nome, c.num, c.desc)).join('')}</table>` : '';
+  }).join('')}`;
 }
 
 // Aviso de prazos no início: só aparece quando algo do kit ou da mochila passou do prazo
@@ -810,10 +836,28 @@ function sobre() {
             <p>Instale a app para a ter no ecrã principal, como as outras apps.</p>
             <button class="btn btn-primary" type="button" data-action="install">Instalar a app</button>
           </div>
+          ${corpoCopia()}
+          ${novidadesHtml()}
           <p class="meta">Versão ${VERSAO} · em desenvolvimento</p>
         </div>`,
     }),
+    montar: montarCopia,
   };
+}
+
+// "Novidades": o que mudou em cada versão, da mais recente para a mais antiga.
+// A versão atual vem aberta; as outras ficam recolhidas.
+function novidadesHtml() {
+  if (!NOVIDADES.length) return '';
+  return `
+    <h2>Novidades</h2>
+    <div class="mais-grupo novidades">
+      ${NOVIDADES.map((v, i) => `
+        <details class="mais"${i === 0 ? ' open' : ''}>
+          <summary><span>Versão ${esc(v.versao)}<span class="nov-data">${esc(v.data)}</span></span>${icon('chev', 'i chev')}</summary>
+          <ul class="passos">${v.itens.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
+        </details>`).join('')}
+    </div>`;
 }
 
 // Devolve o ecrã de uma rota, ou null se a rota não existir.
@@ -823,6 +867,12 @@ export function resolver(nome, sub) {
   if (nome === 'contactos') return contactos();
   if (nome === 'kit') return kit();
   if (nome === 'mochila') return mochilaEcra();
+  if (nome === 'simulacro') {
+    return { title: 'Simulacro', theme: AZUL, html: pagina({ titulo: 'Simulacro', corpo: corpoSimulacro() }), montar: montarSimulacro };
+  }
+  if (nome === 'quiz') {
+    return { title: 'Quiz', theme: AZUL, html: pagina({ titulo: 'Quiz', corpo: corpoQuiz(), editar: 'quiz' }), montar: montarQuiz };
+  }
   if (nome === 'plano') {
     return { title: 'Plano da família', theme: AZUL, html: pagina({ titulo: 'Plano da família', corpo: corpoPlano() }), montar: montarPlano };
   }
@@ -836,6 +886,9 @@ export function resolver(nome, sub) {
   }
   if (nome === 'avisos') return avisosEcra();
   if (nome === 'sismos') return sismosEcra();
+  if (nome === 'fogos') {
+    return { title: 'Fogos', theme: AZUL, html: pagina({ titulo: 'Fogos', corpo: corpoFogos() }), montar: montarFogos, dinamico: true };
+  }
   if (nome === 'figuras') return figurasEcra();
   if (nome === 'sobre') return sobre();
   if (SIMPLES[nome]) {

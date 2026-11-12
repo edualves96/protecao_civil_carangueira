@@ -59,6 +59,19 @@ How it works:
 - The figures available for the guide steps are shown at <https://upcc.pt/#/figuras>.
 - Editors' saves are commits on GitHub, so pull before pushing code changes.
 
+## Fogos (Fogos.pt)
+
+The "Fogos" screen shows active incidents in the Leiria district from the Fogos.pt API. The API key
+must never be in the app: the app is public, and so is this repository. Instead, the publish
+workflow runs `scripts/fogos.mjs` every 10 minutes with the key from a GitHub secret, and publishes
+the result as `app/dados/fogos.json` (not stored in git).
+
+One-time setup: on GitHub, open **Settings → Secrets and variables → Actions → New repository
+secret**, name it `FOGOS_API_KEY` and paste the key. Without it, the screen says there's no data.
+Keep the key file (`fogos.txt`) out of git; it is in `.gitignore`.
+
+To test locally: `FOGOS_API_KEY=... node scripts/fogos.mjs`, then open the preview.
+
 ## Release a new version
 
 Bump `VERSAO` in `app/sw.js` and `app/js/screens.js`. This renews the offline copy on phones that

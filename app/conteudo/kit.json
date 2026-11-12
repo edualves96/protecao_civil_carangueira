@@ -47,7 +47,8 @@
         },
         {
           "nome": "Artigos para necessidades especiais",
-          "nota": "Para bebés, pessoas dependentes, animais de estimação ou quem usa canadianas, andarilho ou cadeira de rodas."
+          "nota": "Para bebés, pessoas dependentes, animais de estimação ou quem usa canadianas, andarilho ou cadeira de rodas.",
+          "opcional": true
         }
       ]
     },
@@ -93,7 +94,8 @@
         },
         {
           "nome": "Chaves de reserva",
-          "nota": "De casa e do carro."
+          "nota": "De casa e do carro.",
+          "opcional": true
         }
       ]
     },
@@ -121,17 +123,20 @@
       "dica": "Para pequenas reparações e para proteger as mãos.",
       "itens": [
         {
-          "nome": "Canivete multiusos"
+          "nome": "Canivete multiusos",
+          "opcional": true
         },
         {
-          "nome": "Fita adesiva resistente"
+          "nome": "Fita adesiva resistente",
+          "opcional": true
         },
         {
           "nome": "Isqueiro ou fósforos",
           "nota": "Guardados num saco impermeável."
         },
         {
-          "nome": "Luvas de trabalho"
+          "nome": "Luvas de trabalho",
+          "opcional": true
         }
       ]
     }

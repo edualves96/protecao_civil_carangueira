@@ -503,6 +503,14 @@ html.offline .net { display: flex; }
 .kit-segs { display: flex; gap: 3px; max-width: 200px; margin-top: 8px; }
 .kit-segs i { flex: 1; height: 6px; border-radius: 3px; background: var(--linha); transition: background-color .3s; }
 .kit-segs i.on { background: var(--azul); }
+/* Opcionais: traço mais fino e claro; não contam para o progresso. */
+.kit-segs i.op { height: 4px; margin-top: 1px; opacity: .55; }
+.check-op {
+  display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 999px; vertical-align: 2px;
+  background: #EEF1F4; font-size: 12px; font-weight: 700; color: var(--tinta-2);
+}
+.kit-extras { margin-top: 6px; font-size: 14px; color: var(--tinta-2); }
+.kit-extras:empty { display: none; }
 .feito .kit-segs i { background: var(--verde); }
 .kit-n { flex: none; font-size: 15px; font-weight: 700; color: var(--tinta-2); }
 .feito .kit-n { color: var(--verde); }
@@ -524,6 +532,111 @@ html.offline .net { display: flex; }
 @media (max-width: 440px) {
   .kit-corpo { padding-left: 0; }
 }
+
+/* ---------- Simulacro e quiz ---------- */
+.sim-lemb { margin-top: 12px; padding: 10px 12px; border-radius: 10px; background: #E3EDF8; font-weight: 700; }
+.sim-lemb.atrasado { background: #FFF1DD; color: #6A3B00; }
+.sim-relogio { margin-top: 24px; padding: 22px 16px; border-radius: 18px; background: var(--branco); text-align: center; box-shadow: inset 0 0 0 2px var(--linha); }
+.sim-relogio.a-correr { box-shadow: inset 0 0 0 3px var(--vermelho); }
+.sim-tempo { font-family: var(--f-titulo); font-weight: 700; font-size: 76px; line-height: 1; letter-spacing: .02em; font-variant-numeric: tabular-nums; }
+.a-correr .sim-tempo { color: var(--vermelho); }
+/* O botão principal do ecrã: grande e ao alcance do polegar (lei de Fitts). */
+.sim-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 60px; margin-top: 18px;
+  border-radius: 14px; background: var(--azul); color: #fff; font-family: var(--f-titulo); font-size: 22px; font-weight: 700;
+}
+.sim-btn svg.i { width: 24px; height: 24px; }
+.sim-parar { background: var(--verde); }
+.sim-passos { margin-top: 16px; }
+.sim-fim { margin-top: 18px; }
+.sim-res { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.sim-res span { font-size: 17px; color: var(--tinta-2); }
+.sim-res b { font-family: var(--f-titulo); font-size: 48px; line-height: 1.05; color: var(--azul); }
+.sim-cmp { margin-top: 8px; text-align: center; font-size: 17px; text-wrap: pretty; }
+.sim-ok { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 18px; font-weight: 700; color: var(--verde); }
+.sim-hist { list-style: none; margin: 6px 0 0; padding: 0; }
+.sim-hist li { padding: 12px 0; border-bottom: 1px solid var(--linha); }
+.sim-hist b { display: block; font-family: var(--f-titulo); font-size: 22px; }
+.sim-hist span { display: block; font-size: 15px; color: var(--tinta-2); }
+.sim-nota { margin-top: 4px; font-style: italic; }
+.quiz-melhor { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-weight: 700; color: var(--verde); }
+.quiz-melhor svg.i { width: 20px; height: 20px; }
+.quiz-prog { display: flex; flex-direction: column; gap: 6px; margin-top: 16px; }
+.quiz-prog-t { font-size: 15px; font-weight: 700; color: var(--tinta-2); }
+.quiz-segs { display: flex; gap: 3px; }
+.quiz-segs i { flex: 1; height: 6px; border-radius: 3px; background: var(--linha); }
+.quiz-segs i.certa { background: var(--verde); }
+.quiz-segs i.errada { background: var(--vermelho); }
+.quiz-caixa { margin-top: 18px; }
+.quiz-p { margin: 0; padding: 0; border: 0; }
+.quiz-q { display: block; margin-bottom: 14px; font-family: var(--f-titulo); font-size: 26px; font-weight: 700; line-height: 1.15; text-wrap: balance; }
+.quiz-q:focus { outline: none; }
+.quiz-op {
+  display: block; width: 100%; min-height: 58px; margin-top: 10px; padding: 12px 16px; border-radius: 12px;
+  border: 2px solid #B9C0C9; background: var(--branco); text-align: left; font-size: 17px; font-weight: 700; color: var(--tinta);
+}
+.quiz-op:disabled { cursor: default; opacity: .65; }
+.quiz-op.certa { opacity: 1; border-color: var(--verde); background: #E5F2E8; }
+.quiz-op.errada { opacity: 1; border-color: var(--vermelho); background: #FBE3E3; }
+.quiz-exp { margin-top: 14px; }
+.quiz-r { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 700; }
+.quiz-r.ok { color: var(--verde); }
+.quiz-r.nok { color: var(--vermelho); }
+.quiz-e { margin-top: 6px; font-size: 17px; line-height: 1.45; text-wrap: pretty; }
+@media (hover: hover) { .quiz-op:not(:disabled):hover { border-color: var(--azul); } }
+
+/* ---------- Sobre: cópia dos dados e novidades ---------- */
+.copia { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.btn-copia {
+  display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 8px 12px;
+  border-radius: 12px; background: var(--azul); color: #fff; font-size: 15px; font-weight: 700; text-align: center; cursor: pointer;
+}
+.btn-copia-2 { background: var(--branco); color: var(--azul); box-shadow: inset 0 0 0 2px var(--azul); }
+.btn-copia svg.i { width: 20px; height: 20px; }
+.btn-copia:focus-within { outline: 3px solid var(--tinta); outline-offset: 2px; }
+.copia-msg { min-height: 1.4em; font-size: 15px; font-weight: 700; color: var(--verde); }
+.novidades { margin-top: 8px; }
+.nov-data { margin-left: 8px; font-family: var(--f-texto); font-size: 14px; font-weight: 400; color: var(--tinta-2); }
+.novidades .passos li { font-size: 16px; }
+
+/* ---------- Fogos (Fogos.pt) ---------- */
+/* Aviso no início quando há um incêndio ativo a menos de 10 km: o bloco mais forte do ecrã
+   a seguir ao estado (efeito Von Restorff). */
+.fogo-perto {
+  display: flex; align-items: center; gap: 12px; margin-top: 16px; padding: 14px 12px 14px 14px; border-radius: 14px;
+  background: var(--vermelho); color: #fff; text-decoration: none;
+}
+.fogo-perto-ic { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: rgb(255 255 255 / .18); }
+.fogo-perto-ic svg.i { width: 26px; height: 26px; }
+.fogo-perto-txt { flex: 1; min-width: 0; }
+.fogo-perto-txt b { display: block; font-family: var(--f-titulo); font-size: 21px; line-height: 1.15; }
+.fogo-perto-txt span { display: block; margin-top: 2px; font-size: 15px; line-height: 1.35; }
+.fogo-perto .chev { flex: none; width: 22px; height: 22px; }
+.mapa-fogos { height: min(42vh, 320px); cursor: grab; }
+.pino-fogo > span {
+  display: grid; place-items: center; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%;
+  background: var(--cor, var(--vermelho)); color: #fff; border: 3px solid #fff; box-shadow: 0 2px 6px rgb(0 0 0 / .35);
+}
+.pino-fogo > span svg.i { width: 18px; height: 18px; }
+.pino-fogo.fim > span { opacity: .7; }
+.pino-fogo { width: 44px; height: 44px; margin: -22px 0 0 -22px; display: grid; place-items: center; }
+.pino-fogo > span { margin: 0; }
+.pino-casa > span {
+  display: block; margin: -12px 0 0 -6px; padding: 2px 8px 2px 18px; border-radius: 999px; white-space: nowrap;
+  background: var(--branco); box-shadow: 0 1px 4px rgb(0 0 0 / .3); font-size: 13px; font-weight: 700; color: var(--tinta);
+  position: relative;
+}
+.pino-casa > span::before { content: ""; position: absolute; left: 6px; top: 50%; width: 8px; height: 8px; margin-top: -4px; border-radius: 50%; background: var(--azul); }
+.fogos { list-style: none; margin: 6px 0 0; padding: 0; }
+.fogo { margin-inline: -8px; padding: 14px 8px; border-bottom: 1px solid var(--linha); }
+.fogo.foco { animation: realce 1.8s ease-out; --cor: var(--vermelho); }
+.fogo-estado { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; }
+.fogo-cor { flex: none; width: 14px; height: 14px; border-radius: 50%; background: var(--cor); box-shadow: inset 0 0 0 1.5px rgb(0 0 0 / .2); }
+.fogo-t { margin-top: 4px; font-family: var(--f-titulo); font-weight: 700; font-size: 24px; line-height: 1.1; }
+.fogo-l { margin-top: 4px; font-size: 16px; font-weight: 700; }
+.fogo-q, .fogo-m { margin-top: 3px; font-size: 15px; color: var(--tinta-2); }
+.fogo-v { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-weight: 700; color: var(--azul); text-underline-offset: 3px; }
+.fogo-v svg.i { width: 18px; height: 18px; }
 
 /* ---------- Prazos de validade (kit e mochila) ---------- */
 .val { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: -6px 0 0 42px; padding: 0 0 14px; }
@@ -674,19 +787,26 @@ html.offline .net { display: flex; }
   .pino-esc > span, .guardado.pisca { animation: none !important; }
 }
 
-/* Imprimir o plano: só a folha, a preto e branco, em A4. */
+/* Imprimir (plano, kit, mochila, contactos): só a folha montada para isso, a preto e
+   branco, em A4. Ver imprimir.js. */
 @media print {
-  @page { size: A4; margin: 16mm; }
-  body { background: #fff; }
-  .drawer, .bar, .scrim, .phead, .edge, #view > *:not(.pbody), .pbody > *:not([data-plano]), [data-plano] > *:not(.folha) { display: none !important; }
-  main { margin: 0 !important; }
-  .folha { display: block; color: #000; font-size: 12pt; }
-  .folha h1 { font-family: var(--f-titulo); font-size: 22pt; }
-  .folha h2 { margin-top: 14pt; font-family: var(--f-titulo); font-size: 15pt; }
+  @page { size: A4; margin: 14mm 16mm; }
+  html.a-imprimir body { background: #fff; }
+  html.a-imprimir body > *:not(#folha) { display: none !important; }
+  html.a-imprimir .folha { display: block; color: #000; font-size: 11.5pt; line-height: 1.35; }
+  .folha-cab { display: flex; justify-content: space-between; gap: 12pt; padding-bottom: 6pt; border-bottom: 1.5pt solid #000; font-size: 9.5pt; }
+  .folha h1 { margin-top: 10pt; font-family: var(--f-titulo); font-size: 22pt; line-height: 1.1; }
+  .folha h2 { margin-top: 14pt; font-family: var(--f-titulo); font-size: 14pt; break-after: avoid; }
   .folha p { margin-top: 4pt; }
   .folha table { width: 100%; margin-top: 4pt; border-collapse: collapse; }
-  .folha th, .folha td { padding: 5pt 6pt; border: 1px solid #999; text-align: left; vertical-align: top; }
+  .folha tr { break-inside: avoid; }
+  .folha th, .folha td { padding: 4pt 6pt; border: 1px solid #999; text-align: left; vertical-align: top; }
   .folha th { width: 32%; }
+  .folha .cx { display: inline-block; width: 11pt; height: 11pt; margin-right: 6pt; border: 1.3pt solid #000; vertical-align: -1.5pt; }
+  .folha .cx.on { background: #000; box-shadow: inset 0 0 0 2pt #fff; }
+  .folha .lista td:first-child { width: 22pt; }
+  .folha .num { font-family: var(--f-titulo); font-size: 13pt; font-weight: 700; white-space: nowrap; }
+  .folha-112 { margin-top: 16pt !important; padding-top: 6pt; border-top: 1px solid #999; font-size: 12pt; }
 }
 
 /* ---------- Mochila de emergência ---------- */

@@ -32,7 +32,7 @@ const paraLat = (y, z) => {
 
 const comoChegar = (x) => `https://www.google.com/maps/dir/?api=1&destination=${x.lat.toFixed(6)},${x.lon.toFixed(6)}`;
 
-function criarMapa(el, { aoTocar }) {
+export function criarMapa(el, { aoTocar = () => {} } = {}) {
   const camada = el.querySelector('[data-mosaicos]');
   const marcas = el.querySelector('[data-marcas]');
   let z = ZOOM.inicio;

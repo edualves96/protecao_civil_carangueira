@@ -124,6 +124,7 @@ Hyperlegible for text. Both are free and will be bundled with the app so they wo
 |---|---|---|
 | — | **Início** | Current status, family preparation, "Se acontecer agora" |
 | Agora | **Avisos do tempo** | Weather warnings for the Leiria district (live, saved for offline use) |
+| Agora | **Fogos** | Active incidents in the Leiria district from Fogos.pt, with a map; home alert for an active fire within 10 km |
 | Agora | **Sismos recentes** | Recent earthquakes on a map (IPMA data) |
 | Preparar | **Kit de emergência** | 72-hour kit checklist, saved on the phone |
 | Preparar | **Mochila de emergência** | Grab-and-go backpack for 3 to 5 days away from home, with a packing guide |

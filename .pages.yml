@@ -183,6 +183,10 @@ content:
                 label: Tem prazo de validade
                 description: Quando alguém marca este item, a app pede até quando é válido e avisa antes de acabar.
                 type: boolean
+              - name: opcional
+                label: Opcional
+                description: Não conta para o progresso. Para coisas que não se aplicam a todos (bebés, animais) ou que são um extra.
+                type: boolean
       - name: rodape
         label: Texto no fim da lista
         type: text
@@ -254,6 +258,10 @@ content:
               - name: validade
                 label: Tem prazo de validade
                 description: Quando alguém marca este item, a app pede até quando é válido e avisa antes de acabar.
+                type: boolean
+              - name: opcional
+                label: Opcional
+                description: Não conta para o progresso. Para coisas que não se aplicam a todos (bebés, animais) ou que são um extra.
                 type: boolean
       - name: arrumar
         label: Como arrumar a mochila
@@ -369,6 +377,68 @@ content:
           - name: nota
             label: Nota
             type: text
+
+  - name: quiz
+    label: Quiz
+    type: file
+    path: app/conteudo/quiz.json
+    format: json
+    fields:
+      - name: intro
+        label: Texto de abertura
+        type: text
+      - name: perguntas
+        label: Perguntas
+        description: Uma pergunta de cada vez, com três respostas. A ordem das respostas muda sempre.
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{q}"
+        fields:
+          - name: q
+            label: Pergunta
+            type: string
+            required: true
+          - name: opcoes
+            label: Respostas
+            description: Três respostas curtas.
+            type: string
+            list:
+              min: 2
+              max: 4
+          - name: certa
+            label: Número da resposta certa
+            description: 1 para a primeira resposta da lista, 2 para a segunda, 3 para a terceira.
+            type: number
+            required: true
+          - name: explica
+            label: Explicação
+            description: Aparece depois de responder, certo ou errado.
+            type: text
+          - name: guia
+            label: Guia para saber mais
+            type: select
+            options:
+              values:
+                - name: sismo
+                  label: Sismo
+                - name: incendio-rural
+                  label: Incêndio rural
+                - name: cheias
+                  label: Cheias e inundações
+                - name: calor
+                  label: Calor extremo
+                - name: tempestade
+                  label: Tempestade e vento forte
+                - name: frio
+                  label: Frio extremo
+                - name: incendio-casa
+                  label: Incêndio em casa
+                - name: materias-perigosas
+                  label: Acidente com matérias perigosas
+                - name: energia
+                  label: Falha prolongada de energia
 
   - name: contactos
     label: Contactos úteis
