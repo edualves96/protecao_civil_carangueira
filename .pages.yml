@@ -154,6 +154,8 @@ content:
                   label: Camisola (roupa e abrigo)
                 - name: ferramentas
                   label: Chave inglesa (ferramentas)
+                - name: familia
+                  label: Coração (família e animais)
                 - name: outro
                   label: Caixa (outro)
           - name: dica
@@ -177,9 +179,196 @@ content:
                 label: Nota
                 description: Opcional. Uma frase curta com detalhes, por exemplo quantidades.
                 type: text
+              - name: validade
+                label: Tem prazo de validade
+                description: Quando alguém marca este item, a app pede até quando é válido e avisa antes de acabar.
+                type: boolean
       - name: rodape
         label: Texto no fim da lista
         type: text
+
+  - name: mochila
+    label: Mochila de emergência
+    type: file
+    path: app/conteudo/mochila.json
+    format: json
+    fields:
+      - name: intro
+        label: Texto de abertura
+        type: text
+      - name: categorias
+        label: Categorias
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{nome}"
+        fields:
+          - name: nome
+            label: Nome da categoria
+            type: string
+            required: true
+          - name: icone
+            label: Ícone
+            description: O desenho que aparece ao lado do nome do grupo.
+            type: select
+            options:
+              values:
+                - name: agua
+                  label: Gota de água (água e comida)
+                - name: saude
+                  label: Estojo de primeiros socorros (saúde)
+                - name: luz
+                  label: Lanterna (luz e comunicação)
+                - name: documentos
+                  label: Documento (documentos e dinheiro)
+                - name: roupa
+                  label: Camisola (roupa e abrigo)
+                - name: ferramentas
+                  label: Chave inglesa (ferramentas)
+                - name: familia
+                  label: Coração (família e animais)
+                - name: outro
+                  label: Caixa (outro)
+          - name: dica
+            label: Dica
+            description: Uma frase curta por baixo do nome da categoria.
+            type: string
+          - name: itens
+            label: Itens
+            description: Mudar o nome de um item volta a deixá-lo por marcar nos telemóveis de quem já o tinha marcado.
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{nome}"
+            fields:
+              - name: nome
+                label: Item
+                type: string
+                required: true
+              - name: nota
+                label: Nota
+                description: Opcional. Uma frase curta com detalhes, por exemplo quantidades.
+                type: text
+              - name: validade
+                label: Tem prazo de validade
+                description: Quando alguém marca este item, a app pede até quando é válido e avisa antes de acabar.
+                type: boolean
+      - name: arrumar
+        label: Como arrumar a mochila
+        type: object
+        fields:
+          - name: titulo
+            label: Título
+            type: string
+          - name: intro
+            label: Texto de abertura
+            type: text
+          - name: passos
+            label: Passos
+            description: Cada passo enche uma parte da mochila desenhada. Mantenha a ordem do fundo para cima.
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{t}"
+            fields:
+              - name: zona
+                label: Parte da mochila que se realça
+                type: select
+                options:
+                  values:
+                    - name: fundo
+                      label: Fundo (pesado)
+                    - name: meio
+                      label: Meio (médio)
+                    - name: topo
+                      label: Topo (leve e mole)
+                    - name: espacos
+                      label: Espaços vazios
+                    - name: lados
+                      label: Equilíbrio dos lados
+                    - name: bolsos
+                      label: Bolsos de fora
+                    - name: alcas
+                      label: Alças e cinto
+                    - name: teste
+                      label: Teste final
+              - name: t
+                label: O que fazer
+                type: string
+                required: true
+              - name: d
+                label: Explicação
+                type: string
+      - name: rodape
+        label: Texto no fim da página
+        type: text
+
+  - name: pontos
+    label: Pontos de encontro (mapa)
+    type: file
+    path: app/conteudo/pontos.json
+    format: json
+    fields:
+      - name: intro
+        label: Texto de abertura
+        type: text
+      - name: aviso
+        label: Nota sobre os locais
+        description: Por exemplo, que os pontos de encontro oficiais ainda vão ser indicados.
+        type: text
+      - name: pontos
+        label: Locais no mapa
+        description: Para saber as coordenadas, no Google Maps toque e mantenha o dedo no local; os dois números que aparecem são a latitude e a longitude.
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{nome}"
+        fields:
+          - name: nome
+            label: Nome
+            type: string
+            required: true
+          - name: tipo
+            label: Tipo
+            type: select
+            options:
+              values:
+                - name: encontro
+                  label: Ponto de encontro oficial
+                - name: abrigo
+                  label: Abrigo
+                - name: junta
+                  label: Junta de Freguesia
+                - name: saude
+                  label: Saúde
+                - name: escola
+                  label: Escola
+                - name: bombeiros
+                  label: Bombeiros
+                - name: gnr
+                  label: GNR
+                - name: outro
+                  label: Outro local de referência
+          - name: morada
+            label: Morada
+            type: string
+          - name: lat
+            label: Latitude
+            description: Por exemplo 39.74242
+            type: number
+            required: true
+          - name: lon
+            label: Longitude
+            description: Por exemplo -8.70812
+            type: number
+            required: true
+          - name: nota
+            label: Nota
+            type: text
 
   - name: contactos
     label: Contactos úteis

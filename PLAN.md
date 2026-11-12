@@ -126,6 +126,7 @@ Hyperlegible for text. Both are free and will be bundled with the app so they wo
 | Agora | **Avisos do tempo** | Weather warnings for the Leiria district (live, saved for offline use) |
 | Agora | **Sismos recentes** | Recent earthquakes on a map (IPMA data) |
 | Preparar | **Kit de emergência** | 72-hour kit checklist, saved on the phone |
+| Preparar | **Mochila de emergência** | Grab-and-go backpack for 3 to 5 days away from home, with a packing guide |
 | Preparar | **Plano da família** | Family members, meeting points, important contacts, special needs |
 | Preparar | **Pontos de encontro** | Map of Caranguejeira meeting points (OpenStreetMap) |
 | Saber agir | **O que fazer se…** | What to do before, during and after each risk (list below) |
@@ -157,7 +158,8 @@ Each step ends with something you can open and try on your phone.
 1. ✅ **Foundation:** project structure, colours and fonts, bottom bar, side menu, home screen, empty screens. Installable from day one: manifest, provisional icon, "Instalar a app" button on Android and the guide on iPhone. Published on GitHub Pages so it can be installed and tested on a real phone.
 2. ✅ **Contactos úteis + O que fazer se…:** tap-to-call contacts and the guides for every risk (offline). Only numbers confirmed on an official source can be called, and each shows its source and date. The guides put what to do now first.
 3. ✅ **Kit de emergência:** 23 items in 6 categories with progress, saved on the phone. The home screen shows the kit count.
-4. **Plano da família + Pontos de encontro:** family plan form and map with Caranguejeira points.
+   ✅ **Kit mochila de emergência:** 29 items in 7 groups for 3 to 5 days away from home, and a packing guide where a drawn backpack fills up step by step as you scroll. Highlighted on the home screen with what's left to do.
+4. ✅ **Plano da família + Pontos de encontro:** a 4-part family plan (who lives at home and their needs, an out-of-area contact, meeting points, how to leave home), saved on the phone as you type and printable on one A4 page. A map (OpenStreetMap tiles, no library) where the family picks a point near home and one outside the area, by tapping the map or using a reference place; the unit edits the reference places, and marks official meeting points, in Pages CMS. Both feed the home tracker.
 5. ✅ **Avisos do tempo + Sismos recentes:** live IPMA data, saved on the phone for offline use, with the status block on the home screen. The status shows the most serious warning for the Leiria district and links to the matching guide. Sea warnings (agitação marítima) only affect the coast, so they appear on the warnings screen but don't colour the home screen. If the data is more than 6 hours old, the app says so instead of "Sem avisos". The earthquakes screen lists everything within 100 km and, up to 400 km, those felt or of magnitude 3 or more. The earthquake map comes with the step 4 map.
 6. **Simulacro + Quiz.**
 

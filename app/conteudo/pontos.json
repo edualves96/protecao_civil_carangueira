@@ -1,0 +1,11 @@
+{
+  "intro": "Combine com a família dois sítios para se encontrarem se não estiverem juntos quando algo acontecer: um perto de casa e outro fora do bairro, para o caso de não poderem voltar.",
+  "aviso": "Os locais no mapa servem de referência. Os pontos de encontro oficiais da freguesia serão indicados pela Proteção Civil.",
+  "pontos": [
+    { "nome": "Junta de Freguesia de Caranguejeira", "tipo": "junta", "morada": "Rua do Comércio, 54", "lat": 39.74242, "lon": -8.70812, "nota": "" },
+    { "nome": "Escola Básica de Caranguejeira", "tipo": "escola", "morada": "", "lat": 39.74294, "lon": -8.70721, "nota": "" },
+    { "nome": "Centro Pastoral e Cultural da Paróquia", "tipo": "outro", "morada": "", "lat": 39.74423, "lon": -8.70734, "nota": "" },
+    { "nome": "Unidade de Cuidados de Saúde Personalizados", "tipo": "saude", "morada": "", "lat": 39.74317, "lon": -8.70681, "nota": "" },
+    { "nome": "Escola Básica Doutor Correia Alexandre", "tipo": "escola", "morada": "", "lat": 39.74709, "lon": -8.69821, "nota": "" }
+  ]
+}

@@ -226,7 +226,9 @@ html.offline .net { display: flex; }
 .seg span { position: relative; flex: 1; height: 8px; border-radius: 2px; background: var(--linha); overflow: hidden; }
 .seg i { position: absolute; top: 0; bottom: 0; left: 0; background: var(--azul); }
 .seglbl { display: flex; margin-top: 6px; font-size: 14px; line-height: 1.2; color: var(--tinta-2); }
-.seglbl span { flex: 1; }
+.seglbl span { flex: 1; min-width: 0; }
+/* Por baixo de cada nome, quanto está feito: mostra logo o que falta. */
+.seglbl b { display: block; margin-top: 2px; font-size: 13px; color: var(--tinta); }
 .next {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   margin-top: 12px; min-height: 52px; padding: 12px 0;
@@ -523,6 +525,299 @@ html.offline .net { display: flex; }
   .kit-corpo { padding-left: 0; }
 }
 
+/* ---------- Prazos de validade (kit e mochila) ---------- */
+.val { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: -6px 0 0 42px; padding: 0 0 14px; }
+.val[hidden] { display: none; }
+.val-l { font-size: 15px; font-weight: 700; }
+.val-i {
+  min-height: 44px; padding: 6px 10px; border: 2px solid #B9C0C9; border-radius: 10px; background: var(--branco);
+  font: inherit; font-size: 16px; color: var(--tinta);
+}
+.val-i:focus { border-color: var(--azul); outline: none; box-shadow: 0 0 0 3px rgb(11 87 164 / .25); }
+.val-e { flex-basis: 100%; font-size: 14px; font-weight: 700; }
+.val-ok { color: var(--verde); }
+.val-falta { color: var(--tinta-2); font-weight: 400; }
+.val-breve { color: #9A5200; }
+.val-expirado { color: var(--vermelho); }
+.kit-alerta { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; padding: 2px 8px; border-radius: 999px; font-size: 13px; font-weight: 700; }
+.kit-alerta svg.i { width: 15px; height: 15px; stroke-width: 2.4; }
+.kit-alerta-exp { background: #FBE3E3; color: #A31F1F; }
+.kit-alerta-breve { background: #FFF1DD; color: #8A4A00; }
+/* Aviso no início (efeito Von Restorff: é o único bloco vermelho/laranja da preparação). */
+.val-aviso {
+  display: flex; align-items: center; gap: 12px; margin-top: 12px; padding: 12px 12px 12px 14px; border-radius: 12px;
+  background: #FFF1DD; color: #5C3500; text-decoration: none; box-shadow: inset 0 0 0 1.5px rgb(196 106 0 / .45);
+}
+.val-aviso-exp { background: #FBE3E3; color: #6E1414; box-shadow: inset 0 0 0 1.5px rgb(198 40 40 / .45); }
+.val-aviso-ic { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #C46A00; color: #fff; }
+.val-aviso-exp .val-aviso-ic { background: var(--vermelho); }
+.val-aviso-txt { flex: 1; min-width: 0; }
+.val-aviso-txt b { display: block; font-size: 17px; }
+.val-aviso-txt span { display: block; margin-top: 2px; font-size: 14px; line-height: 1.35; }
+.val-aviso .chev { flex: none; width: 22px; height: 22px; }
+
+/* ---------- Plano da família ---------- */
+/* Campos grandes e com rótulo por cima (lei de Fitts e lei de Jakob: como num formulário
+   em papel). Grava sozinho ao escrever. */
+.fld { display: block; margin-top: 14px; }
+.fld-r { display: block; font-size: 16px; font-weight: 700; }
+.fld-a { display: block; margin-top: 2px; font-size: 14px; line-height: 1.4; color: var(--tinta-2); }
+.fld input, .fld textarea {
+  display: block; width: 100%; min-height: 50px; margin-top: 6px; padding: 12px 14px;
+  border: 2px solid #B9C0C9; border-radius: 10px; background: var(--branco);
+  font: inherit; font-size: 17px; color: var(--tinta);
+}
+.fld textarea { min-height: 76px; resize: vertical; line-height: 1.4; }
+.fld input::placeholder, .fld textarea::placeholder { color: #767A80; }
+.fld input:focus, .fld textarea:focus { border-color: var(--azul); outline: none; box-shadow: 0 0 0 3px rgb(11 87 164 / .25); }
+.plano-corpo { padding-bottom: 18px; }
+.pessoas { list-style: none; margin: 0; padding: 0; }
+.pessoa { padding: 6px 0 14px; border-bottom: 1px solid var(--linha); }
+/* Idade: três botões grandes em vez de uma lista para abrir. */
+.seg-op { display: flex; gap: 6px; margin: 10px 0 0; padding: 0; border: 0; }
+.seg-op-i { flex: 1; position: relative; }
+.seg-op-i input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.seg-op-i span {
+  display: grid; place-items: center; min-height: 46px; padding: 0 6px; border: 2px solid #B9C0C9; border-radius: 10px;
+  background: var(--branco); font-size: 15px; font-weight: 700; text-align: center; cursor: pointer;
+}
+.seg-op-i input:checked + span { border-color: var(--azul); background: var(--azul); color: #fff; }
+.seg-op-i input:focus-visible + span { outline: 3px solid var(--tinta); outline-offset: 2px; }
+.pessoa-x { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: 6px; font-size: 15px; font-weight: 700; color: var(--vermelho); }
+.pessoa-x svg.i { width: 20px; height: 20px; }
+.add {
+  display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 52px; margin-top: 14px;
+  border: 2px dashed var(--azul); border-radius: 12px; font-size: 16px; font-weight: 700; color: var(--azul); text-decoration: none;
+}
+.ligar-fora { display: flex; align-items: center; gap: 10px; min-height: 52px; margin-top: 14px; padding: 0 16px; border-radius: 12px; background: var(--azul); color: #fff; font-weight: 700; text-decoration: none; }
+.guardado { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 14px; font-weight: 700; color: var(--verde); }
+.guardado svg.i { width: 18px; height: 18px; stroke-width: 2.6; }
+.guardado.pisca { animation: guardado .9s ease-out; }
+@keyframes guardado { 0% { opacity: .3; } 100% { opacity: 1; } }
+.seg-partes span { height: 8px; }
+.enc-lista, .enc-fim { list-style: none; margin: 10px 0 0; padding: 0; }
+.enc-l { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 6px 0; border-bottom: 1px solid var(--linha); }
+.enc-l > span:nth-child(2) { flex: 1; min-width: 0; }
+.enc-l b { display: block; font-size: 14px; color: var(--tinta-2); }
+.enc-l i { font-style: normal; color: var(--tinta-2); }
+.enc-n {
+  flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;
+  font-family: var(--f-titulo); font-weight: 700; font-size: 18px; color: #fff;
+}
+.enc-n1 { background: var(--laranja-pc); color: #1A1200; }
+.enc-n2 { background: var(--azul); }
+.imprimir {
+  display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 52px; margin-top: 22px;
+  border: 2px solid var(--tinta); border-radius: 12px; font-size: 16px; font-weight: 700;
+}
+.folha { display: none; }
+
+/* ---------- Pontos de encontro (mapa) ---------- */
+.esc-grupo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
+.esc {
+  display: flex; align-items: center; gap: 10px; min-height: 64px; padding: 8px 10px; border: 2px solid #B9C0C9; border-radius: 12px;
+  background: var(--branco); text-align: left;
+}
+.esc[aria-pressed="true"] { border-color: var(--azul); box-shadow: 0 0 0 3px rgb(11 87 164 / .2); }
+.esc-txt { flex: 1; min-width: 0; }
+.esc-txt b { display: block; font-size: 15px; }
+.esc-txt span {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+  font-size: 13px; line-height: 1.3; color: var(--tinta-2); hyphens: auto;
+}
+.esc { position: relative; gap: 8px; padding-right: 24px; }
+.esc .enc-n { width: 28px; height: 28px; font-size: 16px; }
+.esc-ok { display: none; position: absolute; top: 6px; right: 6px; color: var(--verde); }
+.esc-ok svg.i { width: 20px; height: 20px; stroke-width: 2.8; }
+.esc.feito .esc-ok { display: block; }
+.esc-ajuda { margin-top: 10px; font-size: 15px; line-height: 1.4; color: var(--tinta-2); }
+.mapa {
+  position: relative; height: min(56vh, 420px); margin-top: 12px; overflow: hidden; border-radius: 14px;
+  background: #E8ECEF; touch-action: none; cursor: crosshair; user-select: none;
+}
+.mapa-mosaicos img { position: absolute; top: 0; left: 0; width: 256px; height: 256px; max-width: none; }
+.mapa-marcas { position: absolute; inset: 0; pointer-events: none; }
+.pino { position: absolute; top: 0; left: 0; pointer-events: auto; }
+.pino-ref {
+  display: grid; place-items: center; width: 44px; height: 44px; margin: -40px 0 0 -22px; color: var(--tinta-2);
+}
+.pino-ref svg.i { width: 30px; height: 30px; fill: var(--branco); stroke-width: 2.2; }
+.pino-esc > span {
+  display: grid; place-items: center; width: 36px; height: 36px; margin: -44px 0 0 -18px; border-radius: 50% 50% 50% 4px; transform: rotate(-45deg);
+  border: 3px solid #fff; box-shadow: 0 2px 6px rgb(0 0 0 / .35); font-family: var(--f-titulo); font-weight: 700; font-size: 18px;
+}
+.pino-perto > span { background: var(--laranja-pc); color: #1A1200; }
+.pino-longe > span { background: var(--azul); color: #fff; }
+.pino-esc > span { animation: pino-cai .45s cubic-bezier(.16, 1, .3, 1); }
+@keyframes pino-cai { from { translate: 0 -18px; opacity: 0; } }
+.pino-aqui { width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; background: #1A73E8; border: 3px solid #fff; box-shadow: 0 0 0 6px rgb(26 115 232 / .25); }
+.mapa-ctl { position: absolute; top: 10px; right: 10px; display: flex; flex-direction: column; gap: 8px; }
+.mapa-ctl button {
+  display: grid; place-items: center; width: 48px; height: 48px; border-radius: 12px; background: var(--branco);
+  box-shadow: 0 2px 6px rgb(0 0 0 / .2); color: var(--tinta);
+}
+.mapa-off { display: none; position: absolute; left: 12px; right: 70px; bottom: 34px; padding: 10px 12px; border-radius: 10px; background: rgb(255 255 255 / .92); font-size: 14px; }
+.mapa.sem-mapa .mapa-off { display: block; }
+.mapa-atr { position: absolute; right: 0; bottom: 0; padding: 3px 8px; background: rgb(255 255 255 / .85); font-size: 12px; color: var(--tinta); }
+.mapa-msg { min-height: 1.4em; margin-top: 8px; font-size: 15px; font-weight: 700; color: var(--verde); }
+.refs { list-style: none; margin: 8px 0 0; padding: 0; }
+.ref { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--linha); }
+.ref-ic { flex: none; color: var(--tinta-2); }
+.ref-txt { flex: 1; min-width: 0; }
+.ref-txt b { display: block; font-size: 16px; line-height: 1.3; }
+.ref-txt span { display: block; font-size: 14px; color: var(--tinta-2); }
+.ref-usar {
+  flex: none; display: grid; place-items: center; min-width: 64px; min-height: 44px; padding: 0 14px; border-radius: 10px;
+  border: 2px solid var(--azul); font-size: 15px; font-weight: 700; color: var(--azul); text-decoration: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pino-esc > span, .guardado.pisca { animation: none !important; }
+}
+
+/* Imprimir o plano: só a folha, a preto e branco, em A4. */
+@media print {
+  @page { size: A4; margin: 16mm; }
+  body { background: #fff; }
+  .drawer, .bar, .scrim, .phead, .edge, #view > *:not(.pbody), .pbody > *:not([data-plano]), [data-plano] > *:not(.folha) { display: none !important; }
+  main { margin: 0 !important; }
+  .folha { display: block; color: #000; font-size: 12pt; }
+  .folha h1 { font-family: var(--f-titulo); font-size: 22pt; }
+  .folha h2 { margin-top: 14pt; font-family: var(--f-titulo); font-size: 15pt; }
+  .folha p { margin-top: 4pt; }
+  .folha table { width: 100%; margin-top: 4pt; border-collapse: collapse; }
+  .folha th, .folha td { padding: 5pt 6pt; border: 1px solid #999; text-align: left; vertical-align: top; }
+  .folha th { width: 32%; }
+}
+
+/* ---------- Mochila de emergência ---------- */
+/* Entrada no início: o único bloco destacado da preparação (laranja do logótipo, em tom
+   claro), com o que falta, para lembrar o que ficou a meio. Toda a área se toca. */
+.moch-cta {
+  display: flex; align-items: center; gap: 14px; margin-top: 16px; padding: 16px 14px 16px 16px;
+  border-radius: 14px; background: #FFF1DD; color: var(--tinta); text-decoration: none;
+  box-shadow: inset 0 0 0 1px rgb(247 148 29 / .35);
+}
+.moch-cta-ic {
+  flex: none; display: grid; place-items: center; width: 54px; height: 54px; border-radius: 50%;
+  background: var(--laranja-pc); color: #1A1200;
+}
+.moch-cta-ic svg.i { width: 30px; height: 30px; }
+.moch-cta-txt { flex: 1; min-width: 0; }
+.moch-cta-t { display: block; font-family: var(--f-titulo); font-weight: 700; font-size: 21px; line-height: 1.15; }
+.moch-cta-d { display: block; margin-top: 3px; font-size: 15px; line-height: 1.35; color: #5C4520; }
+.moch-cta-conta { display: block; margin-top: 8px; font-size: 14px; font-weight: 700; color: #7A4A00; }
+.moch-cta-barra { display: block; height: 8px; margin-top: 5px; border-radius: 4px; background: rgb(247 148 29 / .22); overflow: hidden; }
+.moch-cta-barra i { display: block; height: 100%; border-radius: 4px; background: #C46A00; }
+.moch-cta.feito .moch-cta-conta { color: var(--verde); }
+.moch-cta.feito .moch-cta-barra { background: rgb(46 133 64 / .2); }
+.moch-cta.feito .moch-cta-barra i { background: var(--verde); }
+.moch-cta .chev { flex: none; width: 22px; height: 22px; color: #9A5200; }
+.moch-cta.feito { background: #E5F2E8; box-shadow: inset 0 0 0 1px rgb(46 133 64 / .35); }
+.moch-cta.feito .moch-cta-ic { background: var(--verde); color: #fff; }
+.moch-cta.feito .moch-cta-d, .moch-cta.feito .chev { color: var(--verde); }
+
+/* Atalho para o guia de arrumação, no topo da página da mochila. */
+.arr-ir {
+  display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 18px; padding: 12px 14px;
+  border-radius: 12px; background: #E3EDF8; text-align: left; color: var(--tinta);
+}
+.arr-ir-ic { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--azul); color: #fff; }
+.arr-ir-ic svg.i { width: 24px; height: 24px; }
+.arr-ir-txt { flex: 1; min-width: 0; }
+.arr-ir-txt b { display: block; font-size: 17px; }
+.arr-ir-txt span { display: block; margin-top: 2px; font-size: 14px; color: var(--tinta-2); }
+.arr-ir-seta { color: var(--azul); }
+
+/* Guia "Como arrumar a mochila": a mochila desenhada fica à vista e enche-se à medida
+   que se desce pelos passos. */
+.arrumar { padding-top: 34px; }
+.arr-intro { margin-top: 6px; font-size: 17px; text-wrap: pretty; }
+.arr-grid { margin-top: 12px; }
+.arr-fig {
+  position: sticky; top: 0; z-index: 2; padding: 10px 0 14px;
+  background: linear-gradient(var(--papel) 88%, rgb(245 246 248 / 0));
+}
+.moch-svg { display: block; width: 100%; max-width: 360px; max-height: 250px; margin: 0 auto; overflow: visible; }
+.arr-passos { list-style: none; margin: 0; padding: 0 0 38vh; }
+.arr-btn {
+  display: flex; align-items: flex-start; gap: 14px; width: calc(100% + 16px); margin-inline: -8px;
+  padding: 18px 8px; border-radius: 12px; text-align: left; color: var(--tinta-2);
+  transition: color .25s, background-color .25s;
+}
+.arr-n {
+  flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%;
+  border: 2px solid currentColor; font-family: var(--f-titulo); font-weight: 700; font-size: 19px;
+  transition: background-color .25s, color .25s, border-color .25s;
+}
+.arr-txt { flex: 1; min-width: 0; padding-top: 4px; }
+.arr-t { display: block; font-size: 18px; font-weight: 700; line-height: 1.3; }
+.arr-d { display: block; margin-top: 4px; font-size: 16px; line-height: 1.4; }
+.arr-btn[aria-pressed="true"] { color: var(--tinta); background: #E3EDF8; }
+.arr-btn[aria-pressed="true"] .arr-n { background: var(--azul); border-color: var(--azul); color: #fff; }
+/* Passos já feitos: visto verde no lugar do número. */
+.arr-n { position: relative; }
+.arr-ok { position: absolute; width: 20px; height: 20px; stroke-width: 3; opacity: 0; }
+.arr-btn.feito { color: var(--tinta); }
+.arr-btn.feito .arr-n { background: var(--verde); border-color: var(--verde); color: #fff; }
+.arr-btn.feito .arr-num { opacity: 0; }
+.arr-btn.feito .arr-ok { opacity: 1; }
+/* Por baixo do desenho: em que passo vai e quantos faltam. */
+.arr-prog { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 8px; }
+.arr-prog-t { font-size: 14px; font-weight: 700; color: var(--tinta-2); }
+.arr-prog-segs { display: flex; gap: 4px; width: min(240px, 80%); }
+.arr-prog-segs i { flex: 1; height: 6px; border-radius: 3px; background: var(--linha); transition: background-color .3s; }
+.arr-prog-segs i.on { background: var(--verde); }
+@media (min-width: 1000px) {
+  .arr-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 28px; align-items: start; }
+  .arr-fig { top: 24px; background: none; }
+  .arr-passos { padding: 30px 0 30vh; }
+}
+
+/* Desenho da mochila */
+.m-corpo { fill: var(--branco); stroke: var(--tinta); stroke-width: 3; }
+.m-tampa-saco, .m-bolso { fill: #EEF3F9; stroke: var(--tinta); stroke-width: 3; }
+.m-pega { fill: none; stroke: var(--tinta); stroke-width: 5; stroke-linecap: round; }
+.m-alca, .m-cinto { fill: none; stroke: var(--azul-noite); stroke-width: 10; stroke-linecap: round; }
+.m-fivela { fill: var(--tinta-2); }
+.m-garrafa { fill: var(--azul); }
+.m-tampa { fill: var(--azul-noite); }
+.m-lata { fill: #5C8FCB; }
+.m-aro { stroke: #fff; stroke-opacity: .6; stroke-width: 2; }
+.m-comida { fill: #F6C27E; stroke: #C77A1A; stroke-width: 1.5; }
+.m-risca { stroke: #C77A1A; stroke-width: 2.5; stroke-linecap: round; }
+.m-socorro { fill: #fff; stroke: var(--vermelho); stroke-width: 2.5; }
+.m-cruz { stroke: var(--vermelho); stroke-width: 5; stroke-linecap: round; }
+.m-roupa1 { fill: #7FB0E6; } .m-roupa2 { fill: #A9CBF0; } .m-roupa3 { fill: #5E9AD8; }
+.m-manta { fill: #FBE29A; stroke: #C9A400; stroke-width: 1.5; }
+.m-espiral { fill: none; stroke: #C9A400; stroke-width: 2; stroke-linecap: round; }
+.m-meia { fill: #CFE6D5; stroke: var(--verde); stroke-width: 1.5; }
+.m-centro { stroke: var(--azul); stroke-width: 2; stroke-dasharray: 5 5; }
+.m-braco { stroke: var(--tinta); stroke-width: 3; stroke-linecap: round; }
+.m-prato { fill: none; stroke: var(--tinta); stroke-width: 2.5; }
+.m-apoio { fill: var(--tinta-2); }
+.m-doc { fill: #fff; stroke: var(--azul); stroke-width: 2; }
+.m-doc-l { stroke: var(--azul); stroke-width: 2; stroke-linecap: round; }
+.m-remedio { fill: #FBD3A0; stroke: #C46A00; stroke-width: 2; }
+.m-apito { fill: var(--amarelo); stroke: #8A6E00; stroke-width: 2; stroke-linejoin: round; }
+.m-lanterna { fill: var(--azul); }
+.m-ok { fill: var(--verde); }
+.m-ok-v { fill: none; stroke: #fff; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+.moch-rotulos path { stroke: var(--tinta-2); stroke-width: 1.5; stroke-dasharray: 2 3; }
+.moch-rotulos text { font-family: var(--f-texto); font-size: 14px; font-weight: 700; fill: var(--tinta-2); }
+
+/* Arrumar passo a passo: o que ainda não entrou fica fora (por cima, invisível) e cai
+   no sítio quando chega o seu passo. A zona do passo atual fica realçada. */
+.mz, .m-rot { transition: opacity .35s ease-out, transform .6s cubic-bezier(.16, 1, .3, 1); }
+.mz.fora, .m-rot.fora { opacity: 0; }
+.mz-cai.fora { transform: translateY(-34px); }
+.moch-svg.foco .mz:not(.ativa):not(.fora):not(.mz-alcas) { opacity: .45; }
+.mz-alcas.ativa .m-alca, .mz-alcas.ativa .m-cinto { stroke: var(--laranja-pc); }
+.m-rot.ativa text { fill: var(--azul); }
+.m-rot.ativa path { stroke: var(--azul); stroke-dasharray: none; }
+/* O teste: a mochila "anda" duas vezes e aparece o visto. */
+.moch-svg.anda .moch-saco { animation: moch-anda .55s ease-in-out 2; transform-origin: 118px 256px; }
+@keyframes moch-anda { 50% { transform: translateY(-6px) rotate(-1.2deg); } }
+
 /* ---------- Guias visuais: passos curtos com figuras ---------- */
 .vis-passos { list-style: none; margin: 6px 0 0; padding: 0; }
 .vis-passo { display: flex; align-items: center; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--linha); }
@@ -787,6 +1082,11 @@ html.offline .net { display: flex; }
 .prose .btn { margin-top: 14px; }
 .meta { margin-top: 28px; font-size: 14px; color: var(--tinta-2); }
 .meta a { color: var(--azul); font-weight: 700; text-underline-offset: 3px; }
+/* Lei de Fitts: as ligações no meio do texto (112, fontes, IPMA) ganham uma área de toque
+   maior à volta, sem mudar o aspeto nem o espaçamento das linhas. */
+.intro a, .hint a, .nota a, .vis-t a, .vis-d a, .passos a, .st-meta a, .meta a, .ct-fonte a, .prose p a {
+  display: inline-block; padding: 10px 4px; margin: -10px -4px;
+}
 
 /* ---------- Guia de instalação ---------- */
 .sheet {
@@ -859,4 +1159,8 @@ html.offline .net { display: flex; }
   /* No kit, os grupos abrem sem deslizar e o visto aparece sem salto; as cores mudam na mesma. */
   .kit-cat::details-content, .kit-sum .chev, .kit-ic svg.i, .kit-prog .seg i { transition: none !important; }
   .check input.pop, .kit-ic.acabou, .kit-ic.acabou::after { animation: none !important; }
+  /* Na mochila, as coisas aparecem no sítio sem cair, e a mochila não "anda". */
+  .mz, .m-rot, .arr-btn, .arr-n { transition: opacity .2s !important; }
+  .mz-cai.fora { transform: none; }
+  .moch-svg.anda .moch-saco { animation: none !important; }
 }

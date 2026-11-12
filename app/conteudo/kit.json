@@ -8,11 +8,13 @@
       "itens": [
         {
           "nome": "Água engarrafada para 3 dias",
-          "nota": "Pelo menos 3 litros por pessoa, por dia: cerca de 9 litros por pessoa."
+          "nota": "Pelo menos 3 litros por pessoa, por dia: cerca de 9 litros por pessoa.",
+          "validade": true
         },
         {
           "nome": "Comida para 3 dias",
-          "nota": "Que não precise de frio nem de ser cozinhada e que a família goste de comer: conservas, bolachas, frutos secos."
+          "nota": "Que não precise de frio nem de ser cozinhada e que a família goste de comer: conservas, bolachas, frutos secos.",
+          "validade": true
         },
         {
           "nome": "Abre-latas manual"
@@ -26,11 +28,13 @@
       "itens": [
         {
           "nome": "Estojo de primeiros socorros",
-          "nota": "Veja de vez em quando o que tem e os prazos de validade."
+          "nota": "Veja de vez em quando o que tem e os prazos de validade.",
+          "validade": true
         },
         {
           "nome": "Medicamentos habituais",
-          "nota": "Para pelo menos 3 dias, com a lista dos medicamentos e uma cópia das receitas."
+          "nota": "Para pelo menos 3 dias, com a lista dos medicamentos e uma cópia das receitas.",
+          "validade": true
         },
         {
           "nome": "Óculos de reserva",
@@ -38,7 +42,8 @@
         },
         {
           "nome": "Produtos de higiene",
-          "nota": "Toalhetes, sabonete, papel higiénico, produtos menstruais e sacos do lixo."
+          "nota": "Toalhetes, sabonete, papel higiénico, produtos menstruais e sacos do lixo.",
+          "validade": true
         },
         {
           "nome": "Artigos para necessidades especiais",
@@ -52,11 +57,13 @@
       "dica": "Para ter luz e saber o que se passa se faltar a energia.",
       "itens": [
         {
-          "nome": "Lanterna com pilhas de reserva"
+          "nome": "Lanterna com pilhas de reserva",
+          "validade": true
         },
         {
           "nome": "Rádio portátil",
-          "nota": "A pilhas ou de dar à manivela, para ouvir as indicações da Proteção Civil sem luz nem internet."
+          "nota": "A pilhas ou de dar à manivela, para ouvir as indicações da Proteção Civil sem luz nem internet.",
+          "validade": true
         },
         {
           "nome": "Bateria externa carregada",

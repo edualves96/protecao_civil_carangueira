@@ -2,16 +2,18 @@
 // precisar de reagir a toques, montar(raiz), chamado depois de o HTML aparecer.
 
 import { icon } from './icons.js';
-import { ler } from './store.js';
 import { conteudo, esc, paragrafos, paraTel, ligacaoSegura } from './conteudo.js';
 import { figura, montarFiguras, NOMES_FIGURAS } from './figuras.js';
-import { corpoKit, montarKit, resumoKit } from './kit.js';
+import { corpoKit, montarKit, resumoKit, kit as listaKit, mochila as listaMochila } from './kit.js';
+import { corpoMochila, montarMochila } from './mochila.js';
+import { corpoPlano, montarPlano, resumoPlano } from './plano.js';
+import { corpoEncontro, montarEncontro } from './mapa.js';
 import {
   avisos as fonteAvisos, sismos as fonteSismos, avisosDoDistrito, periodo, quando, dia, hora, meiaNoite,
   textoObtido, atualizarEcra, classeVivo, RECENTE, SITE_AVISOS, SITE_SISMOS,
 } from './ipma.js';
 
-export const VERSAO = '0.4.1';
+export const VERSAO = '0.6.0';
 
 const AZUL = '#0B57A4';
 
@@ -137,20 +139,28 @@ function estadoAtual() {
   };
 }
 
-// Preparação da família. O plano e o ponto de encontro chegam no passo 4.
+// Preparação da família: kit, mochila, plano e ponto de encontro (os dois últimos
+// chegam no passo 4). Mostrar o que falta em cada um ajuda a voltar e acabar
+// (efeito Zeigarnik).
 function progresso() {
-  const plano = Boolean(ler('plano-feito', false));
   const kitResumo = resumoKit();
   const kit = kitResumo.fracao;
-  const encontro = Boolean(ler('encontro-escolhido', false));
-  const pct = Math.round(((plano ? 1 : 0) + kit + (encontro ? 1 : 0)) / 3 * 100);
+  const mochilaResumo = listaMochila.resumo();
+  const mochila = mochilaResumo.fracao;
+  const { plano: planoResumo, encontro: encontroResumo } = resumoPlano();
+  const plano = planoResumo.fracao;
+  const encontro = encontroResumo.fracao;
+  const pct = Math.round((plano + kit + mochila + encontro) / 4 * 100);
   let next;
   if (kit === 0) next = { href: '#/kit', txt: 'Começar o kit de emergência' };
-  else if (!plano) next = { href: '#/plano', txt: 'Fazer o plano da família' };
-  else if (!encontro) next = { href: '#/encontro', txt: 'Escolher o ponto de encontro' };
+  else if (mochila === 0) next = { href: '#/mochila', txt: 'Preparar a mochila de emergência' };
+  else if (plano === 0) next = { href: '#/plano', txt: 'Fazer o plano da família' };
+  else if (encontro < 1) next = { href: '#/encontro', txt: 'Escolher os pontos de encontro' };
+  else if (plano < 1) next = { href: '#/plano', txt: 'Acabar o plano da família' };
   else if (kit < 1) next = { href: '#/kit', txt: 'Completar o kit de emergência' };
-  else next = { href: '#/kit', txt: 'Tudo pronto. Reveja o kit de 6 em 6 meses' };
-  return { plano, kit, kitResumo, encontro, pct, next };
+  else if (mochila < 1) next = { href: '#/mochila', txt: 'Completar a mochila de emergência' };
+  else next = { href: '#/kit', txt: 'Tudo pronto. Reveja o kit e a mochila de 6 em 6 meses' };
+  return { plano, planoResumo, kit, kitResumo, mochila, mochilaResumo, encontro, encontroResumo, pct, next };
 }
 
 function linhaRisco(r, destaque = false, hl = '') {
@@ -170,8 +180,9 @@ function inicio() {
   if (e.risco) ids = [e.risco, ...ids.filter((id) => id !== e.risco)].slice(0, 4);
   const riscos = ids.map((id) => RISCOS.find((r) => r.id === id));
 
-  const resumo = `Preparação: ${p.pct}%. Plano da família: ${p.plano ? 'feito' : 'por fazer'}. `
-    + `Kit de emergência: ${p.kitResumo.feitos} de ${p.kitResumo.total} itens. Ponto de encontro: ${p.encontro ? 'escolhido' : 'por escolher'}.`;
+  const resumo = `Preparação: ${p.pct}%. Plano da família: ${p.planoResumo.feitas} de ${p.planoResumo.total} partes. `
+    + `Kit de emergência: ${p.kitResumo.feitos} de ${p.kitResumo.total} itens. `
+    + `Mochila de emergência: ${p.mochilaResumo.feitos} de ${p.mochilaResumo.total} itens. Pontos de encontro: ${p.encontroResumo.feitos} de 2 escolhidos.`;
 
   const nivel = e.nivel
     ? `<span class="nivel">${icon('alert')}${e.nivel}<span class="vh">: </span></span>`
@@ -185,18 +196,26 @@ function inicio() {
   const preparacao = `
         <section class="sec" aria-labelledby="prep-t">
           <h2 class="sh" id="prep-t">A sua família está preparada?</h2>
+          ${avisoValidades()}
           <div class="prep" role="img" aria-label="${resumo}">
             <p class="pct" aria-hidden="true">${p.pct}%</p>
             <div class="segs" aria-hidden="true">
               <div class="seg">
-                <span><i style="width:${p.plano ? 100 : 0}%"></i></span>
                 <span><i style="width:${Math.round(p.kit * 100)}%"></i></span>
-                <span><i style="width:${p.encontro ? 100 : 0}%"></i></span>
+                <span><i style="width:${Math.round(p.mochila * 100)}%"></i></span>
+                <span><i style="width:${Math.round(p.plano * 100)}%"></i></span>
+                <span><i style="width:${Math.round(p.encontro * 100)}%"></i></span>
               </div>
-              <div class="seglbl"><span>Plano</span><span>Kit ${p.kitResumo.feitos}/${p.kitResumo.total}</span><span>Encontro</span></div>
+              <div class="seglbl">
+                <span>Kit<b>${p.kitResumo.feitos}/${p.kitResumo.total}</b></span>
+                <span>Mochila<b>${p.mochilaResumo.feitos}/${p.mochilaResumo.total}</b></span>
+                <span>Plano<b>${p.planoResumo.feitas}/${p.planoResumo.total}</b></span>
+                <span>Encontro<b>${p.encontroResumo.feitos}/2</b></span>
+              </div>
             </div>
           </div>
           <a class="next" href="${p.next.href}">Próximo passo: ${p.next.txt.charAt(0).toLowerCase() + p.next.txt.slice(1)}${icon('arrow')}</a>
+          ${entradaMochila()}
         </section>`;
 
   const agora = `
@@ -281,8 +300,6 @@ function emBreve(texto) {
 }
 
 const SIMPLES = {
-  plano: ['Plano da família', 'Quem vive consigo, contactos importantes, necessidades especiais e o que fazer se estiverem separados.'],
-  encontro: ['Pontos de encontro', 'Um mapa com os pontos de encontro da freguesia de Caranguejeira.'],
   simulacro: ['Simulacro', 'Treine a saída de casa em segurança, com um cronómetro e os passos a seguir.'],
   quiz: ['Quiz', 'Perguntas rápidas para testar o que sabe sobre autoproteção.'],
 };
@@ -436,6 +453,62 @@ function contactos() {
             <ul class="cts">${(g.itens || []).filter((c) => c && c.nome).map(linha).join('')}</ul>
           </section>`).join('')}`,
     }),
+  };
+}
+
+// Aviso de prazos no início: só aparece quando algo do kit ou da mochila passou do prazo
+// ou acaba este mês ou no próximo. É a primeira coisa da secção de preparação.
+function avisoValidades() {
+  const todos = [
+    ...listaKit.alertas().map((x) => ({ ...x, onde: 'kit', rotulo: 'kit' })),
+    ...listaMochila.alertas().map((x) => ({ ...x, onde: 'mochila', rotulo: 'mochila' })),
+  ].sort((a, b) => (a.estado === 'expirado' ? 0 : 1) - (b.estado === 'expirado' ? 0 : 1));
+  if (!todos.length) return '';
+  const exp = todos.filter((x) => x.estado === 'expirado').length;
+  const breve = todos.length - exp;
+  const n = todos.length;
+  let titulo;
+  if (exp && breve) titulo = `${exp} fora de prazo e ${breve} a acabar`;
+  else if (exp) titulo = `${exp} ${exp === 1 ? 'coisa passou' : 'coisas passaram'} do prazo`;
+  else titulo = `${n} ${n === 1 ? 'coisa acaba' : 'coisas acabam'} o prazo em breve`;
+  const nomes = todos.slice(0, 3).map((x) => `${esc(x.nome)} (${x.rotulo})`).join(', ');
+  const mais = n > 3 ? ` e mais ${n - 3}` : '';
+  return `
+    <a class="val-aviso${exp ? ' val-aviso-exp' : ''}" href="#/${todos[0].onde}">
+      <span class="val-aviso-ic" aria-hidden="true">${icon('alert')}</span>
+      <span class="val-aviso-txt"><b>${titulo}</b><span>${nomes}${mais}. Troque antes de precisar.</span></span>
+      ${icon('chev', 'i chev')}
+    </a>`;
+}
+
+// Entrada da mochila no início: a única área destacada da secção de preparação.
+// Mostra quanto falta, para lembrar o que ficou a meio.
+function entradaMochila() {
+  const r = listaMochila.resumo();
+  const pronta = r.total > 0 && r.feitos === r.total;
+  const estado = pronta
+    ? 'Pronta. Deixe-a junto à porta.'
+    : r.feitos === 0 ? 'O que levar para 3 a 5 dias fora de casa, e como arrumar.' : 'Continue de onde ficou.';
+  const conta = pronta ? `${r.total} de ${r.total} prontos` : `${r.feitos} de ${r.total} prontos · faltam ${r.total - r.feitos}`;
+  return `
+    <a class="moch-cta${pronta ? ' feito' : ''}" href="#/mochila">
+      <span class="moch-cta-ic" aria-hidden="true">${icon('mochila')}</span>
+      <span class="moch-cta-txt">
+        <span class="moch-cta-t">Kit mochila de emergência</span>
+        <span class="moch-cta-d">${estado}</span>
+        <span class="moch-cta-conta">${conta}</span>
+        <span class="moch-cta-barra" aria-hidden="true"><i style="width:${Math.round(r.fracao * 100)}%"></i></span>
+      </span>
+      ${icon('chev', 'i chev')}
+    </a>`;
+}
+
+function mochilaEcra() {
+  return {
+    title: 'Kit mochila de emergência',
+    theme: AZUL,
+    html: pagina({ titulo: 'Kit mochila de emergência', corpo: corpoMochila(), editar: 'mochila' }),
+    montar: montarMochila,
   };
 }
 
@@ -737,8 +810,7 @@ function sobre() {
             <p>Instale a app para a ter no ecrã principal, como as outras apps.</p>
             <button class="btn btn-primary" type="button" data-action="install">Instalar a app</button>
           </div>
-          <p class="meta">Versão ${VERSAO} · em desenvolvimento<br>
-          Tipos de letra: Barlow Semi Condensed e Atkinson Hyperlegible (SIL Open Font License).</p>
+          <p class="meta">Versão ${VERSAO} · em desenvolvimento</p>
         </div>`,
     }),
   };
@@ -750,6 +822,18 @@ export function resolver(nome, sub) {
   if (nome === 'agir') return sub ? guiaRisco(sub) : agir();
   if (nome === 'contactos') return contactos();
   if (nome === 'kit') return kit();
+  if (nome === 'mochila') return mochilaEcra();
+  if (nome === 'plano') {
+    return { title: 'Plano da família', theme: AZUL, html: pagina({ titulo: 'Plano da família', corpo: corpoPlano() }), montar: montarPlano };
+  }
+  if (nome === 'encontro') {
+    return {
+      title: 'Pontos de encontro',
+      theme: AZUL,
+      html: pagina({ titulo: 'Pontos de encontro', corpo: corpoEncontro(), editar: 'pontos', voltar: '#/plano', voltarTxt: 'Plano da família' }),
+      montar: montarEncontro,
+    };
+  }
   if (nome === 'avisos') return avisosEcra();
   if (nome === 'sismos') return sismosEcra();
   if (nome === 'figuras') return figurasEcra();

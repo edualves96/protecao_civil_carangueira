@@ -1,0 +1,225 @@
+{
+  "intro": "Se um incêndio ou uma cheia o obrigar a sair de casa à pressa, não há tempo para pensar no que levar. Esta mochila fica pronta junto à porta, com o essencial para 3 a 5 dias fora de casa. Uma por pessoa.",
+  "categorias": [
+    {
+      "nome": "Água e comida",
+      "icone": "agua",
+      "dica": "Leve só o que consegue carregar. Nos abrigos há água e comida.",
+      "itens": [
+        {
+          "nome": "Água para o primeiro dia",
+          "nota": "Pelo menos 3 litros por pessoa, em garrafas pequenas.",
+          "validade": true
+        },
+        {
+          "nome": "Comida leve que não precise de cozinhar",
+          "nota": "Barras de cereais, frutos secos, bolachas e latas de abertura fácil.",
+          "validade": true
+        },
+        {
+          "nome": "Garrafa reutilizável",
+          "nota": "Para voltar a encher onde houver água potável."
+        }
+      ]
+    },
+    {
+      "nome": "Documentos e dinheiro",
+      "icone": "documentos",
+      "dica": "Tudo junto, num saco à prova de água.",
+      "itens": [
+        {
+          "nome": "Cópias dos documentos",
+          "nota": "Cartão de Cidadão, cartão de utente, seguros e receitas médicas."
+        },
+        {
+          "nome": "Dinheiro em notas e moedas",
+          "nota": "Sem eletricidade, o multibanco pode não funcionar."
+        },
+        {
+          "nome": "Lista de contactos em papel",
+          "nota": "Família, médico, vizinhos e a escola dos filhos."
+        },
+        {
+          "nome": "Chaves de reserva",
+          "nota": "De casa e do carro."
+        }
+      ]
+    },
+    {
+      "nome": "Saúde e higiene",
+      "icone": "saude",
+      "dica": "Pense no que cada pessoa usa todos os dias.",
+      "itens": [
+        {
+          "nome": "Medicamentos para 5 dias",
+          "nota": "Com uma lista dos medicamentos e das doses.",
+          "validade": true
+        },
+        {
+          "nome": "Pequeno estojo de primeiros socorros",
+          "nota": "Pensos, compressas e desinfetante.",
+          "validade": true
+        },
+        {
+          "nome": "Óculos ou lentes de reserva",
+          "nota": ""
+        },
+        {
+          "nome": "Escova e pasta de dentes, sabonete",
+          "nota": ""
+        },
+        {
+          "nome": "Toalhetes, papel higiénico e produtos menstruais",
+          "nota": ""
+        }
+      ]
+    },
+    {
+      "nome": "Roupa e abrigo",
+      "icone": "roupa",
+      "dica": "Roupa prática, que se possa vestir por camadas.",
+      "itens": [
+        {
+          "nome": "Roupa interior e meias para 5 dias",
+          "nota": "Ocupam pouco espaço e fazem muita diferença."
+        },
+        {
+          "nome": "Uma muda de roupa confortável",
+          "nota": ""
+        },
+        {
+          "nome": "Casaco impermeável",
+          "nota": "Um poncho também serve e ocupa pouco."
+        },
+        {
+          "nome": "Manta térmica",
+          "nota": "Pesa quase nada e guarda o calor do corpo."
+        },
+        {
+          "nome": "Calçado resistente e confortável",
+          "nota": "Para andar a pé, se for preciso."
+        }
+      ]
+    },
+    {
+      "nome": "Luz e comunicação",
+      "icone": "luz",
+      "dica": "Para ver, ouvir e pedir ajuda sem eletricidade.",
+      "itens": [
+        {
+          "nome": "Lanterna de cabeça com pilhas de reserva",
+          "nota": "Deixa as mãos livres.",
+          "validade": true
+        },
+        {
+          "nome": "Bateria externa carregada e cabo do telemóvel",
+          "nota": ""
+        },
+        {
+          "nome": "Rádio a pilhas",
+          "nota": "Para ouvir as indicações das autoridades.",
+          "validade": true
+        },
+        {
+          "nome": "Apito",
+          "nota": "Para pedir ajuda se ficar preso."
+        }
+      ]
+    },
+    {
+      "nome": "Utensílios",
+      "icone": "ferramentas",
+      "dica": "Pequenas coisas que resolvem muitos problemas.",
+      "itens": [
+        {
+          "nome": "Canivete multiusos",
+          "nota": ""
+        },
+        {
+          "nome": "Sacos de plástico com fecho",
+          "nota": "Para proteger os documentos e a roupa da chuva."
+        },
+        {
+          "nome": "Isqueiro ou fósforos num saco estanque",
+          "nota": ""
+        },
+        {
+          "nome": "Caneta e bloco de notas",
+          "nota": ""
+        }
+      ]
+    },
+    {
+      "nome": "Família e animais",
+      "icone": "familia",
+      "dica": "Cada pessoa da casa tem necessidades diferentes.",
+      "itens": [
+        {
+          "nome": "Para bebés: fraldas, leite e biberão",
+          "nota": "",
+          "validade": true
+        },
+        {
+          "nome": "Para crianças: um brinquedo ou um livro pequeno",
+          "nota": "Ajuda a acalmar num sítio estranho."
+        },
+        {
+          "nome": "Para animais: comida, trela e boletim de vacinas",
+          "nota": "",
+          "validade": true
+        },
+        {
+          "nome": "Apoios de quem precisa",
+          "nota": "Pilhas do aparelho auditivo, carregador da cadeira de rodas, bengala."
+        }
+      ]
+    }
+  ],
+  "arrumar": {
+    "titulo": "Como arrumar a mochila",
+    "intro": "Uma mochila bem arrumada pesa menos nas costas. Siga os passos e veja-a encher-se.",
+    "passos": [
+      {
+        "zona": "fundo",
+        "t": "O mais pesado vai no fundo, encostado às costas.",
+        "d": "Água e latas. O peso fica junto ao corpo e não o puxa para trás."
+      },
+      {
+        "zona": "meio",
+        "t": "No meio, o resto da comida e a higiene.",
+        "d": "Também o estojo de primeiros socorros, bem fechado."
+      },
+      {
+        "zona": "topo",
+        "t": "Por cima, o que é mole e leve.",
+        "d": "Roupa, casaco e manta. Protegem o resto e quase não pesam."
+      },
+      {
+        "zona": "espacos",
+        "t": "Encha os espaços vazios.",
+        "d": "Meias e roupa interior entre as coisas, para nada abanar enquanto anda."
+      },
+      {
+        "zona": "lados",
+        "t": "Equilibre os dois lados.",
+        "d": "O mesmo peso à esquerda e à direita, para a mochila não puxar para um lado."
+      },
+      {
+        "zona": "bolsos",
+        "t": "O que precisa logo vai nos bolsos de fora.",
+        "d": "Documentos, medicamentos, lanterna e apito, sem ter de desfazer a mochila."
+      },
+      {
+        "zona": "alcas",
+        "t": "Aperte as alças e o cinto.",
+        "d": "A mochila deve ficar colada às costas, com parte do peso na cintura."
+      },
+      {
+        "zona": "teste",
+        "t": "Faça o teste: ande 15 minutos com ela.",
+        "d": "Se doer ou abanar, arrume de novo ou tire peso. Deve conseguir levá-la a pé, sem ajuda."
+      }
+    ]
+  },
+  "rodape": "Guarde a mochila perto da porta de saída. Reveja-a de 6 em 6 meses: validades, pilhas e o tamanho da roupa das crianças."
+}
