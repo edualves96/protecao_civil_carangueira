@@ -9,7 +9,7 @@ import { corpoMochila, montarMochila } from './mochila.js';
 import { corpoPlano, montarPlano, resumoPlano, lerPlano } from './plano.js';
 import { imprimir } from './imprimir.js';
 import { corpoEncontro, montarEncontro } from './mapa.js';
-import { corpoFogos, montarFogos, atualizarFogos, avisoFogoPerto } from './fogos.js';
+import { corpoFogos, montarFogos, atualizarFogos, estadoFogos, SITE_FOGOS } from './fogos.js';
 import {
   avisos as fonteAvisos, sismos as fonteSismos, avisosDoDistrito, periodo, quando, dia, hora, meiaNoite,
   textoObtido, atualizarEcra, classeVivo, RECENTE, SITE_AVISOS, SITE_SISMOS,
@@ -175,8 +175,23 @@ function linhaRisco(r, destaque = false, hl = '') {
   return `<li><a class="row${destaque ? ' hl' : ''}"${estilo} href="#/agir/${r.id}">${icon(r.icon)}${r.nome}${icon('chev', 'i chev')}</a></li>`;
 }
 
+// Linha curta com os avisos do tempo (IPMA), por baixo do estado dos fogos.
+function linhaTempo(t) {
+  const texto = t.nivel ? `${t.nivel} · ${t.big}` : (t.id === 'verde' ? 'Sem avisos nos próximos 3 dias' : t.big);
+  return `
+    <a class="tempo-l tempo-${t.id}" href="#/avisos">
+      <span class="tempo-cor" aria-hidden="true"></span>
+      <span class="tempo-txt"><b>Avisos do tempo (IPMA)</b><span>${texto}</span></span>
+      ${icon('chev', 'i chev')}
+    </a>`;
+}
+
 function inicio() {
-  const e = estadoAtual();
+  // O topo mostra os fogos; os avisos do tempo ficam numa linha por baixo.
+  const tempo = estadoAtual();
+  const e = estadoFogos();
+  const risco = e.risco || tempo.risco;
+  const hl = e.risco ? e.hl : tempo.hl;
   const p = progresso();
 
   const acao = e.act
@@ -184,7 +199,7 @@ function inicio() {
     : '';
 
   let ids = PRINCIPAIS.slice();
-  if (e.risco) ids = [e.risco, ...ids.filter((id) => id !== e.risco)].slice(0, 4);
+  if (risco) ids = [risco, ...ids.filter((id) => id !== risco)].slice(0, 4);
   const riscos = ids.map((id) => RISCOS.find((r) => r.id === id));
 
   const resumo = `Preparação: ${p.pct}%. Plano da família: ${p.planoResumo.feitas} de ${p.planoResumo.total} partes. `
@@ -192,12 +207,12 @@ function inicio() {
     + `Mochila de emergência: ${p.mochilaResumo.feitos} de ${p.mochilaResumo.total} itens. Pontos de encontro: ${p.encontroResumo.feitos} de 2 escolhidos.`;
 
   const nivel = e.nivel
-    ? `<span class="nivel">${icon('alert')}${e.nivel}<span class="vh">: </span></span>`
+    ? `<span class="nivel">${icon(e.icone || 'alert')}${e.nivel}<span class="vh">: </span></span>`
     : '';
 
-  const mais = e.mais ? `<a class="st-mais" href="#/avisos">${e.mais}${icon('chev', 'i chev')}</a>` : '';
+  const mais = e.mais ? `<a class="st-mais" href="${e.maisHref}">${e.mais}${icon('chev', 'i chev')}</a>` : '';
   const obtido = e.obtido
-    ? `<p class="st-meta"><span class="${classeVivo(fonteAvisos)}" aria-hidden="true"></span><span data-obtido>${textoObtido(fonteAvisos)}</span> · Fonte: <a href="${SITE_AVISOS}" target="_blank" rel="noopener">IPMA</a></p>`
+    ? `<p class="st-meta"><span class="vivo${e.recente ? '' : ' vivo-off'}" aria-hidden="true"></span>Atualizado ${quando(e.obtido)} · Fonte: <a href="${SITE_FOGOS}" target="_blank" rel="noopener">Fogos.pt</a></p>`
     : '';
 
   const preparacao = `
@@ -229,13 +244,13 @@ function inicio() {
         <section class="sec" aria-labelledby="agora-t">
           <h2 class="sh" id="agora-t">Se acontecer agora</h2>
           <ul class="rows">
-            ${riscos.map((r, i) => linhaRisco(r, i === 0 && r.id === e.risco, e.hl)).join('')}
+            ${riscos.map((r, i) => linhaRisco(r, i === 0 && r.id === risco, hl)).join('')}
             <li><a class="row more" href="#/agir">Todos os riscos${icon('chev', 'i chev')}</a></li>
           </ul>
         </section>`;
 
-  // Com um aviso ativo, o que fazer vem primeiro; sem aviso, a preparação.
-  const seccoes = e.risco ? agora + preparacao : preparacao + agora;
+  // Com um incêndio perto ou um aviso ativo, o que fazer vem primeiro; senão, a preparação.
+  const seccoes = risco ? agora + preparacao : preparacao + agora;
 
   return {
     title: null,
@@ -248,7 +263,6 @@ function inicio() {
             <p class="net">Sem rede</p>
           </div>
           <div class="estado">
-            ${e.demo ? '<p class="demo">DEMONSTRAÇÃO · DADOS FICTÍCIOS</p>' : ''}
             <h1 class="big" id="estado">${nivel}${e.big}</h1>
             <p class="desc">${e.desc}</p>
             ${acao}
@@ -260,7 +274,7 @@ function inicio() {
       <div class="edge" style="--edge:${e.theme}"></div>
 
       <div class="wrap">
-        ${e.demo ? '' : avisoFogoPerto()}
+        ${linhaTempo(tempo)}
         ${seccoes}
 
         <div class="install" data-install data-card hidden>
@@ -272,11 +286,11 @@ function inicio() {
           <button class="x" type="button" data-action="dismiss-install" aria-label="Agora não">${icon('close')}</button>
         </div>
       </div>`,
-    montar: e.demo ? null : (raiz) => {
+    montar: (raiz) => {
       atualizarEcra(raiz, fonteAvisos);
       atualizarFogos().then((mudou) => { if (mudou) window.dispatchEvent(new CustomEvent('pcc:dados')); });
     },
-    dinamico: !e.demo,
+    dinamico: true,
   };
 }
 

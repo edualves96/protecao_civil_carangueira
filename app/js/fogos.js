@@ -40,10 +40,23 @@ export function atualizarFogos() {
   return pedido;
 }
 
+// Nome da ocorrência em português corrente: "Mato" -> "Incêndio em mato".
+const NATUREZAS = [
+  [/^agr/i, 'Incêndio agrícola'],
+  [/^mato/i, 'Incêndio em mato'],
+  [/^povoamento/i, 'Incêndio em povoamento florestal'],
+  [/^flor/i, 'Incêndio florestal'],
+  [/^(urb|habit)/i, 'Incêndio urbano'],
+  [/^indus/i, 'Incêndio industrial'],
+];
 const titulo = (o) => {
   const n = String(o.natureza || '').trim();
   if (!n) return o.incendio ? 'Incêndio' : 'Ocorrência';
-  return o.incendio && /^(agr|mato|povo|flor|urb|habit|indus|ser|consol)/i.test(n) ? `Incêndio ${n.toLowerCase()}` : n.charAt(0).toUpperCase() + n.slice(1).toLowerCase();
+  if (o.incendio) {
+    const certo = NATUREZAS.find(([re]) => re.test(n));
+    if (certo) return certo[1];
+  }
+  return n.charAt(0).toUpperCase() + n.slice(1).toLowerCase();
 };
 const km = (v) => `${String(v).replace('.', ',')} km`;
 const meios = (o) => [
@@ -51,6 +64,58 @@ const meios = (o) => [
   `${o.terrestres} ${o.terrestres === 1 ? 'veículo' : 'veículos'}`,
   o.aereos ? `${o.aereos} ${o.aereos === 1 ? 'meio aéreo' : 'meios aéreos'}` : '',
 ].filter(Boolean).join(' · ');
+
+// Estado do topo do início, a partir dos fogos: vermelho com um incêndio ativo a menos
+// de 10 km, laranja com incêndios noutros pontos do distrito, verde sem incêndios,
+// azul sem dados (ou com dados de há mais de uma hora e nada ativo).
+const AZUL = '#0B57A4';
+const RECENTE = 60 * 60 * 1000;
+export function estadoFogos(agora = Date.now()) {
+  const d = fogosGuardados();
+  const obtido = d?.obtido ? Date.parse(d.obtido) : null;
+  const base = { obtido, recente: Boolean(obtido && agora - obtido <= RECENTE), maisHref: '#/fogos', icone: 'fire' };
+  if (!d) return { ...base, id: 'pendente', theme: AZUL, big: 'A consultar os fogos', desc: 'A obter os incêndios ativos no distrito de Leiria.' };
+  if (!d.ok) {
+    return {
+      ...base, id: 'pendente', theme: AZUL, big: 'Sem dados dos fogos',
+      desc: 'Não foi possível obter as ocorrências de momento.',
+      act: { href: SITE_FOGOS, txt: 'Abrir o Fogos.pt', ext: true },
+    };
+  }
+  const incendios = (d.ocorrencias || []).filter((o) => o.incendio && ativo(o));
+  const perto = incendios.filter((o) => o.km <= PERTO_KM);
+  if (perto.length) {
+    const o = perto[0];
+    return {
+      ...base, id: 'vermelho', theme: '#C62828', hl: '#A31F1F', risco: 'incendio-rural',
+      nivel: perto.length > 1 ? `${perto.length} incêndios ativos perto` : 'Incêndio ativo perto',
+      big: `${esc(titulo(o))} a ${km(o.km)}`,
+      desc: `${esc(o.local || o.freguesia)} · ${esc(o.estado)}. ${meios(o)}. Siga as indicações das autoridades.`,
+      act: { href: '#/agir/incendio-rural', txt: 'O que fazer num incêndio rural' },
+      mais: 'Ver no mapa dos fogos',
+    };
+  }
+  if (incendios.length) {
+    const o = incendios[0];
+    return {
+      ...base, id: 'laranja', theme: '#F7941D', hl: '#9A5200',
+      nivel: 'Incêndios no distrito',
+      big: `${incendios.length} ${incendios.length === 1 ? 'incêndio ativo' : 'incêndios ativos'}`,
+      desc: `Nenhum perto de Caranguejeira. O mais próximo: ${esc(o.local || o.concelho)}, a ${km(o.km)} (${esc(o.estado)}).`,
+      mais: 'Ver no mapa dos fogos',
+    };
+  }
+  if (!base.recente) {
+    return {
+      ...base, id: 'pendente', theme: AZUL, big: 'Sem dados recentes',
+      desc: `Os últimos dados dos fogos são de ${quando(obtido, agora)}. Ligue-se à internet para atualizar.`,
+    };
+  }
+  return {
+    ...base, id: 'verde', theme: '#2E8540', big: 'Sem incêndios ativos',
+    desc: 'Não há incêndios ativos no distrito de Leiria, segundo o Fogos.pt.', mais: 'Ver os fogos',
+  };
+}
 
 // Para o início: incêndio ativo perto de Caranguejeira, se houver.
 export function fogoPerto() {

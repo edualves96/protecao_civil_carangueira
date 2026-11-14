@@ -6,6 +6,15 @@ What each version of the app added. Residents see the same history, in Portugues
 To release a version: bump `VERSAO` in `app/js/versao.js` and `app/sw.js`, and add an entry to
 the top of `NOVIDADES` in `versao.js` and to this file.
 
+## 0.8.1 (14 Nov 2026)
+- The top of the home screen now shows fires from Fogos.pt: red for an active fire within 10 km
+  (with the rural fire guide first under "Se acontecer agora"), orange for fires elsewhere in the
+  district, green with none, blue without recent data. Replaces the separate red fire block.
+- IPMA weather warnings move to a short line just below.
+- Fire types read naturally ("Incêndio em mato").
+- The side menu fits on short desktop screens (down to about 700 px high) without a scrollbar,
+  shrinking its rows in steps; below that it scrolls with the scrollbar hidden.
+
 ## 0.8.0 (12 Nov 2026)
 - Car kit (`#/carro`): what to keep in the car to wait several hours on a closed road. Same list
   engine as the kit and backpack, editable in Pages CMS.

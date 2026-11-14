@@ -606,6 +606,25 @@ html.offline .net { display: flex; }
 .nov-data { margin-left: 8px; font-family: var(--f-texto); font-size: 14px; font-weight: 400; color: var(--tinta-2); }
 .novidades .passos li { font-size: 16px; }
 
+/* Linha dos avisos do tempo (IPMA) no início, por baixo do estado dos fogos. Discreta
+   quando não há avisos; com aviso, a bola fica da cor do aviso. */
+.tempo-l {
+  display: flex; align-items: center; gap: 12px; min-height: 60px; margin-top: 14px; padding: 10px 12px 10px 14px;
+  border-radius: 12px; background: var(--branco); color: var(--tinta); text-decoration: none; box-shadow: inset 0 0 0 1px var(--linha);
+}
+.tempo-cor { flex: none; width: 16px; height: 16px; border-radius: 50%; background: var(--tinta-2); box-shadow: inset 0 0 0 1.5px rgb(0 0 0 / .2); }
+.tempo-verde .tempo-cor { background: var(--verde); }
+.tempo-amarelo .tempo-cor { background: var(--amarelo); }
+.tempo-laranja .tempo-cor { background: var(--laranja-pc); }
+.tempo-vermelho .tempo-cor { background: var(--vermelho); }
+.tempo-pendente .tempo-cor { background: var(--azul); }
+.tempo-txt { flex: 1; min-width: 0; }
+.tempo-txt b { display: block; font-size: 14px; color: var(--tinta-2); }
+.tempo-txt span { display: block; margin-top: 1px; font-size: 16px; font-weight: 700; }
+.tempo-vermelho, .tempo-laranja { box-shadow: inset 0 0 0 2px var(--laranja-pc); }
+.tempo-vermelho { box-shadow: inset 0 0 0 2px var(--vermelho); }
+.tempo-l .chev { flex: none; width: 20px; height: 20px; color: var(--tinta-2); }
+
 /* ---------- Fogos (Fogos.pt) ---------- */
 /* Aviso no início quando há um incêndio ativo a menos de 10 km: o bloco mais forte do ecrã
    a seguir ao estado (efeito Von Restorff). */
@@ -1261,12 +1280,33 @@ html.offline .net { display: flex; }
   main .edge::after { background-position: -300px 0; }
 }
 
-/* Computador com ecrã baixo: menu mais compacto (rato, não dedo) */
+/* Computador com ecrã baixo: o menu encolhe por degraus para caber inteiro, sem barra
+   de deslizar (no computador usa-se o rato, por isso as linhas podem ser mais baixas). */
 @media (min-width: 900px) and (max-height: 900px) {
   .dtop { padding-top: calc(20px + var(--safe-t)); }
   .n { min-height: 38px; font-size: 20px; }
   .g { padding-top: 8px; }
 }
+@media (min-width: 900px) and (max-height: 860px) {
+  .n { min-height: 31px; font-size: 18px; }
+  .n[aria-current="page"]::before { top: 5px; bottom: 5px; }
+  .g { padding: 7px 22px 1px; font-size: 11px; }
+  .gap { height: 4px; }
+  .nav { padding: 2px 0; }
+  .unit { padding: 5px 0; }
+  .unit img { width: 36px; height: 36px; }
+  .unit-n { font-size: 18px; }
+  .dbar { padding: 4px 14px calc(10px + var(--safe-b)); }
+  .dbar .btn { min-height: 44px; }
+}
+@media (min-width: 900px) and (max-height: 760px) {
+  .n { min-height: 28px; font-size: 17px; }
+  .g { padding-top: 5px; }
+}
+/* Se mesmo assim não couber, o menu desliza sem mostrar a barra cinzenta; a sombra em
+   baixo mostra que há mais. */
+.nav { scrollbar-width: none; }
+.nav::-webkit-scrollbar { display: none; }
 
 @media (hover: hover) {
   .n:hover { background: rgba(255, 255, 255, .06); }

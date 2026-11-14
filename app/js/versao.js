@@ -2,9 +2,18 @@
 // Ao publicar uma versão nova: mude VERSAO aqui e em sw.js, e junte uma entrada ao topo.
 // A mesma história está em CHANGELOG.md, para quem mantém a app.
 
-export const VERSAO = '0.8.0';
+export const VERSAO = '0.8.1';
 
 export const NOVIDADES = [
+  {
+    versao: '0.8.1',
+    data: '14/11/2026',
+    itens: [
+      'O topo do início passa a mostrar os fogos: vermelho com um incêndio ativo perto de Caranguejeira, laranja com incêndios noutros pontos do distrito e verde sem incêndios.',
+      'Os avisos do tempo do IPMA ficam numa linha logo a seguir.',
+      'Em computadores com ecrã mais baixo, o menu lateral cabe inteiro, sem barra de deslizar.',
+    ],
+  },
   {
     versao: '0.8.0',
     data: '12/11/2026',
