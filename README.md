@@ -72,6 +72,30 @@ Keep the key file (`fogos.txt`) out of git; it is in `.gitignore`.
 
 To test locally: `FOGOS_API_KEY=... node scripts/fogos.mjs`, then open the preview.
 
+### Refreshing every 10 minutes (external timer)
+
+GitHub runs scheduled workflows late or skips them (in practice a few times a day), so the
+workflow's own `schedule` is only a backup. An external timer at cron-job.org asks GitHub to run
+the workflow every 10 minutes, which GitHub does straight away.
+
+1. **GitHub token** (<https://github.com/settings/personal-access-tokens/new>): a fine-grained
+   token, resource owner `edualves96`, **Only select repositories** → `protecao_civil_carangueira`,
+   permission **Actions: Read and write** and nothing else. It can only start or cancel workflow
+   runs on this repository; it cannot read or change the code. Note its expiry date to renew it.
+2. **cron-job.org job**: every 10 minutes, request method `POST` to
+   `https://api.github.com/repos/edualves96/protecao_civil_carangueira/actions/workflows/pages.yml/dispatches`
+   with these headers:
+   - `Authorization: Bearer <token>`
+   - `Accept: application/vnd.github+json`
+   - `X-GitHub-Api-Version: 2022-11-28`
+   - `Content-Type: application/json`
+
+   and the body `{"ref":"ccr-d836c5a6-1m8oud"}`. A working call answers `204 No Content`.
+3. In the repository's **Actions** tab, runs marked "workflow_dispatch" appear every 10 minutes.
+
+If the token expires, the timer's calls fail with `401` and the data goes back to updating a few
+times a day; the app then shows "Sem dados recentes" rather than claiming there are no fires.
+
 ## Release a new version
 
 Bump `VERSAO` in `app/sw.js` and `app/js/versao.js`, and add the changes to `NOVIDADES` in `versao.js` and to `CHANGELOG.md`. This renews the offline copy on phones that
