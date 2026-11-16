@@ -49,8 +49,9 @@ function mostrar({ manter = false } = {}) {
   if (!menuAberto()) definirTema(temaPagina);
 
   menu.querySelectorAll('a.n').forEach((a) => {
-    const alvo = a.getAttribute('href').replace(/^#\/?/, '').split('/')[0];
-    if (alvo === nome) a.setAttribute('aria-current', 'page');
+    // Um item pode servir várias páginas com separadores (data-rotas="kit mochila carro").
+    const alvos = (a.dataset.rotas || a.getAttribute('href').replace(/^#\/?/, '').split('/')[0]).split(' ');
+    if (alvos.includes(nome)) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
   });
 

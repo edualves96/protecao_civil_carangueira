@@ -186,12 +186,41 @@ function linhaTempo(t) {
     </a>`;
 }
 
+// Linha curta com os incêndios (Fogos.pt), quando não estão no topo.
+function linhaFogos(f) {
+  return `
+    <a class="tempo-l tempo-${f.id}" href="#/fogos">
+      <span class="tempo-cor" aria-hidden="true"></span>
+      <span class="tempo-txt"><b>Incêndios (Fogos.pt)</b><span>${f.linha}</span></span>
+      ${icon('chev', 'i chev')}
+    </a>`;
+}
+
+// O topo mostra o mais grave para Caranguejeira: um incêndio ativo a menos de 10 km,
+// senão o aviso do IPMA, senão verde. O que não está no topo fica numa linha por baixo.
+function estadoTopo(f, tempo) {
+  if (f.id === 'vermelho') return f;
+  if (tempo.nivel) return { ...tempo, maisHref: '#/avisos', fonte: 'ipma' };
+  if (f.pertoAntigo) return f;
+  const fogosOk = f.id === 'verde' || f.id === 'distrito';
+  if (fogosOk && tempo.id === 'verde') {
+    return {
+      id: 'verde', theme: tempo.theme, fonte: 'ambos',
+      big: 'Sem avisos nem incêndios perto',
+      desc: 'Segundo o IPMA e o Fogos.pt. Os detalhes estão logo abaixo.',
+    };
+  }
+  // Falta uma das fontes: diz-se qual, em vez de mostrar verde sem saber.
+  if (!fogosOk) return f;
+  return { ...tempo, fonte: 'ipma' };
+}
+
 function inicio() {
-  // O topo mostra os fogos; os avisos do tempo ficam numa linha por baixo.
   const tempo = estadoAtual();
-  const e = estadoFogos();
-  const risco = e.risco || tempo.risco;
-  const hl = e.risco ? e.hl : tempo.hl;
+  const f = estadoFogos();
+  const e = estadoTopo(f, tempo);
+  const risco = e.risco;
+  const hl = e.hl;
   const p = progresso();
 
   const acao = e.act
@@ -211,9 +240,14 @@ function inicio() {
     : '';
 
   const mais = e.mais ? `<a class="st-mais" href="${e.maisHref}">${e.mais}${icon('chev', 'i chev')}</a>` : '';
-  const obtido = e.obtido
-    ? `<p class="st-meta"><span class="vivo${e.recente ? '' : ' vivo-off'}" aria-hidden="true"></span>Atualizado ${quando(e.obtido)} · Fonte: <a href="${SITE_FOGOS}" target="_blank" rel="noopener">Fogos.pt</a></p>`
-    : '';
+  let obtido = '';
+  if (e.fonte === 'fogos' && e.obtido) {
+    obtido = `<p class="st-meta"><span class="vivo${e.recente ? '' : ' vivo-off'}" aria-hidden="true"></span>Atualizado ${quando(e.obtido)} · Fonte: <a href="${SITE_FOGOS}" target="_blank" rel="noopener">Fogos.pt</a></p>`;
+  } else if (e.fonte === 'ipma' && e.nivel) {
+    obtido = `<p class="st-meta">Fonte: <a href="${SITE_AVISOS}" target="_blank" rel="noopener">IPMA</a></p>`;
+  }
+  // As linhas por baixo: o que não está no topo.
+  const linhas = (e.fonte === 'fogos' ? '' : linhaFogos(f)) + (e.fonte === 'ipma' ? '' : linhaTempo(tempo));
 
   const preparacao = `
         <section class="sec" aria-labelledby="prep-t">
@@ -274,7 +308,7 @@ function inicio() {
       <div class="edge" style="--edge:${e.theme}"></div>
 
       <div class="wrap">
-        ${linhaTempo(tempo)}
+        ${linhas}
         ${seccoes}
 
         <div class="install" data-install data-card hidden>
@@ -298,7 +332,33 @@ function inicio() {
 const EDITOR = 'https://app.pagescms.org/edualves96/protecao_civil_carangueira/ccr-d836c5a6-1m8oud/file/';
 
 // `largo`: em ecrãs grandes a página usa mais largura (para pôr duas colunas lado a lado).
-function pagina({ titulo, corpo, voltar = '#/', voltarTxt = 'Início', editar = '', largo = false }) {
+// Páginas irmãs que partilham um item do menu: um separador para cada uma, por cima do conteúdo.
+// São ligações (cada uma tem o seu endereço), por isso uma <nav> com aria-current.
+const GRUPOS = {
+  kits: {
+    rotulo: 'Kits de emergência',
+    abas: [['kit', 'Em casa'], ['mochila', 'Mochila'], ['carro', 'Carro']],
+  },
+  plano: {
+    rotulo: 'Plano da família',
+    abas: [['plano', 'Plano'], ['encontro', 'Pontos de encontro']],
+  },
+  treinar: {
+    rotulo: 'Simulacro e quiz',
+    abas: [['simulacro', 'Simulacro'], ['quiz', 'Quiz']],
+  },
+};
+
+function separadores(grupo, atual) {
+  const g = GRUPOS[grupo];
+  if (!g) return '';
+  return `
+    <nav class="abas" aria-label="${g.rotulo}">
+      ${g.abas.map(([id, nome]) => `<a class="aba" href="#/${id}"${id === atual ? ' aria-current="page"' : ''}>${nome}</a>`).join('')}
+    </nav>`;
+}
+
+function pagina({ titulo, corpo, voltar = '#/', voltarTxt = 'Início', editar = '', largo = false, grupo = '', aba = '' }) {
   const lapis = editar
     ? `<a class="ed" href="${EDITOR}${editar}" target="_blank" rel="noopener" aria-label="Editar o conteúdo desta página" title="Editar no Pages CMS">${icon('edit')}</a>`
     : '';
@@ -312,7 +372,7 @@ function pagina({ titulo, corpo, voltar = '#/', voltarTxt = 'Início', editar = 
       </div>
     </header>
     <div class="edge" style="--edge:${AZUL}"></div>
-    <div class="${wrap} pbody">${corpo}</div>`;
+    <div class="${wrap} pbody">${separadores(grupo, aba)}${corpo}</div>`;
 }
 
 function emBreve(texto) {
@@ -550,7 +610,7 @@ function mochilaEcra() {
   return {
     title: 'Kit mochila de emergência',
     theme: AZUL,
-    html: pagina({ titulo: 'Kit mochila de emergência', corpo: corpoMochila(), editar: 'mochila' }),
+    html: pagina({ titulo: 'Kit mochila de emergência', corpo: corpoMochila(), editar: 'mochila', grupo: 'kits', aba: 'mochila' }),
     montar: montarMochila,
   };
 }
@@ -559,7 +619,7 @@ function kit() {
   return {
     title: 'Kit de emergência',
     theme: AZUL,
-    html: pagina({ titulo: 'Kit de emergência', corpo: corpoKit(), editar: 'kit' }),
+    html: pagina({ titulo: 'Kit de emergência', corpo: corpoKit(), editar: 'kit', grupo: 'kits', aba: 'kit' }),
     montar: montarKit,
   };
 }
@@ -885,22 +945,22 @@ export function resolver(nome, sub) {
   if (nome === 'kit') return kit();
   if (nome === 'mochila') return mochilaEcra();
   if (nome === 'carro') {
-    return { title: 'Kit do carro', theme: AZUL, html: pagina({ titulo: 'Kit do carro', corpo: listaCarro.corpo(), editar: 'carro' }), montar: listaCarro.montar };
+    return { title: 'Kit do carro', theme: AZUL, html: pagina({ titulo: 'Kit do carro', corpo: listaCarro.corpo(), editar: 'carro', grupo: 'kits', aba: 'carro' }), montar: listaCarro.montar };
   }
   if (nome === 'simulacro') {
-    return { title: 'Simulacro', theme: AZUL, html: pagina({ titulo: 'Simulacro', corpo: corpoSimulacro() }), montar: montarSimulacro };
+    return { title: 'Simulacro', theme: AZUL, html: pagina({ titulo: 'Simulacro', corpo: corpoSimulacro(), grupo: 'treinar', aba: 'simulacro' }), montar: montarSimulacro };
   }
   if (nome === 'quiz') {
-    return { title: 'Quiz', theme: AZUL, html: pagina({ titulo: 'Quiz', corpo: corpoQuiz(), editar: 'quiz' }), montar: montarQuiz };
+    return { title: 'Quiz', theme: AZUL, html: pagina({ titulo: 'Quiz', corpo: corpoQuiz(), editar: 'quiz', grupo: 'treinar', aba: 'quiz' }), montar: montarQuiz };
   }
   if (nome === 'plano') {
-    return { title: 'Plano da família', theme: AZUL, html: pagina({ titulo: 'Plano da família', corpo: corpoPlano() }), montar: montarPlano };
+    return { title: 'Plano da família', theme: AZUL, html: pagina({ titulo: 'Plano da família', corpo: corpoPlano(), grupo: 'plano', aba: 'plano' }), montar: montarPlano };
   }
   if (nome === 'encontro') {
     return {
       title: 'Pontos de encontro',
       theme: AZUL,
-      html: pagina({ titulo: 'Pontos de encontro', corpo: corpoEncontro(), editar: 'pontos', voltar: '#/plano', voltarTxt: 'Plano da família' }),
+      html: pagina({ titulo: 'Pontos de encontro', corpo: corpoEncontro(), editar: 'pontos', grupo: 'plano', aba: 'encontro' }),
       montar: montarEncontro,
     };
   }

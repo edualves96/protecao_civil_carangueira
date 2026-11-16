@@ -2,9 +2,20 @@
 // Ao publicar uma versão nova: mude VERSAO aqui e em sw.js, e junte uma entrada ao topo.
 // A mesma história está em CHANGELOG.md, para quem mantém a app.
 
-export const VERSAO = '0.8.1';
+export const VERSAO = '0.9.0';
 
 export const NOVIDADES = [
+  {
+    versao: '0.9.0',
+    data: '16/11/2026',
+    itens: [
+      'O topo do início mostra o que é mais grave para Caranguejeira: um incêndio ativo a menos de 10 km, senão um aviso do IPMA, senão verde. Os incêndios noutros pontos do distrito passam para uma linha por baixo.',
+      'Dados dos fogos com mais de uma hora deixam de aparecer como atuais, no início e na página dos fogos. A app diz se é falta de rede ou atraso do Fogos.pt.',
+      'Nos mapas, um dedo volta a deslizar a página; para mover o mapa, use dois dedos.',
+      'Tocar no mapa dos pontos de encontro pergunta antes de guardar, e trocar um ponto pode ser desfeito.',
+      'Menu mais curto: os três kits, o plano com os pontos de encontro e o simulacro com o quiz ficam juntos, com separadores. Os contactos úteis sobem para o topo.',
+    ],
+  },
   {
     versao: '0.8.1',
     data: '14/11/2026',

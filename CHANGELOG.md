@@ -6,6 +6,24 @@ What each version of the app added. Residents see the same history, in Portugues
 To release a version: bump `VERSAO` in `app/js/versao.js` and `app/sw.js`, and add an entry to
 the top of `NOVIDADES` in `versao.js` and to this file.
 
+## 0.9.0 (16 Nov 2026)
+Safety fixes and a shorter menu, from the design review of 15 Nov.
+- The top of the home screen shows the most serious local risk: red for an active fire within
+  10 km (with data from the last hour), otherwise the IPMA warning, otherwise green. Fires
+  elsewhere in the district no longer turn the top orange; they get a neutral line below, next to
+  the IPMA line.
+- Fire data older than one hour is never shown as current, on the home screen or on `#/fogos`.
+  A nearby fire seen in old data says it may already be out. "Sem rede" (the phone is offline) is
+  told apart from "O Fogos.pt não atualiza desde…" (late feed).
+- Maps no longer trap scrolling: one finger scrolls the page, two fingers move and zoom the map,
+  and the mouse wheel zooms only with Ctrl. A short hint explains this. The meeting points map
+  is at most 45% of the screen height.
+- Tapping the meeting points map asks "Usar este sítio como ponto 1?" before saving, and
+  replacing a point offers "Desfazer".
+- Menu down from 15 to 10 items: kit, backpack and car kit share one page with tabs; so do the
+  family plan and meeting points, and the drill and quiz. "Contactos úteis" moves to the top.
+  The unit footer scrolls with the list. The old addresses (`#/mochila`, `#/carro`, …) still work.
+
 ## 0.8.1 (14 Nov 2026)
 - The top of the home screen now shows fires from Fogos.pt: red for an active fire within 10 km
   (with the rural fire guide first under "Se acontecer agora"), orange for fires elsewhere in the

@@ -87,34 +87,87 @@ export function criarMapa(el, { aoTocar = () => {} } = {}) {
     pedir();
   };
 
-  // Arrastar move o mapa; um toque sem arrastar escolhe o sítio.
+  // Dica por cima do mapa, que se apaga sozinha.
+  const dica = document.createElement('p');
+  dica.className = 'mapa-dica';
+  dica.setAttribute('aria-hidden', 'true');
+  el.append(dica);
+  let dicaT = 0;
+  const mostrarDica = (txt) => {
+    dica.textContent = txt;
+    el.classList.add('com-dica');
+    clearTimeout(dicaT);
+    dicaT = setTimeout(() => el.classList.remove('com-dica'), 1600);
+  };
+
+  // O mapa não prende a página. Com o rato, arrastar move o mapa e Ctrl + roda aproxima.
+  // Com o dedo, um dedo desliza a página e dois dedos movem e aproximam o mapa.
+  // Um toque ou clique sem arrastar escolhe o sítio.
   let arrasto = null;
+  let multi = false;
   el.addEventListener('pointerdown', (ev) => {
     if (ev.target.closest('button, a')) return;
-    arrasto = { x: ev.clientX, y: ev.clientY, cx, cy, moveu: false };
-    el.setPointerCapture(ev.pointerId);
+    if (!ev.isPrimary) { arrasto = null; return; }
+    multi = false;
+    arrasto = { x: ev.clientX, y: ev.clientY, cx, cy, moveu: false, toque: ev.pointerType === 'touch' };
+    if (!arrasto.toque) el.setPointerCapture(ev.pointerId);
   });
   el.addEventListener('pointermove', (ev) => {
-    if (!arrasto) return;
+    if (!arrasto || !ev.isPrimary) return;
     const dx = ev.clientX - arrasto.x;
     const dy = ev.clientY - arrasto.y;
     if (Math.abs(dx) + Math.abs(dy) > 6) arrasto.moveu = true;
+    if (arrasto.toque) return;
     cx = arrasto.cx - dx;
     cy = arrasto.cy - dy;
     pedir();
   });
   el.addEventListener('pointerup', (ev) => {
-    if (!arrasto) return;
+    if (!arrasto || !ev.isPrimary) return;
     const a = arrasto;
     arrasto = null;
-    if (a.moveu) return;
+    if (a.moveu || multi) return;
     const r = el.getBoundingClientRect();
     const x = cx - r.width / 2 + (ev.clientX - r.left);
     const y = cy - r.height / 2 + (ev.clientY - r.top);
     aoTocar({ lat: paraLat(y, z), lon: paraLon(x, z) });
   });
   el.addEventListener('pointercancel', () => { arrasto = null; });
+
+  let gesto = null;
+  const meio = (t) => ({
+    x: (t[0].clientX + t[1].clientX) / 2,
+    y: (t[0].clientY + t[1].clientY) / 2,
+    d: Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY) || 1,
+  });
+  el.addEventListener('touchstart', (ev) => {
+    if (ev.touches.length !== 2) return;
+    multi = true;
+    arrasto = null;
+    gesto = { ...meio(ev.touches), cx, cy };
+  }, { passive: true });
+  el.addEventListener('touchmove', (ev) => {
+    if (ev.touches.length === 1) {
+      if (arrasto?.moveu) mostrarDica('Para mover o mapa, use dois dedos');
+      return;
+    }
+    if (!gesto || ev.touches.length !== 2) return;
+    ev.preventDefault();
+    const m = meio(ev.touches);
+    cx = gesto.cx - (m.x - gesto.x);
+    cy = gesto.cy - (m.y - gesto.y);
+    const escala = m.d / gesto.d;
+    if (escala > 1.5 || escala < 0.67) {
+      const r = el.getBoundingClientRect();
+      zoom(escala > 1 ? 1 : -1, m.x - r.left, m.y - r.top);
+      gesto = { ...m, cx, cy };
+    }
+    pedir();
+  }, { passive: false });
+  el.addEventListener('touchend', (ev) => { if (ev.touches.length < 2) gesto = null; }, { passive: true });
+
   el.addEventListener('wheel', (ev) => {
+    if (!ev.ctrlKey && !ev.metaKey) { mostrarDica('Para aproximar, use Ctrl + roda do rato ou os botões + e −'); return; }
     ev.preventDefault();
     const r = el.getBoundingClientRect();
     zoom(ev.deltaY < 0 ? 1 : -1, ev.clientX - r.left, ev.clientY - r.top);
@@ -177,6 +230,7 @@ export function corpoEncontro() {
         <a class="mapa-atr" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>
       </div>
       <p class="mapa-msg" aria-live="polite" data-mapa-msg></p>
+      <div class="mapa-conf" data-conf hidden></div>
       <label class="fld" for="enc-nome" data-renomear hidden>
         <span class="fld-r">Nome deste sítio</span>
         <input id="enc-nome" type="text" autocomplete="off" placeholder="Por exemplo: Largo da igreja">
@@ -224,8 +278,22 @@ export function montarEncontro(raiz) {
     }).join('');
   };
 
+  // Um toque no mapa só propõe o sítio: guarda-se depois de "Usar este sítio".
+  // Trocar um ponto já escolhido deixa "Desfazer" à vista.
+  const conf = zona.querySelector('[data-conf]');
+  let proposta = null;
+
+  const esconderConf = () => { conf.hidden = true; conf.innerHTML = ''; };
+  const mostrarConf = (texto, botoes, foco = false) => {
+    conf.innerHTML = `<p aria-live="polite">${esc(texto)}</p>
+      <div class="conf-b">${botoes.map(([t], i) => `<button type="button" class="conf-${i ? 'sec' : 'pri'}" data-b="${i}">${t}</button>`).join('')}</div>`;
+    conf.hidden = false;
+    conf.querySelectorAll('[data-b]').forEach((b) => b.addEventListener('click', botoes[Number(b.dataset.b)][1]));
+    if (foco) conf.querySelector('button').focus({ preventScroll: true });
+  };
+
   const mapa = criarMapa(mapaEl, {
-    aoTocar: (pos) => escolher({ nome: 'Sítio escolhido no mapa', ...pos }, true),
+    aoTocar: (pos) => propor({ nome: 'Sítio escolhido no mapa', ...pos }),
   });
 
   const desenharPinos = () => {
@@ -237,26 +305,62 @@ export function montarEncontro(raiz) {
       const x = e[id];
       if (x) lista.push({ lat: x.lat, lon: x.lon, classe: `pino-esc pino-${id}`, html: `<span>${l.n}</span>` });
     });
+    if (proposta) lista.push({ lat: proposta.lat, lon: proposta.lon, classe: `pino-esc pino-${lado} pino-proposta`, html: `<span>${LADOS[lado].n}</span>` });
     if (aqui) lista.push({ lat: aqui.lat, lon: aqui.lon, classe: 'pino-aqui', html: '' });
     mapa.pinos(lista);
   };
 
-  function escolher(x, doMapa = false) {
-    e = { ...e, [lado]: { nome: x.nome, lat: x.lat, lon: x.lon } };
+  const atualizarLado = (l) => {
+    const x = e[l];
+    zona.querySelector(`[data-lado-nome="${l}"]`).textContent = x ? x.nome : 'Por escolher';
+    zona.querySelector(`[data-lado="${l}"]`).classList.toggle('feito', Boolean(x));
+  };
+
+  function propor(pos) {
+    proposta = pos;
+    const l = LADOS[lado];
+    const troca = e[lado] ? ` Fica no lugar de "${e[lado].nome}".` : '';
+    msg.textContent = '';
+    desenharPinos();
+    mostrarConf(`Usar este sítio como ponto ${l.n} (${l.nome.toLowerCase()})?${troca}`, [
+      ['Usar este sítio', () => escolher(proposta, true)],
+      ['Cancelar', () => { proposta = null; esconderConf(); desenharPinos(); }],
+    ]);
+  }
+
+  function desfazer(l, antes) {
+    e = { ...e, [l]: antes };
     guardarEncontro(e);
-    zona.querySelector(`[data-lado-nome="${lado}"]`).textContent = x.nome;
-    zona.querySelector(`[data-lado="${lado}"]`).classList.add('feito');
-    msg.textContent = `Ponto ${LADOS[lado].n} (${LADOS[lado].nome.toLowerCase()}): ${x.nome}. Guardado.`;
+    atualizarLado(l);
+    renomear.hidden = true;
+    esconderConf();
+    msg.textContent = `Ponto ${LADOS[l].n} reposto: ${antes.nome}.`;
+    desenharPinos();
+    listaFinal();
+  }
+
+  function escolher(x, doMapa = false) {
+    const l = lado;
+    const antes = e[l] || null;
+    proposta = null;
+    e = { ...e, [l]: { nome: x.nome, lat: x.lat, lon: x.lon } };
+    guardarEncontro(e);
+    atualizarLado(l);
+    msg.textContent = `Ponto ${LADOS[l].n} (${LADOS[l].nome.toLowerCase()}): ${x.nome}. Guardado.`;
+    if (antes) mostrarConf(`Trocou "${antes.nome}" por este sítio.`, [['Desfazer', () => desfazer(l, antes)]]);
+    else esconderConf();
     renomear.hidden = !doMapa;
-    if (doMapa) { campoNome.value = ''; campoNome.dataset.lado = lado; campoNome.focus({ preventScroll: true }); }
+    if (doMapa) { campoNome.value = ''; campoNome.dataset.lado = l; campoNome.focus({ preventScroll: true }); }
     desenharPinos();
     listaFinal();
     // Depois de escolher o primeiro, passa sozinho para o segundo se ainda faltar.
-    const outro = lado === 'perto' ? 'longe' : 'perto';
+    const outro = l === 'perto' ? 'longe' : 'perto';
     if (!doMapa && !e[outro]) setTimeout(() => mudarLado(outro), 600);
   }
 
   function mudarLado(novo) {
+    // Um sítio proposto e não confirmado era para o outro ponto: deixa de valer.
+    if (proposta && novo !== lado) { proposta = null; esconderConf(); }
     lado = novo;
     zona.querySelectorAll('[data-lado]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lado === lado)));
     zona.querySelector('[data-esc-ajuda]').textContent = `${LADOS[lado].ajuda} Toque no mapa ou escolha um local da lista.`;

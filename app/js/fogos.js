@@ -65,25 +65,54 @@ const meios = (o) => [
   o.aereos ? `${o.aereos} ${o.aereos === 1 ? 'meio aéreo' : 'meios aéreos'}` : '',
 ].filter(Boolean).join(' · ');
 
-// Estado do topo do início, a partir dos fogos: vermelho com um incêndio ativo a menos
-// de 10 km, laranja com incêndios noutros pontos do distrito, verde sem incêndios,
-// azul sem dados (ou com dados de há mais de uma hora e nada ativo).
+// Estado dos fogos para o início. Só um incêndio ativo a menos de 10 km, com dados da
+// última hora, chega ao topo (vermelho). Os incêndios noutros pontos do distrito ficam
+// numa linha neutra (`linha`), como a dos avisos do tempo. Dados com mais de uma hora
+// nunca se mostram como atuais: diz-se de quando são e porquê (sem rede ou atraso do Fogos.pt).
 const AZUL = '#0B57A4';
 const RECENTE = 60 * 60 * 1000;
+
+// "Sem rede" é diferente de "o Fogos.pt não atualiza": no primeiro caso o problema é do telemóvel.
+export function porqueAntigo(obtido, agora = Date.now()) {
+  return navigator.onLine
+    ? `O Fogos.pt não atualiza desde ${quando(obtido, agora)}`
+    : `Sem rede. Os últimos dados são de ${quando(obtido, agora)}`;
+}
+
 export function estadoFogos(agora = Date.now()) {
   const d = fogosGuardados();
   const obtido = d?.obtido ? Date.parse(d.obtido) : null;
-  const base = { obtido, recente: Boolean(obtido && agora - obtido <= RECENTE), maisHref: '#/fogos', icone: 'fire' };
-  if (!d) return { ...base, id: 'pendente', theme: AZUL, big: 'A consultar os fogos', desc: 'A obter os incêndios ativos no distrito de Leiria.' };
+  const recente = Boolean(obtido && agora - obtido <= RECENTE);
+  const base = { obtido, recente, maisHref: '#/fogos', icone: 'fire', fonte: 'fogos' };
+  if (!d) {
+    return { ...base, id: 'pendente', theme: AZUL, big: 'A consultar os fogos', desc: 'A obter os incêndios ativos no distrito de Leiria.', linha: 'A consultar…' };
+  }
   if (!d.ok) {
     return {
       ...base, id: 'pendente', theme: AZUL, big: 'Sem dados dos fogos',
       desc: 'Não foi possível obter as ocorrências de momento.',
       act: { href: SITE_FOGOS, txt: 'Abrir o Fogos.pt', ext: true },
+      linha: 'Sem dados de momento',
     };
   }
   const incendios = (d.ocorrencias || []).filter((o) => o.incendio && ativo(o));
   const perto = incendios.filter((o) => o.km <= PERTO_KM);
+  if (!recente) {
+    // Com dados antigos não sabemos se um incêndio perto ainda está ativo, nem se há outros.
+    const antes = perto.length
+      ? `. Nessa altura havia ${perto.length === 1 ? 'um incêndio ativo' : `${perto.length} incêndios ativos`} a menos de ${PERTO_KM} km, que pode já não estar ativo.`
+      : '.';
+    return {
+      ...base, id: 'pendente', theme: AZUL, antigo: true, pertoAntigo: perto.length > 0,
+      ...(perto.length ? { risco: 'incendio-rural', hl: AZUL } : {}),
+      big: perto.length ? 'Incêndio perto, dados antigos' : 'Sem dados recentes dos fogos',
+      desc: `${porqueAntigo(obtido, agora)}${antes} Se vir fumo ou fogo, ligue 112.`,
+      act: { href: SITE_FOGOS, txt: 'Ver no Fogos.pt', ext: true },
+      linha: perto.length
+        ? `${quando(obtido, agora).replace(/^./, (c) => c.toUpperCase())} havia um incêndio a ${km(perto[0].km)} · pode já não estar ativo`
+        : `Dados de ${quando(obtido, agora)} · podem já não estar certos`,
+    };
+  }
   if (perto.length) {
     const o = perto[0];
     return {
@@ -93,46 +122,17 @@ export function estadoFogos(agora = Date.now()) {
       desc: `${esc(o.local || o.freguesia)} · ${esc(o.estado)}. ${meios(o)}. Siga as indicações das autoridades.`,
       act: { href: '#/agir/incendio-rural', txt: 'O que fazer num incêndio rural' },
       mais: 'Ver no mapa dos fogos',
+      linha: `${esc(titulo(o))} a ${km(o.km)}`,
     };
   }
   if (incendios.length) {
     const o = incendios[0];
     return {
-      ...base, id: 'laranja', theme: '#F7941D', hl: '#9A5200',
-      nivel: 'Incêndios no distrito',
-      big: `${incendios.length} ${incendios.length === 1 ? 'incêndio ativo' : 'incêndios ativos'}`,
-      desc: `Nenhum perto de Caranguejeira. O mais próximo: ${esc(o.local || o.concelho)}, a ${km(o.km)} (${esc(o.estado)}).`,
-      mais: 'Ver no mapa dos fogos',
+      ...base, id: 'distrito',
+      linha: `Nenhum perto. ${incendios.length} no distrito, o mais próximo a ${km(o.km)} (${esc(o.local || o.concelho)})`,
     };
   }
-  if (!base.recente) {
-    return {
-      ...base, id: 'pendente', theme: AZUL, big: 'Sem dados recentes',
-      desc: `Os últimos dados dos fogos são de ${quando(obtido, agora)}. Ligue-se à internet para atualizar.`,
-    };
-  }
-  return {
-    ...base, id: 'verde', theme: '#2E8540', big: 'Sem incêndios ativos',
-    desc: 'Não há incêndios ativos no distrito de Leiria, segundo o Fogos.pt.', mais: 'Ver os fogos',
-  };
-}
-
-// Para o início: incêndio ativo perto de Caranguejeira, se houver.
-export function fogoPerto() {
-  const d = fogosGuardados();
-  if (!d) return null;
-  return (d.ocorrencias || []).find((o) => o.incendio && ativo(o) && o.km <= PERTO_KM) || null;
-}
-
-export function avisoFogoPerto() {
-  const o = fogoPerto();
-  if (!o) return '';
-  return `
-    <a class="fogo-perto" href="#/fogos">
-      <span class="fogo-perto-ic" aria-hidden="true">${icon('fire')}</span>
-      <span class="fogo-perto-txt"><b>${esc(titulo(o))} a ${km(o.km)}</b><span>${esc(o.local || o.freguesia)} · ${esc(o.estado)}. Siga as indicações das autoridades.</span></span>
-      ${icon('chev', 'i chev')}
-    </a>`;
+  return { ...base, id: 'verde', linha: 'Sem incêndios ativos no distrito de Leiria' };
 }
 
 function linha(o, agora) {
@@ -151,6 +151,7 @@ export function corpoFogos() {
   const d = fogosGuardados();
   const agora = Date.now();
   const obtido = d?.obtido ? Date.parse(d.obtido) : null;
+  const recente = Boolean(obtido && agora - obtido <= RECENTE);
   const lista = d?.ocorrencias || [];
   const perto = lista.filter((o) => o.km <= PERTO_KM);
   const resto = lista.filter((o) => o.km > PERTO_KM);
@@ -166,16 +167,18 @@ export function corpoFogos() {
   } else if (!d.ok) {
     corpo = `<div class="soon"><h2 class="soon-k">Sem dados de momento</h2><p class="soon-t">Não foi possível obter as ocorrências. Veja em <a href="${SITE_FOGOS}" target="_blank" rel="noopener">fogos.pt</a>.</p></div>`;
   } else if (!lista.length) {
-    corpo = `<div class="soon"><h2 class="soon-k">Sem ocorrências no distrito de Leiria</h2><p class="soon-t">Em todo o país há ${d.total} ${d.total === 1 ? 'ocorrência ativa' : 'ocorrências ativas'}.</p></div>`;
+    corpo = `<div class="soon"><h2 class="soon-k">Sem ocorrências no distrito de Leiria${recente ? '' : ` (dados de ${quando(obtido, agora)})`}</h2><p class="soon-t">Em todo o país há ${d.total} ${d.total === 1 ? 'ocorrência ativa' : 'ocorrências ativas'}.</p></div>`;
   } else {
-    corpo = grupo('perto', `Perto de Caranguejeira (até ${PERTO_KM} km)`, perto) + grupo('resto', 'No resto do distrito', resto)
+    corpo = grupo('perto', `Até ${PERTO_KM} km de Caranguejeira`, perto) + grupo('resto', 'No resto do distrito', resto)
       + `<p class="nota">Em todo o país: ${d.total} ${d.total === 1 ? 'ocorrência ativa' : 'ocorrências ativas'}.</p>`;
   }
 
   return `
     <div data-fogos>
       <p class="intro">Ocorrências ativas no distrito de Leiria, com a informação da Proteção Civil publicada pelo Fogos.pt.</p>
-      <p class="obtido"><span class="vivo${d?.ok ? '' : ' vivo-off'}" aria-hidden="true"></span>${obtido ? `Atualizado ${quando(obtido, agora)} · de 10 em 10 minutos` : 'A consultar…'}</p>
+      <p class="obtido"><span class="vivo${d?.ok && recente ? '' : ' vivo-off'}" aria-hidden="true"></span>${obtido ? `Atualizado ${quando(obtido, agora)} · de 10 em 10 minutos` : 'A consultar…'}</p>
+      ${obtido && !recente ? `
+      <p class="antigo" role="note">${icon('alert')}<span><b>Estes dados podem já não estar certos.</b> ${porqueAntigo(obtido, agora)}. Uma ocorrência pode já ter acabado, ou haver outras. Veja em <a href="${SITE_FOGOS}" target="_blank" rel="noopener">fogos.pt</a>.</span></p>` : ''}
       ${lista.length ? `
       <div class="mapa mapa-fogos" data-mapa>
         <div class="mapa-mosaicos" data-mosaicos></div>
