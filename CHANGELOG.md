@@ -6,6 +6,20 @@ What each version of the app added. Residents see the same history, in Portugues
 To release a version: bump `VERSAO` in `app/js/versao.js` and `app/sw.js`, and add an entry to
 the top of `NOVIDADES` in `versao.js` and to this file.
 
+## 0.10.0 (17 Nov 2026)
+- "Avisar a família" (`#/avisar`, in the menu, on the home screen and in the family plan): a text
+  message saying "Estou bem" or "Preciso de ajuda" and where the person is, from GPS, home or one
+  of the family's meeting points. It opens the phone's own messages app with the text ready, to the
+  plan's out-of-area contact or anyone else; WhatsApp and copy are extra options.
+- Works without internet: GPS needs no data and a text message only needs signal. The place is
+  described offline from the reference places and meeting points ("Perto de: … (300 m a norte)").
+- The message carries a link, `https://upcc.pt/#/aqui/LAT_LON_MARGIN_MINUTE_STATE`. Opening it
+  shows "Localização recebida": the place in words, when it was sent, a map, the distance from
+  the receiver ("Mostrar onde estou") and "Como chegar".
+- No server or registration: the location only leaves the phone in the message the person sends,
+  and it sits after the `#`, which browsers never send to the website.
+- The menu height steps were adjusted for its 11 items.
+
 ## 0.9.0 (16 Nov 2026)
 Safety fixes and a shorter menu, from the design review of 15 Nov.
 - The top of the home screen shows the most serious local risk: red for an active fire within

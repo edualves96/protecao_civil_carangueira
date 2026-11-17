@@ -19,6 +19,7 @@ import { VERSAO, NOVIDADES } from './versao.js';
 import { corpoCopia, montarCopia } from './copia.js';
 import { corpoSimulacro, montarSimulacro } from './simulacro.js';
 import { corpoQuiz, montarQuiz } from './quiz.js';
+import { corpoAvisar, montarAvisar, corpoAqui, montarAqui } from './localizacao.js';
 
 const AZUL = '#0B57A4';
 
@@ -280,6 +281,7 @@ function inicio() {
           <ul class="rows">
             ${riscos.map((r, i) => linhaRisco(r, i === 0 && r.id === risco, hl)).join('')}
             <li><a class="row more" href="#/agir">Todos os riscos${icon('chev', 'i chev')}</a></li>
+            <li><a class="row row-avisar" href="#/avisar">${icon('mensagem')}Avisar a família onde está${icon('chev', 'i chev')}</a></li>
           </ul>
         </section>`;
 
@@ -962,6 +964,17 @@ export function resolver(nome, sub) {
       theme: AZUL,
       html: pagina({ titulo: 'Pontos de encontro', corpo: corpoEncontro(), editar: 'pontos', grupo: 'plano', aba: 'encontro' }),
       montar: montarEncontro,
+    };
+  }
+  if (nome === 'avisar') {
+    return { title: 'Avisar a família', theme: AZUL, html: pagina({ titulo: 'Avisar a família', corpo: corpoAvisar() }), montar: montarAvisar };
+  }
+  if (nome === 'aqui') {
+    return {
+      title: 'Localização recebida',
+      theme: AZUL,
+      html: pagina({ titulo: 'Localização recebida', corpo: corpoAqui(sub) }),
+      montar: (raiz) => montarAqui(raiz, sub),
     };
   }
   if (nome === 'avisos') return avisosEcra();

@@ -108,6 +108,18 @@ The warnings (Leiria district, area `LRA`) and recent earthquakes come from the 
 answer is kept on the phone, so the screens still work offline. IPMA asks to always name it as the
 source, with a link.
 
+## Avisar a família (location by text message)
+
+`#/avisar` writes a text message ("Estou bem" or "Preciso de ajuda", plus where the person is) and
+opens the phone's own messages app with it ready to send. There is no server and no registration:
+the location only leaves the phone in the message the person sends, so it also works without
+internet, as long as there is mobile signal. The code is in `app/js/localizacao.js`.
+
+The message links to `https://upcc.pt/#/aqui/LAT_LON_MARGIN_MINUTE_STATE`, which shows the place
+in words, on a map and with directions. The location sits after the `#`, which browsers never send
+to the server. The place names come from the reference places in `app/conteudo/pontos.json` (editable
+in Pages CMS), so adding well-known local places there makes the messages more precise.
+
 ## Preview the warning states
 
 The home screen shows the real IPMA warnings. To preview a state with sample data, add `?demo=`

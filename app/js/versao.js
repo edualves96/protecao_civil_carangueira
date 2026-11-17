@@ -2,9 +2,19 @@
 // Ao publicar uma versão nova: mude VERSAO aqui e em sw.js, e junte uma entrada ao topo.
 // A mesma história está em CHANGELOG.md, para quem mantém a app.
 
-export const VERSAO = '0.9.0';
+export const VERSAO = '0.10.0';
 
 export const NOVIDADES = [
+  {
+    versao: '0.10.0',
+    data: '17/11/2026',
+    itens: [
+      'Avisar a família: uma SMS a dizer que está bem (ou que precisa de ajuda) e onde está. Funciona sem internet, basta haver rede.',
+      'O sítio vai em palavras, por exemplo "Perto de: Junta de Freguesia de Caranguejeira (300 m a norte)", e com uma ligação para o mapa.',
+      'Quem recebe a SMS toca na ligação e vê onde a pessoa está, a que distância fica e como lá chegar.',
+      'A localização só sai do telemóvel na mensagem que enviar. A app não a guarda nem a envia para nenhum servidor.',
+    ],
+  },
   {
     versao: '0.9.0',
     data: '16/11/2026',

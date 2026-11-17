@@ -99,7 +99,8 @@ function parteHtml(parte, p, e, aberta) {
       ${campo('fora-tel', 'Telefone dessa pessoa', p.fora.tel, { tipo: 'tel', exemplo: '912 345 678', extra: 'inputmode="tel" data-campo="fora.tel"' })}
       ${campo('medico-nome', 'Médico de família ou centro de saúde', p.medico.nome, { exemplo: 'Opcional', extra: 'data-campo="medico.nome"' })}
       ${campo('medico-tel', 'Telefone', p.medico.tel, { tipo: 'tel', exemplo: 'Opcional', extra: 'inputmode="tel" data-campo="medico.tel"' })}
-      ${p.fora.tel.trim() ? `<a class="ligar-fora" href="tel:${paraTel(p.fora.tel)}">${icon('phone')}Ligar a ${esc(p.fora.nome || 'esse contacto')}</a>` : ''}`;
+      ${p.fora.tel.trim() ? `<a class="ligar-fora" href="tel:${paraTel(p.fora.tel)}">${icon('phone')}Ligar a ${esc(p.fora.nome || 'esse contacto')}</a>` : ''}
+      <a class="add" href="#/avisar">${icon('mensagem')}Mandar uma SMS a dizer onde está</a>`;
   } else if (parte.id === 'encontro') {
     const linha = (rot, x, n) => `
       <li class="enc-l"><span class="enc-n enc-n${n}" aria-hidden="true">${n}</span>

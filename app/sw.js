@@ -2,7 +2,7 @@
 // Estratégia: rede primeiro (para ter sempre a versão mais recente) e, sem rede, a cópia guardada.
 // Ao publicar uma nova versão, atualize VERSAO para renovar a cópia guardada.
 
-const VERSAO = '0.9.0';
+const VERSAO = '0.10.0';
 const CACHE = `pcc-${VERSAO}`;
 
 const FICHEIROS = [
@@ -28,6 +28,7 @@ const FICHEIROS = [
   'js/simulacro.js',
   'js/quiz.js',
   'js/ipma.js',
+  'js/localizacao.js',
   'conteudo/kit.json',
   'conteudo/mochila.json',
   'conteudo/carro.json',
