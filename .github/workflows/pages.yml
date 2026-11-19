@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.publicacao.outputs.page_url }}
+      url: ${{ steps.publicacao.outputs.page_url || steps.nova-tentativa.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -43,5 +43,15 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: app
+      # Às vezes o GitHub demora a mostrar os ficheiros acabados de enviar, e a publicação
+      # falha com "No artifacts named github-pages were found". Nesse caso espera 30 segundos
+      # e tenta outra vez; só se a segunda tentativa falhar é que a execução falha.
       - id: publicacao
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+      - name: Esperar antes de tentar outra vez
+        if: steps.publicacao.outcome == 'failure'
+        run: sleep 30
+      - id: nova-tentativa
+        if: steps.publicacao.outcome == 'failure'
         uses: actions/deploy-pages@v4

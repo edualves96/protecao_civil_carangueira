@@ -93,6 +93,10 @@ the workflow every 10 minutes, which GitHub does straight away.
    and the body `{"ref":"ccr-d836c5a6-1m8oud"}`. A working call answers `204 No Content`.
 3. In the repository's **Actions** tab, runs marked "workflow_dispatch" appear every 10 minutes.
 
+Now and then GitHub is slow to list the files a run has just uploaded, and publishing fails with
+"No artifacts named github-pages were found". The workflow then waits 30 seconds and tries once
+more; the run only fails (and GitHub only emails you) if that second try fails too.
+
 If the token expires, the timer's calls fail with `401` and the data goes back to updating a few
 times a day; the app then shows "Sem dados recentes" rather than claiming there are no fires.
 
