@@ -107,8 +107,12 @@ already have the app installed.
 
 ## IPMA data
 
-The warnings (Leiria district, area `LRA`) and recent earthquakes come from the IPMA open data API
-(<https://api.ipma.pt/>): no key, and the browser calls it directly. See `app/js/ipma.js`. The last
+The warnings (Leiria district, area `LRA`), the daily forecast (Leiria, `globalIdLocal` 1100900) and
+recent earthquakes come from the IPMA open data API (<https://api.ipma.pt/>): no key, and the
+browser calls it directly. The hour-by-hour forecast behind the slider on each day comes from the
+feed IPMA's own website uses (`api.ipma.pt/public-data/forecast/aggregate/1100900.json`). It isn't
+documented open data and could change; if it stops working, the day cards still show, without the
+slider. See `app/js/tempo.js`. See `app/js/ipma.js`. The last
 answer is kept on the phone, so the screens still work offline. IPMA asks to always name it as the
 source, with a link.
 

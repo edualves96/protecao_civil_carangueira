@@ -6,6 +6,28 @@ What each version of the app added. Residents see the same history, in Portugues
 To release a version: bump `VERSAO` in `app/js/versao.js` and `app/sw.js`, and add an entry to
 the top of `NOVIDADES` in `versao.js` and to this file.
 
+## 0.11.0 (24 Nov 2026)
+- Weather forecast from IPMA's open data (daily forecast for Leiria, `globalIdLocal` 1100900, the
+  nearest IPMA location to Caranguejeira). No key, called from the browser like the warnings, and
+  saved on the phone for offline use.
+- Hour-by-hour forecast from the feed IPMA's own website uses
+  (`api.ipma.pt/public-data/forecast/aggregate/1100900.json`: hourly for 3 days, then every 3 hours).
+  It isn't part of the documented open data, so the app works without it: the day cards then
+  appear without the hour slider.
+- Home: today's maximum, minimum and chance of rain with a weather icon in the top corner of the
+  status block. It links to the forecast on `#/avisos` (via `#/avisos/previsao`, which scrolls to it).
+- `#/avisos`: "Previsão do tempo", one card for today and each of the next 3 days (two columns on
+  wide screens) with the weather in words, maximum, minimum, chance of rain and wind.
+- Each card has an hour slider: the thumb is a cloud, a bubble shows that hour's temperature,
+  weather icon and chance of rain, and a line shows the temperature through the day. The card's
+  background and drawing follow the chosen hour's weather (sun, clouds, rain, thunderstorm, fog,
+  snow), and turn dark with a moon and stars between sunset and sunrise (worked out for Leiria).
+  Rain, snow and fog move gently, except with reduced motion.
+- New weather icons (sun, sun and cloud, cloud, rain, thunderstorm, fog, moon, moon and cloud) in
+  the app's style.
+- Links inside text (sources, 112) wrap at the end of a line again instead of jumping to a line of
+  their own.
+
 ## 0.10.0 (17 Nov 2026)
 - "Avisar a família" (`#/avisar`, in the menu, on the home screen and in the family plan): a text
   message saying "Estou bem" or "Preciso de ajuda" and where the person is, from GPS, home or one

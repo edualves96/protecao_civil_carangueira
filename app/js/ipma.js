@@ -105,6 +105,39 @@ export const sismos = fonte('ipma-sismos', `${API}/observation/seismic/${AREA_SI
       && (s.km <= 100 || (s.km <= 400 && (s.sentido || (s.mag !== null && s.mag >= 3)))));
 });
 
+// Previsão diária para Leiria, a localidade do IPMA mais perto de Caranguejeira (cerca de 9 km).
+// O IPMA dá 5 dias; a app mostra hoje e os 3 seguintes.
+const LOCAL_PREVISAO = 1100900; // Leiria
+const LEIRIA = { lat: 39.7473, lon: -8.8069 };
+// O IPMA usa -99 para "sem valor".
+const num = (v) => (Number.isFinite(Number(v)) && Number(v) > -90 ? Number(v) : null);
+export const previsao = fonte('ipma-previsao', `${API}/forecast/meteorology/cities/daily/${LOCAL_PREVISAO}.json`, (json) => {
+  if (!json || !Array.isArray(json.data)) throw new Error('formato');
+  return json.data
+    .filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d.forecastDate))
+    .map((d) => ({
+      data: d.forecastDate,
+      min: num(d.tMin),
+      max: num(d.tMax),
+      tipo: Number(d.idWeatherType),
+      chuva: num(d.precipitaProb),
+      ventoDir: String(d.predWindDir || ''),
+      ventoClasse: Number(d.classWindSpeed),
+    }));
+});
+
+// Previsão hora a hora (de hora a hora nos 3 primeiros dias, depois de 3 em 3 horas).
+// O IPMA usa estes dados no seu site, mas não fazem parte dos dados abertos documentados:
+// se deixarem de vir, os dias continuam a aparecer, só sem a régua das horas.
+export const horas = fonte('ipma-horas', `https://api.ipma.pt/public-data/forecast/aggregate/${LOCAL_PREVISAO}.json`, (json) => {
+  if (!Array.isArray(json)) throw new Error('formato');
+  return json
+    .filter((x) => (x.idPeriodo === 1 || x.idPeriodo === 3) && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(x.dataPrev))
+    .map((x) => ({ quando: x.dataPrev.slice(0, 16), temp: num(x.tMed), tipo: Number(x.idTipoTempo), chuva: num(x.probabilidadePrecipita) }))
+    .filter((x) => x.temp !== null)
+    .sort((a, b) => (a.quando < b.quando ? -1 : 1));
+});
+
 function distancia(lat, lon) {
   const rad = (g) => (g * Math.PI) / 180;
   const dLat = rad(lat - CARANGUEJEIRA.lat);
@@ -173,6 +206,114 @@ export function meiaNoite(ms, mais = 0) {
   const p = partesLisboa(ms);
   const d = new Date(Date.UTC(p.year, p.month - 1, p.day + mais));
   return horaPortugal(`${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${d.getUTCDate()}T00:00`);
+}
+
+/* ---------- Previsão do tempo ---------- */
+
+// Tipos de tempo do IPMA (weather-type-classe.json), em português corrente, com o ícone.
+const TEMPO = {
+  1: ['Céu limpo', 'sol'],
+  2: ['Céu pouco nublado', 'solnuvem'],
+  3: ['Céu parcialmente nublado', 'solnuvem'],
+  4: ['Céu muito nublado', 'nuvem'],
+  5: ['Nuvens altas', 'solnuvem'],
+  6: ['Aguaceiros ou chuva', 'chuva'],
+  7: ['Aguaceiros fracos', 'chuva'],
+  8: ['Aguaceiros fortes', 'chuva'],
+  9: ['Chuva ou aguaceiros', 'chuva'],
+  10: ['Chuva fraca ou chuvisco', 'chuva'],
+  11: ['Chuva forte', 'chuva'],
+  12: ['Períodos de chuva', 'chuva'],
+  13: ['Períodos de chuva fraca', 'chuva'],
+  14: ['Períodos de chuva forte', 'chuva'],
+  15: ['Chuvisco', 'chuva'],
+  16: ['Neblina', 'nevoeiro'],
+  17: ['Nevoeiro ou nuvens baixas', 'nevoeiro'],
+  18: ['Neve', 'snow'],
+  19: ['Trovoada', 'trovoada'],
+  20: ['Aguaceiros e possível trovoada', 'trovoada'],
+  21: ['Granizo', 'chuva'],
+  22: ['Geada', 'snow'],
+  23: ['Chuva e possível trovoada', 'trovoada'],
+  24: ['Nuvens de trovoada', 'nuvem'],
+  25: ['Períodos de céu muito nublado', 'nuvem'],
+  26: ['Nevoeiro', 'nevoeiro'],
+  27: ['Céu nublado', 'nuvem'],
+  28: ['Aguaceiros de neve', 'snow'],
+  29: ['Chuva e neve', 'snow'],
+  30: ['Chuva e neve', 'snow'],
+};
+const VENTO = { 1: 'fraco', 2: 'moderado', 3: 'forte', 4: 'muito forte' };
+const DE_ONDE = { N: 'norte', NE: 'nordeste', E: 'leste', SE: 'sudeste', S: 'sul', SW: 'sudoeste', W: 'oeste', NW: 'noroeste' };
+export const graus = (t) => (t === null ? '–' : `${Math.round(t)}°`);
+
+// Hoje e os dias seguintes (até `quantos`), já com o texto a mostrar. Uma previsão
+// guardada continua a servir sem rede enquanto tiver o dia de hoje.
+export function previsaoDias(dados, agora = Date.now(), quantos = 4) {
+  if (!dados || !Array.isArray(dados.lista)) return [];
+  const hoje = diaLisboa(agora);
+  return dados.lista
+    .map((d) => {
+      const [a, m, dd] = d.data.split('-').map(Number);
+      const meioDia = horaPortugal(`${a}-${m}-${dd}T12:00`);
+      const [texto, icone] = TEMPO[d.tipo] || ['Sem informação', 'nuvem'];
+      const vento = VENTO[d.ventoClasse] ? `Vento ${VENTO[d.ventoClasse]}${DE_ONDE[d.ventoDir] ? ` de ${DE_ONDE[d.ventoDir]}` : ''}` : '';
+      const nome = dia(meioDia, agora);
+      return {
+        ...d,
+        dias: Math.round((Date.UTC(a, m - 1, dd) - hoje) / 864e5),
+        nome: nome.charAt(0).toUpperCase() + nome.slice(1),
+        texto, icone, vento,
+      };
+    })
+    .filter((d) => d.dias >= 0)
+    .slice(0, quantos);
+}
+
+// A previsão de hoje, se a cópia guardada a tiver.
+export function previsaoHoje(dados, agora = Date.now()) {
+  const d = previsaoDias(dados, agora, 1)[0];
+  return d && d.dias === 0 ? d : null;
+}
+
+// Nascer e pôr do sol em Leiria num dia ("AAAA-MM-DD"), pela equação do nascer do sol
+// (com erro de poucos minutos). Serve para a régua das horas mostrar a noite.
+export function solDoDia(data) {
+  const [a, m, d] = data.split('-').map(Number);
+  const rad = Math.PI / 180;
+  const n = Math.round(Date.UTC(a, m - 1, d, 12) / 864e5 + 2440587.5 - 2451545 + 0.0008);
+  const j = n - LEIRIA.lon / 360;
+  const M = (357.5291 + 0.98560028 * j) % 360;
+  const C = 1.9148 * Math.sin(M * rad) + 0.02 * Math.sin(2 * M * rad) + 0.0003 * Math.sin(3 * M * rad);
+  const lambda = (M + C + 180 + 102.9372) % 360;
+  const transito = 2451545 + j + 0.0053 * Math.sin(M * rad) - 0.0069 * Math.sin(2 * lambda * rad);
+  const senDecl = Math.sin(lambda * rad) * Math.sin(23.4397 * rad);
+  const cosW = (Math.sin(-0.833 * rad) - Math.sin(LEIRIA.lat * rad) * senDecl) / (Math.cos(LEIRIA.lat * rad) * Math.cos(Math.asin(senDecl)));
+  const w = Math.acos(Math.max(-1, Math.min(1, cosW))) / rad / 360;
+  const paraMs = (jd) => (jd - 2440587.5) * 864e5;
+  return { nascer: paraMs(transito - w), por: paraMs(transito + w) };
+}
+
+// As horas de um dia, com o tempo em palavras, o ícone (lua de noite) e a probabilidade
+// de chuva (o IPMA só a dá de 3 em 3 horas: as outras horas usam a mais próxima).
+export function horasDoDia(dados, data) {
+  if (!dados || !Array.isArray(dados.lista)) return [];
+  const todas = dados.lista.map((h) => ({ ...h, ms: horaPortugal(h.quando) }));
+  const comChuva = todas.filter((h) => h.chuva !== null);
+  const { nascer, por } = solDoDia(data);
+  return todas
+    .filter((h) => h.quando.startsWith(data))
+    .map((h) => {
+      const [texto, cena] = TEMPO[h.tipo] || ['Sem informação', 'nuvem'];
+      const noite = h.ms < nascer || h.ms > por;
+      let chuva = h.chuva;
+      if (chuva === null) {
+        const perto = comChuva.reduce((melhor, c) => (Math.abs(c.ms - h.ms) < Math.abs(melhor.ms - h.ms) ? c : melhor), { ms: Infinity });
+        if (Math.abs(perto.ms - h.ms) <= 2 * 3600e3) chuva = perto.chuva;
+      }
+      const icone = noite && cena === 'sol' ? 'lua' : noite && cena === 'solnuvem' ? 'luanuvem' : cena;
+      return { ms: h.ms, hora: hora(h.ms), h: partesLisboa(h.ms).hour, temp: h.temp, texto, cena, icone, noite, chuva };
+    });
 }
 
 /* ---------- Avisos do distrito ---------- */

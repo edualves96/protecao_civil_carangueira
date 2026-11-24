@@ -13,7 +13,9 @@ import { corpoFogos, montarFogos, atualizarFogos, estadoFogos, SITE_FOGOS } from
 import {
   avisos as fonteAvisos, sismos as fonteSismos, avisosDoDistrito, periodo, quando, dia, hora, meiaNoite,
   textoObtido, atualizarEcra, classeVivo, RECENTE, SITE_AVISOS, SITE_SISMOS,
+  previsao as fontePrevisao, horas as fonteHoras,
 } from './ipma.js';
+import { tempoHoje, corpoPrevisao, montarPrevisao } from './tempo.js';
 
 import { VERSAO, NOVIDADES } from './versao.js';
 import { corpoCopia, montarCopia } from './copia.js';
@@ -296,6 +298,7 @@ function inicio() {
         <div class="wrap">
           <div class="top">
             <div><p class="wm-s">PROTEÇÃO CIVIL</p><p class="wm">Caranguejeira</p></div>
+            ${tempoHoje()}
             <p class="net">Sem rede</p>
           </div>
           <div class="estado">
@@ -324,6 +327,9 @@ function inicio() {
       </div>`,
     montar: (raiz) => {
       atualizarEcra(raiz, fonteAvisos);
+      atualizarEcra(raiz, fontePrevisao);
+      // As horas também se guardam já, para a previsão hora a hora funcionar depois sem rede.
+      atualizarEcra(raiz, fonteHoras);
       atualizarFogos().then((mudou) => { if (mudou) window.dispatchEvent(new CustomEvent('pcc:dados')); });
     },
     dinamico: true,
@@ -697,6 +703,15 @@ function linhaDoTempo(todos, agora) {
 
 function montarAvisos(raiz) {
   atualizarEcra(raiz, fonteAvisos);
+  atualizarEcra(raiz, fontePrevisao);
+  atualizarEcra(raiz, fonteHoras);
+  montarPrevisao(raiz);
+  // Vindo da temperatura do início (#/avisos/previsao), desce até à previsão, depois de a
+  // app pôr o ecrã no topo. O endereço volta a #/avisos para não descer de novo a cada atualização.
+  if (location.hash.endsWith('/previsao')) {
+    history.replaceState(null, '', `${location.pathname}${location.search}#/avisos`);
+    setTimeout(() => raiz.querySelector('#prev-t')?.scrollIntoView({ block: 'start' }), 0);
+  }
   const tl = raiz.querySelector('.tl');
   if (!tl) return;
   animarUmaVez('avisos', tl, 1600);
@@ -742,11 +757,12 @@ function avisosEcra() {
     html: pagina({
       titulo,
       corpo: `
-        <p class="intro">Avisos do IPMA para o distrito de Leiria nos próximos 3 dias.</p>
+        <p class="intro">Avisos do IPMA para o distrito de Leiria e previsão do tempo para os próximos 3 dias.</p>
         <p class="obtido"><span class="${classeVivo(fonteAvisos)}" aria-hidden="true"></span><span data-obtido>${textoObtido(fonteAvisos)}</span></p>
         ${dados && (todos.length || agora - dados.obtido <= RECENTE) ? linhaDoTempo(todos, agora) : ''}
         ${corpo}
-        <p class="meta">Fonte: <a href="${SITE_AVISOS}" target="_blank" rel="noopener">IPMA – Instituto Português do Mar e da Atmosfera</a>. Os avisos são para todo o distrito de Leiria.</p>`,
+        ${corpoPrevisao(agora)}
+        <p class="meta">Fonte: <a href="${SITE_AVISOS}" target="_blank" rel="noopener">IPMA – Instituto Português do Mar e da Atmosfera</a>. Os avisos são para todo o distrito de Leiria; a previsão é para a cidade de Leiria.</p>`,
     }),
     montar: montarAvisos,
     dinamico: true,

@@ -1,6 +1,9 @@
 // Ícones de traço simples (24×24). Desenhados para a app.
 
 const PONTO = 'fill="currentColor" stroke="none"';
+export const NUVEM = 'M7.5 19.5a4.5 4.5 0 0 1-.6-8.96 5.5 5.5 0 0 1 10.6-1.3A4.6 4.6 0 0 1 17 19.5z';
+const NUVEM_CIMA = 'M7.5 14.5a4 4 0 0 1-.5-7.97 5 5 0 0 1 9.7-1.2A4.1 4.1 0 0 1 16.8 14.5z';
+const NUVEM_DIREITA = 'M9.5 20a3.8 3.8 0 0 1-.5-7.57 4.8 4.8 0 0 1 9.2-.9A4 4 0 0 1 18 20z';
 
 const P = {
   menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
@@ -46,6 +49,15 @@ const P = {
   dots: `<circle cx="12" cy="5" r="1.8" ${PONTO}/><circle cx="12" cy="12" r="1.8" ${PONTO}/><circle cx="12" cy="19" r="1.8" ${PONTO}/>`,
   'dots-h': `<circle cx="5" cy="12" r="1.8" ${PONTO}/><circle cx="12" cy="12" r="1.8" ${PONTO}/><circle cx="19" cy="12" r="1.8" ${PONTO}/>`,
   download: '<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>',
+  // Tempo (previsão do IPMA): uma nuvem em baixo, ou mais acima com chuva, trovoada ou nevoeiro por baixo.
+  sol: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/>',
+  solnuvem: `<path d="M8 2.5V4M2.5 8H4M4.1 4.1l1.1 1.1M11.9 4.1l-1.1 1.1"/><path d="M5.1 10.6A3.2 3.2 0 0 1 11 7.6"/><path d="${NUVEM_DIREITA}"/>`,
+  nuvem: `<path d="${NUVEM}"/>`,
+  chuva: `<path d="${NUVEM_CIMA}"/><path d="M8 17.5l-1 3M12 17.5l-1 3M16 17.5l-1 3"/>`,
+  trovoada: `<path d="${NUVEM_CIMA}"/><path d="M12.5 15.5 10 19h3l-2.5 3.5"/>`,
+  nevoeiro: `<path d="${NUVEM_CIMA}"/><path d="M4 18h16M7 21.5h10"/>`,
+  lua: '<path d="M19.5 14.8A8 8 0 1 1 9.2 4.5a6.4 6.4 0 0 0 10.3 10.3z"/>',
+  luanuvem: `<path d="M4.4 10.4a4.6 4.6 0 0 1 5.4-6.9 3.6 3.6 0 0 0 2.5 5.4"/><path d="${NUVEM_DIREITA}"/>`,
 };
 
 export function icon(nome, classe = 'i') {

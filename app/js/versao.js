@@ -2,9 +2,19 @@
 // Ao publicar uma versão nova: mude VERSAO aqui e em sw.js, e junte uma entrada ao topo.
 // A mesma história está em CHANGELOG.md, para quem mantém a app.
 
-export const VERSAO = '0.10.0';
+export const VERSAO = '0.11.0';
 
 export const NOVIDADES = [
+  {
+    versao: '0.11.0',
+    data: '24/11/2026',
+    itens: [
+      'A temperatura de hoje no topo do início: a máxima, a mínima, a probabilidade de chuva e um desenho do tempo, com a previsão do IPMA para Leiria.',
+      'Na página dos avisos, um cartão para hoje e cada um dos 3 dias seguintes, com a máxima, a mínima, a chuva e o vento.',
+      'Em cada dia, deslize a nuvem para ver a temperatura, o tempo e a chuva hora a hora. O fundo do cartão muda com o tempo: sol, nuvens, chuva, trovoada, nevoeiro ou neve, e de noite fica escuro, com lua e estrelas.',
+      'A previsão fica guardada no telemóvel e continua a aparecer sem rede.',
+    ],
+  },
   {
     versao: '0.10.0',
     data: '17/11/2026',
