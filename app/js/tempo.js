@@ -31,6 +31,25 @@ export function tempoHoje() {
     </a>`;
 }
 
+// Versão grande, para quando o topo do início está calmo (sem avisos nem incêndios perto):
+// o tempo de hoje passa a ser o destaque.
+export function tempoDestaque() {
+  const d = previsaoHoje(fontePrevisao.guardado());
+  if (!d) return '';
+  const chuva = d.chuva !== null ? `, probabilidade de chuva de ${pct(d.chuva)}` : '';
+  const rotulo = `Hoje em Leiria: ${d.texto.toLowerCase()}, máxima de ${grausDitos(d.max)}, mínima de ${grausDitos(d.min)}${chuva}. Ver a previsão dos próximos dias.`;
+  return `
+    <a class="td" href="#/avisos/previsao" aria-label="${rotulo}">
+      ${icon(d.icone, 'i td-ic')}
+      <span class="td-temp" aria-hidden="true">${graus(d.max)}</span>
+      <span class="td-txt" aria-hidden="true">
+        <b>${d.texto}</b>
+        <span class="td-mais"><span>mín. ${graus(d.min)}</span>${d.chuva !== null ? `<span>Chuva ${pct(d.chuva)}</span>` : ''}</span>
+      </span>
+      ${icon('chev', 'i chev')}
+    </a>`;
+}
+
 /* ---------- Página dos avisos: um cartão por dia ---------- */
 
 // O desenho de fundo do cartão. Todas as peças estão lá; a classe do cartão diz quais se veem.

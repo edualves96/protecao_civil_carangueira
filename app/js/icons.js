@@ -41,6 +41,7 @@ const P = {
   wind: '<path d="M3 8h11a3 3 0 1 0-3-3M3 12h16a3 3 0 1 1-3 3M3 16h8"/>',
   snow: '<path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7"/>',
   home: '<path d="M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.5h.01"/>',
   alert: '<path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17h.01"/>',
   bolt: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
   mensagem: '<path d="M4 5h16v11H10l-4.5 4v-4H4z"/><path d="M8 9.5h8M8 12.5h5"/>',

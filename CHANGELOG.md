@@ -6,6 +6,17 @@ What each version of the app added. Residents see the same history, in Portugues
 To release a version: bump `VERSAO` in `app/js/versao.js` and `app/sw.js`, and add an entry to
 the top of `NOVIDADES` in `versao.js` and to this file.
 
+## 0.11.1 (26 Nov 2026)
+- The home top block takes much less room on phones when nothing needs action: about 200 px
+  instead of 310 px when calm, and about 240 px instead of 370 px without recent data. Today's
+  weather becomes the main element (big icon, maximum, weather in words, minimum and chance of
+  rain, linking to the forecast), and the status becomes one smaller line: "✓ Sem avisos nem
+  incêndios perto", or "ⓘ Sem dados recentes dos fogos" with a short reason and an inline link.
+  The "Segundo o IPMA e o Fogos.pt…" sentence is gone.
+- A fire nearby, an IPMA warning or a nearby fire in old data keep the big layout, with the small
+  temperature in the corner.
+- Text in the top block no longer fades (it was below the 4.5:1 contrast minimum on green).
+
 ## 0.11.0 (24 Nov 2026)
 - Weather forecast from IPMA's open data (daily forecast for Leiria, `globalIdLocal` 1100900, the
   nearest IPMA location to Caranguejeira). No key, called from the browser like the warnings, and

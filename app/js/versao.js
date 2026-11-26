@@ -2,9 +2,17 @@
 // Ao publicar uma versão nova: mude VERSAO aqui e em sw.js, e junte uma entrada ao topo.
 // A mesma história está em CHANGELOG.md, para quem mantém a app.
 
-export const VERSAO = '0.11.0';
+export const VERSAO = '0.11.1';
 
 export const NOVIDADES = [
+  {
+    versao: '0.11.1',
+    data: '26/11/2026',
+    itens: [
+      'Quando não há avisos nem incêndios perto, ou faltam dados recentes, o topo do início fica mais pequeno: o tempo de hoje aparece em grande e o estado numa só linha, com uma frase curta.',
+      'Texto do topo mais fácil de ler, com mais contraste.',
+    ],
+  },
   {
     versao: '0.11.0',
     data: '24/11/2026',

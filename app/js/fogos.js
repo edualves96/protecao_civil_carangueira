@@ -87,10 +87,12 @@ export function estadoFogos(agora = Date.now()) {
   if (!d) {
     return { ...base, id: 'pendente', theme: AZUL, big: 'A consultar os fogos', desc: 'A obter os incêndios ativos no distrito de Leiria.', linha: 'A consultar…' };
   }
+  // `curto`: a frase do topo compacto do início (sem incêndio perto, o topo fica pequeno).
   if (!d.ok) {
     return {
       ...base, id: 'pendente', theme: AZUL, big: 'Sem dados dos fogos',
       desc: 'Não foi possível obter as ocorrências de momento.',
+      curto: 'Não foi possível obter as ocorrências.',
       act: { href: SITE_FOGOS, txt: 'Abrir o Fogos.pt', ext: true },
       linha: 'Sem dados de momento',
     };
@@ -107,6 +109,7 @@ export function estadoFogos(agora = Date.now()) {
       ...(perto.length ? { risco: 'incendio-rural', hl: AZUL } : {}),
       big: perto.length ? 'Incêndio perto, dados antigos' : 'Sem dados recentes dos fogos',
       desc: `${porqueAntigo(obtido, agora)}${antes} Se vir fumo ou fogo, ligue 112.`,
+      curto: `${porqueAntigo(obtido, agora)}.`,
       act: { href: SITE_FOGOS, txt: 'Ver no Fogos.pt', ext: true },
       linha: perto.length
         ? `${quando(obtido, agora).replace(/^./, (c) => c.toUpperCase())} havia um incêndio a ${km(perto[0].km)} · pode já não estar ativo`

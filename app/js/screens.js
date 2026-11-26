@@ -15,7 +15,7 @@ import {
   textoObtido, atualizarEcra, classeVivo, RECENTE, SITE_AVISOS, SITE_SISMOS,
   previsao as fontePrevisao, horas as fonteHoras,
 } from './ipma.js';
-import { tempoHoje, corpoPrevisao, montarPrevisao } from './tempo.js';
+import { tempoHoje, tempoDestaque, corpoPrevisao, montarPrevisao } from './tempo.js';
 
 import { VERSAO, NOVIDADES } from './versao.js';
 import { corpoCopia, montarCopia } from './copia.js';
@@ -55,6 +55,7 @@ const ESTADOS = {
     id: 'pendente',
     big: 'Sem ligação',
     desc: 'Não foi possível obter os avisos do IPMA. Ligue-se à internet para ver se há avisos para o distrito de Leiria.',
+    curto: 'Não foi possível obter os avisos do IPMA.',
     act: SITE_IPMA,
     theme: AZUL,
   },
@@ -121,6 +122,7 @@ function estadoAtual() {
       return {
         ...ESTADOS.desatualizado,
         desc: `Os últimos dados do IPMA são de ${quando(dados.obtido, agora)}. Ligue-se à internet para ver se há avisos.`,
+        curto: `Os últimos avisos do IPMA são de ${quando(dados.obtido, agora)}.`,
       };
     }
     return {
@@ -210,7 +212,6 @@ function estadoTopo(f, tempo) {
     return {
       id: 'verde', theme: tempo.theme, fonte: 'ambos',
       big: 'Sem avisos nem incêndios perto',
-      desc: 'Segundo o IPMA e o Fogos.pt. Os detalhes estão logo abaixo.',
     };
   }
   // Falta uma das fontes: diz-se qual, em vez de mostrar verde sem saber.
@@ -241,6 +242,20 @@ function inicio() {
   const nivel = e.nivel
     ? `<span class="nivel">${icon(e.icone || 'alert')}${e.nivel}<span class="vh">: </span></span>`
     : '';
+  // Sem nada que peça ação (verde, ou sem dados recentes mas sem incêndio perto), o tempo de
+  // hoje passa a ser o destaque do topo e o estado fica numa linha pequena, com uma frase
+  // curta: o topo ocupa menos espaço no telemóvel. Um incêndio perto, um aviso do IPMA ou um
+  // incêndio perto em dados antigos continuam em grande.
+  const compacto = e.id === 'verde' || (e.id === 'pendente' && !e.pertoAntigo);
+  const ligacaoCurta = e.act
+    ? ` <a href="${e.act.href}"${e.act.ext ? ' target="_blank" rel="noopener"' : ''}>${e.act.txt}${icon(e.act.ext ? 'external' : 'arrow')}</a>`
+    : '';
+  const estadoCompacto = `
+          <div class="estado estado-calmo">
+            ${tempoDestaque()}
+            <h1 class="big big-calmo" id="estado">${icon(e.id === 'verde' ? 'check' : 'info')}${e.big}</h1>
+            ${e.curto || ligacaoCurta ? `<p class="st-curto">${e.curto || ''}${ligacaoCurta}</p>` : ''}
+          </div>`;
 
   const mais = e.mais ? `<a class="st-mais" href="${e.maisHref}">${e.mais}${icon('chev', 'i chev')}</a>` : '';
   let obtido = '';
@@ -298,16 +313,17 @@ function inicio() {
         <div class="wrap">
           <div class="top">
             <div><p class="wm-s">PROTEÇÃO CIVIL</p><p class="wm">Caranguejeira</p></div>
-            ${tempoHoje()}
+            ${compacto ? '' : tempoHoje()}
             <p class="net">Sem rede</p>
           </div>
+          ${compacto ? estadoCompacto : `
           <div class="estado">
             <h1 class="big" id="estado">${nivel}${e.big}</h1>
-            <p class="desc">${e.desc}</p>
+            ${e.desc ? `<p class="desc">${e.desc}</p>` : ''}
             ${acao}
             ${mais}
             ${obtido}
-          </div>
+          </div>`}
         </div>
       </section>
       <div class="edge" style="--edge:${e.theme}"></div>

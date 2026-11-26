@@ -178,7 +178,7 @@ body.menu-open .scrim { opacity: 1; visibility: visible; transition: opacity .24
 .dbar .sos-txt { display: none; }
 
 /* ---------- Início: estado atual ---------- */
-.status { padding: calc(20px + var(--safe-t)) 0 14px; }
+.status { padding: calc(18px + var(--safe-t)) 0 14px; }
 .s-pendente { background: var(--azul); color: #fff; --act-bg: #fff; --act-fg: var(--tinta); }
 .s-verde { background: var(--verde); color: #fff; --act-bg: #fff; --act-fg: var(--tinta); }
 .s-amarelo { background: var(--amarelo); color: #1A1600; --act-bg: #1A1600; --act-fg: #fff; }
@@ -186,7 +186,7 @@ body.menu-open .scrim { opacity: 1; visibility: visible; transition: opacity .24
 .s-vermelho { background: var(--vermelho); color: #fff; --act-bg: #fff; --act-fg: var(--tinta); }
 
 .top { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
-.status .wm-s { font-size: 13px; opacity: .85; }
+.status .wm-s { font-size: 13px; }
 .net { display: none; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; }
 .net::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
 html.offline .net { display: flex; }
@@ -195,14 +195,36 @@ html.offline .net { display: flex; }
   display: flex; align-items: center; gap: 8px; min-height: 44px; margin-left: auto; padding: 2px 0 2px 6px;
   color: inherit; text-decoration: none;
 }
-.hoje-ic { width: 34px; height: 34px; stroke-width: 1.8; }
+svg.hoje-ic { width: 34px; height: 34px; stroke-width: 1.8; }
 .hoje-t { display: flex; flex-direction: column; align-items: flex-end; line-height: 1; }
 .hoje-t b { font-family: var(--f-titulo); font-weight: 700; font-size: 30px; font-variant-numeric: tabular-nums; }
-.hoje-t > span { margin-top: 3px; font-size: 13px; font-weight: 700; opacity: .92; }
+.hoje-t > span { margin-top: 3px; font-size: 13px; font-weight: 700; }
 .hoje-chuva { display: flex; align-items: center; gap: 2px; }
 .hoje-chuva svg.i { width: 13px; height: 13px; stroke-width: 2.4; }
 
 .estado { margin-top: 26px; }
+/* Topo calmo: o tempo de hoje em grande e o estado numa linha, por baixo de um traço. */
+.estado-calmo { margin-top: 10px; }
+.td { display: flex; align-items: center; gap: 10px; max-width: 30rem; min-height: 64px; color: inherit; text-decoration: none; }
+svg.td-ic { width: 48px; height: 48px; stroke-width: 1.6; }
+.td-temp { font-family: var(--f-titulo); font-weight: 700; font-size: 58px; line-height: .9; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.td-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.td-txt b { font-size: 18px; line-height: 1.2; text-wrap: balance; }
+/* A mínima e a chuva partem-se entre si, nunca a meio ("Chuva 40%" fica junto). */
+.td-mais { display: flex; flex-wrap: wrap; gap: 0 10px; font-size: 15px; font-weight: 700; }
+.td-mais > span { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
+.td-txt svg.i { width: 15px; height: 15px; stroke-width: 2.4; }
+.td .chev { width: 20px; height: 20px; opacity: .85; }
+.big.big-calmo {
+  display: flex; align-items: center; gap: 8px; margin-top: 10px; padding-top: 10px;
+  border-top: 1px solid rgb(255 255 255 / .3); font-size: 22px; line-height: 1.15;
+}
+.big.big-calmo:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.big-calmo svg.i { width: 24px; height: 24px; stroke-width: 2.8; }
+/* Sem dados recentes: o porquê numa frase e a ligação na mesma linha. */
+.st-curto { margin-top: 6px; font-size: 15px; line-height: 1.4; }
+.st-curto a { display: inline; padding: 10px 0; font-weight: 700; color: inherit; text-underline-offset: 3px; white-space: nowrap; }
+.st-curto a svg.i { width: 16px; height: 16px; margin-left: 3px; vertical-align: -2px; }
 .demo {
   display: block; width: fit-content; margin-bottom: 16px; padding: 3px 8px;
   border: 1.5px solid currentColor; border-radius: 6px;
